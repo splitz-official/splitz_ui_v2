@@ -4,7 +4,7 @@ import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 function OTPScreen() {
   return (
     <View>
-      <text>Hello</text>
+      <text>Bye Now</text>
     </View>
   );
 }
