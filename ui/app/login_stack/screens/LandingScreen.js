@@ -2,19 +2,22 @@ import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 import colors from "../../../../constants/colors";
-import {
-  HeadingText,
-  TopLogo,
-  ButtonText,
-  ButtonText2,
-} from "../../../components";
+// import {
+//   HeadingText,
+//   TopLogo,
+//   ButtonText,
+//   ButtonText2,
+// } from "../../../components/";
 
-// import HeadingText from "../components/HeadingText";
-// import TopLogo from "../components/TopLogo";
-// import ButtonText from "../components/ButtonText";
-// import ButtonText2 from "../components/ButtonText2";
+import HeadingText from "../../../components/HeadingText";
+import TopLogo from "../../../components/TopLogo";
+import ButtonText from "../../../components/ButtonText";
+import ButtonText2 from "../../../components/ButtonText2";
 
 function LandingScreen() {
+  const handlePress = () => {
+    console.log("test!");
+  };
   return (
     <View style={styles.container}>
       <TopLogo />

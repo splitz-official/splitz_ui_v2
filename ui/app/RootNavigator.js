@@ -2,7 +2,7 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import LandingScreen from "./login_stack/screens/LandingScreen";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import colors from "../../constants/colors";
 
 const Stack = createStackNavigator();
