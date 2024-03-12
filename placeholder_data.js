@@ -1,8 +1,8 @@
-import Ray from "/Users/charlesgutcho/Desktop/Apps/NewScreens/placeholder_images/Ray.png"
-import Kyle from "/Users/charlesgutcho/Desktop/Apps/NewScreens/placeholder_images/Kyle.png"
-import Rainer from "/Users/charlesgutcho/Desktop/Apps/NewScreens/placeholder_images/Rainer.png"
-import Ray2 from "/Users/charlesgutcho/Desktop/Apps/NewScreens/placeholder_images/Ray2.png"
-import Charles from "/Users/charlesgutcho/Desktop/Apps/NewScreens/placeholder_images/Charles.png"
+import Ray from "./placeholder_images/Ray.png"
+import Kyle from "./placeholder_images/Kyle.png"
+import Rainer from "./placeholder_images/Rainer.png"
+import Ray2 from "./placeholder_images/Ray2.png"
+import Charles from "./placeholder_images/Charles.png"
 
 export const items = [
   {
