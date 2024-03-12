@@ -7,6 +7,7 @@ import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold, DMSans_4
 
 import LoginStackNavigation from "./splitz_app/Login_stack/Navigation";
 import { NavigationContainer } from "@react-navigation/native";
+import Login_3_Username_Screen from "./splitz_app/Login_stack/Login_3_Username_Screen";
 
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
  
   return (
     <LoginStackNavigation baseURL={baseURL}/>
-    // <Login_3_Username_Screen/>
+    // <Login_3_Username_Screen />
 );
 }
 

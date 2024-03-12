@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
       },
       phoneinputbox: {
         fontSize: RFValue(14),
-        fontFamily: 'DMSans_500Medium'
+        fontFamily: 'DMSans_500Medium',
+        // color: Colors.primary
       },
 })
 

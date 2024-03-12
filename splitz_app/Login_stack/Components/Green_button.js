@@ -3,10 +3,10 @@ import React from 'react'
 import Colors from '../../../Config/Colors'
 import { RFValue } from 'react-native-responsive-fontsize'
 
-const Green_button = ({children, onPress}) => {
+const Green_button = ({children, onPress, buttonstyle}) => {
   return (
     <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, buttonstyle]}
         activeOpacity={.8}
         onPress={onPress}>
             <Text style={styles.buttontext}>{children}</Text>
@@ -20,10 +20,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: Colors.primary,
         marginLeft: 20,
-        marginVertical: 15,
+        marginTop: 20,
+        marginBottom: 15,
         // paddingVertical: 15,
         height: RFValue(45),
-        borderRadius: 10
+        borderRadius: 10,
     },
       buttontext: {
         fontSize: RFValue(15),

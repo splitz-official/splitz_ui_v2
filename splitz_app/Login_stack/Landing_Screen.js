@@ -1,13 +1,14 @@
 import React, {useRef} from 'react';
 import { Animated, FlatList, View, StyleSheet, SafeAreaView, Button, Image, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+
 
 import SlideItem from './Components/SlideItem';
 import Slides from './Components/Data'
 import Pagination from './Components/Pagination';
 import Colors from '../../Config/Colors';
 import Screen from '../../Components/Screen';
-import { RFValue } from 'react-native-responsive-fontsize';
 import GradientBackground from './Components/Gradient_background';
 import Logo from './Components/Logo';
 import axios from 'axios';
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     },
     list: {
         // borderWidth: 5,
-        borderColor: 'orange',
+        // borderColor: 'orange',
     },
     login: {
         marginHorizontal: 15,
@@ -107,13 +108,13 @@ const styles = StyleSheet.create({
     },
     signup: {
         marginHorizontal: 15,
-        borderWidth: 2,
         borderColor: Colors.white,
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 18,
         borderRadius: 15,
-        marginVertical: 10
+        marginVertical: 10,
+        borderWidth: 2,
     }
 })
 
