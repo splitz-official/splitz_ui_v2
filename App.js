@@ -5,7 +5,7 @@ import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold, DMSans_4
 
 
 
-import LoginStackNavigation from "./Application/Login_stack/Navigation";
+import LoginStackNavigation from "./splitz_app/Login_stack/Navigation";
 import { NavigationContainer } from "@react-navigation/native";
 
 
