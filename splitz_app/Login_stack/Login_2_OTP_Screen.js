@@ -95,10 +95,10 @@ const Login_2_OTP_Screen = ({ route }) => {
                 </TouchableOpacity>
             </View>
             <Green_button onPress={handleOTPSubmit}>Continue</Green_button>
-            <TouchableOpacity
+            {/* <TouchableOpacity
             onPress={()=>{navigate("Phone_Input_Screen")}}>
                 <Text>GO BACK</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </Login_layout>
     </GradientBackground>
   )

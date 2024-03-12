@@ -55,10 +55,10 @@ function Login_Screen_2({ route }) {
                     withShadow
                     />
                     <Green_button onPress={handleIntializeVerification}>Continue</Green_button>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                     onPress={()=>{navigate("Landing_Screen")}}>
                         <Text>GO BACK</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </Login_layout>
             </GradientBackground>
     );
