@@ -67,6 +67,6 @@ function TabGroup() {
 
 export default function Bottom_Tab_Navigation() {
     return(
-            <TabGroup/>
+        <TabGroup/>
     )
 }
