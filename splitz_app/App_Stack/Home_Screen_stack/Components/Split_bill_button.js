@@ -6,14 +6,10 @@ import Colors from '../../../../Config/Colors';
 import { RegularText, Bold700Text } from '../../../../Config/AppText';
 
 
-const handlesplitbutton = () => {
-    console.log('Split Bill Button Pressed');
-}
-
-function Split_bill_button(props) {
+function Split_bill_button({onPress}) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} activeOpacity={.8} onPress={handlesplitbutton}>
+            <TouchableOpacity style={styles.button} activeOpacity={.8} onPress={onPress}>
                 <Image style = {styles.image} source={require('../../../../assets/occo(35).png')}></Image>
                 <Bold700Text style={styles.text}>Split Bill</Bold700Text>
             </TouchableOpacity>

@@ -27,8 +27,8 @@ export default function App() {
   const baseURL = "http://3.14.255.133";
  
   return (
-    <Camera/>
-    // <LoginStackNavigation baseURL={baseURL}/>
+    // <Camera/>
+    <LoginStackNavigation baseURL={baseURL}/>
     // <Login_3_Username_Screen />
 );
 }

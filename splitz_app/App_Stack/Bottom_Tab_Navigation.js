@@ -11,12 +11,12 @@ import {
     Feather,
 } from '@expo/vector-icons';
 
-import Home_screen from './Home_Screen_stack/Home_screen'
 import Groups_and_Bills from './Bill_Groups_stack/Groups_and_Bills_Screen'
 import Chat from './Chat_stack/Chat';
 import Profile from './Profile_Stack/Profile';
 import Colors from '../../Config/Colors';
 import { RFValue } from 'react-native-responsive-fontsize';
+import HomeStackNavigation from './Home_Screen_stack/Navigation_home_stack';
 
 
 const Tab = createBottomTabNavigator();
@@ -57,7 +57,7 @@ function TabGroup() {
             }
         })}
         >
-            <Tab.Screen name='Home' component={Home_screen}/>
+            <Tab.Screen name='Home' component={HomeStackNavigation}/>
             <Tab.Screen name='Groups' component={Groups_and_Bills}/>
             <Tab.Screen name='Messages'component={Chat}/>
             <Tab.Screen name='Profile' component={Profile}/>

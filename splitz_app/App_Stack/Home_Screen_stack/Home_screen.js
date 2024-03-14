@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize"
+import { useNavigation } from '@react-navigation/native';
 
 import { RegularText, Bold700Text, Medium500Text } from '../../../Config/AppText';
 import Screen from '../../../Components/Screen';
@@ -11,14 +12,22 @@ import Join_create_buttons from './Components/Join_create_buttons';
 import Activity_list from './Components/Activity_list';
 import Placecholder_list from './Components/Placeholder_list';
 
+
 function Home_screen(props) {
+
+    const { navigate } = useNavigation();
+
     return (
         <Screen>
             <View style={{flex:1}}>
                 <TopLogo/>
-                <Medium500Text style={styles.Welcometext}>Welcome Back, Rainer</Medium500Text>
+                <Medium500Text style={styles.Welcometext}>Welcome Back, Rainer</Medium500Text> 
                 <Owe_owed/>
-                <Split_bill_button/>
+                <Split_bill_button
+                onPress={() => {
+                    console.log("Split Pressed");
+                    navigate("Split_bill_stack")
+                }}/>
                 <Join_create_buttons/>
                 <Placecholder_list />
             </View>
