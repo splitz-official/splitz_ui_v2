@@ -13,7 +13,8 @@ function SplitBillGroup() {
         initialRouteName="Split_bill">
             <SplitBillStack.Screen 
             name="Split_bill"
-            component={Take_pic}/>
+            component={Take_pic}
+            />
         </SplitBillStack.Navigator>
     )
 }

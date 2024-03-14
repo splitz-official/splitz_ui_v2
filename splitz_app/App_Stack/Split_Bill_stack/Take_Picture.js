@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Alert, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Alert, Image, Dimensions, ImageBackground } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'
 
 import { Entypo } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
@@ -11,9 +11,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
-import Camera_Button from './Components/Camera_Button';
+
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import Button from './Components/Buttons';
 
 // console.log(Dimensions.get('window').width)
 
@@ -24,7 +25,8 @@ const Take_pic = () => {
     const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
     const cameraRef = useRef(null);
 
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
+
 
     useEffect(() => {
       (async () => {
@@ -70,56 +72,67 @@ const Take_pic = () => {
         type={type}
         flashMode={flash}
         ref={cameraRef}
-        autoFocus={Camera.Constants.AutoFocus.on}
+        autoFocus={Camera.Constants.AutoFocus}
         >
-          <View style={styles.flip_flash_buttons}>
-            <Camera_Button 
-            IconComponent={
-            <Ionicons name="chevron-back-outline" size={RFValue(22)} color={Colors.primary} onPress={() => {
-              navigate('home')
-            }} /> 
-            }
-            button_style={styles.back_button}
-            />
-            <Camera_Button 
-            IconComponent={
-            <Ionicons name={flash === Camera.Constants.FlashMode.off ? "flash-off" : "flash"} size={RFValue(22)} color="gray" onPress={() => {
-              setFlash(flash === Camera.Constants.FlashMode.off ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.off)
-            }}/>
-            }
-            />
+          <View style={{justifyContent: 'space-between', flex: 1}}>
+            <View style={styles.flip_flash_buttons}>
+              <Button 
+              IconComponent={
+              <Ionicons 
+                name="chevron-back-outline" 
+                size={RFValue(22)} color={Colors.primary} 
+                onPress={() => {
+                  navigation.navigate('home')
+                }} /> 
+              }
+              button_style={styles.back_button}
+              />
+              <Button 
+              IconComponent={
+                <Ionicons 
+                name={flash === Camera.Constants.FlashMode.off ? "flash-off" : "flash"}
+                size={RFValue(22)} color={flash === Camera.Constants.FlashMode.off ? "gray" : "white"} 
+                onPress={() => {
+                  setFlash(flash === Camera.Constants.FlashMode.off ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.off)
+                }}/>
+              }
+              />
+            </View>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Button
+              onPress={takePicture} 
+              // IconComponent={<Entypo name="camera" size={RFValue(30)} color={Colors.primary} />}
+              button_style={styles.take_photo_button}
+              />
+            </View>
           </View>
         </Camera>
         :
-        <Image style={styles.camera} source={{uri: image}}/>
-        }
-        <View>
-          {image ?
-          <View style={styles.isPictureButtons}>
-            <Camera_Button
-            // title={"Re-take"}
-            IconComponent={<Fontisto name="redo" size={RFValue(25)} color="white" onPress={() => setImage(null)}/>}
-            />
-            <Camera_Button
-            // title={"Save"}
-            IconComponent={<AntDesign name="check" size={RFValue(25)} color="white" onPress={saveImage} />}
-            />
+        <ImageBackground style={styles.isImage} source={{uri: image}}>
+            <View style={styles.isPictureButtons}>
+              <Button
+              // title={"Re-take"}
+              IconComponent={<Fontisto name="redo" size={RFValue(25)} color="white" onPress={() => setImage(null)}/>}
+              />
+              <Button
+              // title={"Save"}
+              IconComponent={<AntDesign name="check" size={RFValue(25)} color="white" onPress={saveImage} />}
+              />
           </View>
-          :
-          <Camera_Button
-          onPress={takePicture} 
-          IconComponent={<Entypo name="camera" size={RFValue(30)} color={Colors.primary} />}
-          button_style={styles.take_photo_button}
-          >
-          </Camera_Button>
-          }
-        </View>
+        </ImageBackground>
+        }
       </View>
     </Screen>
   )
 }
 
 const styles = StyleSheet.create({
+  isImage: {
+    justifyContent: 'flex-end',
+    flex: 1,
+    borderWidth: 2,
+    borderColor: 'white'
+  },
   background: {
     backgroundColor: Colors.black
   },
@@ -141,19 +154,19 @@ const styles = StyleSheet.create({
     height: RFValue(60),
     width: RFValue(60),
     borderRadius: RFValue(30),
-    backgroundColor: 'white',
-    // borderWidth: 2,
-    // borderColor: Colors.primary,
+    // backgroundColor: 'white',
+    borderWidth: RFValue(6),
+    borderColor: Colors.white,
     marginTop: 15,
-    marginBottom: 5
+    marginBottom: 30
   },
   isPictureButtons: {
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingHorizontal: 25,
-    paddingBottom: 10,
-    width: '100%'
+    paddingHorizontal: 30,
+    width: '100%',
+    marginBottom: 30
     // borderWidth: 2,
     // borderColor: 'white',
   },

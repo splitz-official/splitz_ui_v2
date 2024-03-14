@@ -10,7 +10,7 @@ function Split_bill_button({onPress}) {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.button} activeOpacity={.8} onPress={onPress}>
-                <Image style = {styles.image} source={require('../../../../assets/occo(35).png')}></Image>
+                <Image resizeMode='contain' style = {styles.image} source={require('../../../../assets/occo(35).png')}></Image>
                 <Bold700Text style={styles.text}>Split Bill</Bold700Text>
             </TouchableOpacity>
         </View>
@@ -30,15 +30,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
         backgroundColor: Colors.primary,
-        borderRadius: 15,
-        maxWidth: '93%',
+        borderRadius: 25,
+        marginHorizontal: 10,
         flex: 1,
-        // borderWidth:2,
     },
     text: {
         color: Colors.white,
-        fontSize: RFValue(20),
-        paddingVertical: 15
+        fontSize: RFValue(18),
+        paddingVertical: 10,
+        fontFamily: 'DMSans_700Bold'
     }, 
     image: {
         marginRight: 8,

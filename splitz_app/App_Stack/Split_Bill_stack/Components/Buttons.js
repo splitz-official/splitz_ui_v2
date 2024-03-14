@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { Children } from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 
 
-const Camera_Button = ({onPress, IconComponent, title, button_style}) => {
+const Button = ({onPress, IconComponent, title, button_style, Children}) => {
   return (
     <TouchableOpacity activeOpacity={.5} onPress={onPress} style={[styles.button, button_style]}>
-        {IconComponent}
+        {IconComponent && IconComponent}
+        {Children}
         {title && <Text style={styles.title}>{title}</Text>}
     </TouchableOpacity>
   )
@@ -29,4 +30,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Camera_Button
+export default Button

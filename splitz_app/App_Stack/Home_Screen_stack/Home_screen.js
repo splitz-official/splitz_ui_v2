@@ -23,13 +23,13 @@ function Home_screen(props) {
                 <TopLogo/>
                 <Medium500Text style={styles.Welcometext}>Welcome Back, Rainer</Medium500Text> 
                 <Owe_owed/>
+                <Join_create_buttons/>
+                <Placecholder_list />
                 <Split_bill_button
                 onPress={() => {
                     console.log("Split Pressed");
                     navigate("Split_bill_stack")
                 }}/>
-                <Join_create_buttons/>
-                <Placecholder_list />
             </View>
         </Screen>
     );
