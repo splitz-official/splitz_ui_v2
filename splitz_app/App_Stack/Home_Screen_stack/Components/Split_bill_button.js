@@ -23,7 +23,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
         marginVertical: 2,
-        // borderWidth: 2
+        // borderWidth: 2,
+        backgroundColor: 'white',
+        paddingVertical: 10
     },
     button: {
         alignItems: 'center',
