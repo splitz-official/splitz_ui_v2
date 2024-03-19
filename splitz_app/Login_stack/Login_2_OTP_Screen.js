@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import * as SecureStore from "expo-secure-store"
 
+import Config from 'react-native-config'
 import GradientBackground from './Components/Gradient_background'
 import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
@@ -11,6 +12,8 @@ import OTPInputField from './Components/OTP_Input'
 import Colors from '../../Config/Colors'
 import { RFValue } from 'react-native-responsive-fontsize'
 
+//ideas
+//consider having the screen autonavigate when the otp is typed in
 
 const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")

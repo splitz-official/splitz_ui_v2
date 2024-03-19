@@ -7,8 +7,6 @@ import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold, DMSans_4
 
 import LoginStackNavigation from "./splitz_app/Login_stack/Navigation";
 import { NavigationContainer } from "@react-navigation/native";
-import Login_3_Username_Screen from "./splitz_app/Login_stack/Login_3_Username_Screen";
-import Camera from "./splitz_app/App_Stack/Split_Bill_stack/Take_Picture";
 
 
 export default function App() {
@@ -27,9 +25,8 @@ export default function App() {
   const baseURL = "http://3.14.255.133";
  
   return (
-    // <Camera/>
+    // <Camera_learn/>
     <LoginStackNavigation baseURL={baseURL}/>
-    // <Login_3_Username_Screen />
 );
 }
 

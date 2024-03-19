@@ -2,22 +2,27 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import PhoneInput from 'react-native-phone-number-input';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 import axios from 'axios';
+import Config from 'react-native-config';
 
 import GradientBackground from './Components/Gradient_background';
 import Colors from '../../Config/Colors';
 import Logo from './Components/Logo';
 import Screen from '../../Components/Screen';
-import { RFValue } from 'react-native-responsive-fontsize';
 import Login_layout from './Components/Login_layout';
 import Green_button from './Components/Green_button';
+
+//baseURL + "/user/initialize-verification"
 
 function Login_Screen_2({ route }) {
     console.log("Login Stack: Phone Input Screen")
     const { navigate } = useNavigation();
     const { baseURL } = route.params;
     const [number, setNumber] = useState("")
+
+    // console.log("URL:" + Config.BASE_URL)
 
     handleIntializeVerification = () => {
         axios
