@@ -56,9 +56,9 @@ function TopLogo() {
         <View>
             <RegularText style={styles.topLogoText}>splitz</RegularText>
         </View>
-        <View style={styles.topicons}>
+        {/* <View style={styles.topicons}>
             <SearchExpandable />
-        </View>
+        </View> */}
     </View>
     
     );

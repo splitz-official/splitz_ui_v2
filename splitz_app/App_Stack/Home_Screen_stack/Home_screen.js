@@ -15,6 +15,7 @@ import Placecholder_list from './Components/Placeholder_list';
 
 //change user name to actual user not Rainer
 
+
 function Home_screen(props) {
 
     const { navigate } = useNavigation();

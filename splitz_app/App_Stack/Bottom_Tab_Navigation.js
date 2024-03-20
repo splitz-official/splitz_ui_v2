@@ -15,7 +15,7 @@ import Groups_and_Bills from './Bill_Groups_stack/Groups_and_Bills_Screen'
 import Chat from './Chat_stack/Chat';
 import Profile from './Profile_Stack/Profile';
 import Colors from '../../Config/Colors';
-import { RFValue } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import HomeStackNavigation from './Home_Screen_stack/Navigation_home_stack';
 import Coming_soon from './Bill_Groups_stack/Coming_soon';
 
@@ -47,9 +47,10 @@ function TabGroup() {
             tabBarStyle: {
                 maxHeight: '10%',
                 flex:1,
-                paddingTop: 10,
-                borderTopWidth: 0,
-                borderColor: 'transparent'
+                paddingTop: RFPercentage(2),
+                // borderTopWidth: 0,
+                // borderWidth: 2,
+                // borderColor: 'blue'
             },
             tabBarShowLabel: false,
             tabBarAllowFontScaling: true,
@@ -60,8 +61,8 @@ function TabGroup() {
         })}
         >
             <Tab.Screen name='Home' component={HomeStackNavigation}/>
-            <Tab.Screen name='Groups' component={Coming_soon}/>
-            <Tab.Screen name='Messages'component={Chat}/>
+            {/* <Tab.Screen name='Groups' component={Coming_soon}/> */}
+            {/* <Tab.Screen name='Messages'component={Chat}/> */}
             <Tab.Screen name='Profile' component={Profile}/>
         </Tab.Navigator>
     )

@@ -33,6 +33,7 @@ const Placecholder_list = () => {
                     />
                 )}
                 ItemSeparatorComponent={ListItemSeparator}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );

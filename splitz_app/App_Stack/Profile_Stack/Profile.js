@@ -4,6 +4,7 @@ import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList } from
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -14,6 +15,8 @@ import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import Large_button from './Components/Large_button';
+
+//user actual name not placeholder(add this in)
 
 function Profile(props) {
     const { navigate } = useNavigation();
@@ -70,7 +73,10 @@ function Profile(props) {
     );
 
     return (
-        <View style={{flex: 1, backgroundColor: Colors.primary}}>
+        <LinearGradient colors={['#005D1A','#C1EBCD']} 
+        start={{ x: 0.5, y: 1 }}
+        end={{ x: .5, y: 0 }}
+        style={{flex:1}}>
             <Screen>
                 <View style={styles.add_friend_icon_container}>
                     <TouchableOpacity activeOpacity={.8} style={styles.add_friend_icon}>
@@ -125,7 +131,7 @@ function Profile(props) {
                     </TouchableOpacity>
                 </View> */}
             </Screen>
-        </View>
+        </LinearGradient>
     );
 }
 

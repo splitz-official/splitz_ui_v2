@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
   isImage: {
     justifyContent: 'flex-end',
     flex: 1,
-    borderWidth: 2,
-    borderColor: 'white'
+    // borderWidth: 2,
+    // borderColor: 'white'
   },
   background: {
     backgroundColor: Colors.black

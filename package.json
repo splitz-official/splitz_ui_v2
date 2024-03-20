@@ -47,7 +47,8 @@
     "react-native-tab-view": "^3.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "dotenv": "^16.4.5"
   },
   "private": true
 }

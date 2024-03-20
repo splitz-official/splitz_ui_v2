@@ -23,7 +23,7 @@ export default function App() {
   }
 
   const baseURL = "http://3.14.255.133";
- 
+  
   return (
     // <Camera_learn/>
     <LoginStackNavigation baseURL={baseURL}/>

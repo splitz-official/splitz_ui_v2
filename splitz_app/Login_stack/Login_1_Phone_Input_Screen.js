@@ -22,7 +22,7 @@ function Login_Screen_2({ route }) {
     const { baseURL } = route.params;
     const [number, setNumber] = useState("")
 
-    // console.log("URL:" + Config.BASE_URL)
+    // console.log(Config.BASE_URL)
 
     handleIntializeVerification = () => {
         axios
