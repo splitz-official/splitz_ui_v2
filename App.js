@@ -1,18 +1,40 @@
 import "react-native-gesture-handler";
-import { View, StyleSheet, ActivityIndicator, useEffect } from "react-native";
-import React from "react";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold, DMSans_400Regular_Italic } from '@expo-google-fonts/dm-sans';
-
+import * as SecureStore from "expo-secure-store"
+import * as SplashScreen from 'expo-splash-screen';
 
 import { AxiosProvider } from "./Axios/axiosContext";
 import { useAxios } from "./Axios/axiosContext";
 
 import LoginStackNavigation from "./splitz_app/Login_stack/Navigation_login_stack";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import Bottom_Tab_Navigation from "./splitz_app/App_Stack/Bottom_Tab_Navigation";
 
 
 
 export default function App() {
+  const [isLoggedIn, SetIsLoggedIn] = useState(false);
+
+  async function getData() {
+    //need to consider verifying the token in the future but for now this will work for MVP
+    const token = await SecureStore.getItemAsync("access_token");
+    // console.log("from app.js token: " + token);
+    SetIsLoggedIn(token);
+    // console.log("from app.js isLoggedIn: " + isLoggedIn);
+  }
+
+  useEffect(() => {
+    getData();
+    setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 1000);
+  }, [])
+
+  // useEffect(() => {
+  //   console.log("from app.js isLoggedIn: " + isLoggedIn);
+  // }, [isLoggedIn]);
 
   let [fontsLoaded] = useFonts({
     DMSans_400Regular,
@@ -25,20 +47,14 @@ export default function App() {
     return <View style={styles.loaderContainer}><ActivityIndicator size="large" /></View>;
   }
 
-  // if (token) {
-  //   return 
-    
-  // }else {
-
-  // }
-  
   return (
     <AxiosProvider>
-      <LoginStackNavigation/>
+      <NavigationContainer>
+          <LoginStackNavigation initialRouteName={isLoggedIn ? "Bottom_Tab_Home_Navigator" : "Landing_Screen"}/>
+      </NavigationContainer>
     </AxiosProvider>
 );
 }
-
 
 
 const styles = StyleSheet.create({

@@ -2,10 +2,11 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useEffect, useState } from 'react';
 import * as SecureStore from "expo-secure-store"
+import { ActivityIndicator, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
 import Landing from './Landing_Screen';
 import Login_Screen_2 from './Login_1_Phone_Input_Screen';
-import { NavigationContainer } from '@react-navigation/native';
 import Bottom_Tab_Navigation from '../App_Stack/Bottom_Tab_Navigation';
 import Login_2_OTP_Screen from './Login_2_OTP_Screen';
 import Login_3_Username_Screen from './Login_3_Username_Screen';
@@ -13,25 +14,12 @@ import { useAxios } from '../../Axios/axiosContext';
 
 const LoginStack = createStackNavigator();
 
-function LoginStackGroup({ baseURL }) {
-
-    const { token } = useAxios();
-    const [initialRoute, setInitialRoute] = useState('Landing_Screen');
-
-    // useEffect(() => {
-    //     console.log("navigation token check")
-    //     if (token) {
-    //         console.log("bottom tab")
-    //         setInitialRoute('Bottom_Tab_Home_Navigator');
-    //     } else {
-    //         setInitialRoute('Landing_Screen'); 
-    //     }
-    // }, [token]);
+function LoginStackGroup({ initialRouteName }) {
 
     return (
         <LoginStack.Navigator 
         screenOptions={{headerShown: false}}
-        initialRouteName={token ? "Bottom_Tab_Home_Navigator" : "Landing_Screen"}>
+        initialRouteName={initialRouteName}>
             <LoginStack.Screen 
             name="Landing_Screen" 
             component={Landing}
@@ -56,10 +44,8 @@ function LoginStackGroup({ baseURL }) {
     );
 }
 
-export default function LoginStackNavigation() {
+export default function LoginStackNavigation({ initialRouteName }) {
     return (
-        <NavigationContainer>
-            <LoginStackGroup />
-        </NavigationContainer>
+            <LoginStackGroup initialRouteName={initialRouteName}/>
     )
 }

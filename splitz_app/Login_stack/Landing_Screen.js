@@ -11,24 +11,21 @@ import SlideItem from './Components/SlideItem';
 import Slides from './Components/Data'
 import Pagination from './Components/Pagination';
 import Colors from '../../Config/Colors';
-import Screen from '../../Components/Screen';
 import GradientBackground from './Components/Gradient_background';
-import Logo from './Components/Logo';
-import axios from 'axios';
 import * as SecureStore from "expo-secure-store"
 
 function Landing({ route }) {
     console.log("Login Stack: Landing Screen")
     const { navigate } = useNavigation();
 
-    const { token } = useAxios();
+    // const { token } = useAxios();
 
-    useEffect(() => {
-        if (token) {
-            console.log("navigaate from landing screen")
-            navigate("Bottom_Tab_Home_Navigator");
-        }
-    }, [token, navigate]);
+    // useEffect(() => {
+    //     if (token) {
+    //         console.log("navigaate from landing screen")
+    //         navigate("Bottom_Tab_Home_Navigator");
+    //     }
+    // }, [token, navigate]);
 
     handlePress = async () => {
         console.log("Verify User");

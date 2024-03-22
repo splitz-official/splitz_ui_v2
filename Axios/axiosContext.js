@@ -11,7 +11,7 @@ export const AxiosProvider = ({ children }) => {
   const [userData, setUserData ] = useState(null);
 
   useEffect(() => {
-    // console.log("Context looking for token")
+    // console.log("Checking for token via securestore from context a;ldkfjals;kfja")
     const fetchToken = async () => {
       const access_token = await SecureStore.getItemAsync('access_token');
       if (access_token) {
@@ -27,6 +27,7 @@ export const AxiosProvider = ({ children }) => {
     const fetchUserData = async () => {
         if (token) {
             try {
+              // console.log("fetching user data from context ;adkljf")
               const response = await axiosInstance.get('/user/');
               setUserData(response.data);
             } catch (error) {

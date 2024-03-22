@@ -25,7 +25,7 @@ import randomColor from 'randomcolor';
 function Profile(props) {
     const { navigate } = useNavigation();
     const { userData } = useAxios();
-    console.log(userData)
+    // console.log("From Profile.js: " + userData)
 
     const name = userData.name;
     const username = userData.username;

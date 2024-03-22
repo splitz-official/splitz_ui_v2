@@ -24,6 +24,7 @@ const Tab = createBottomTabNavigator();
 function TabGroup() {
     return(
         <Tab.Navigator
+        initialRouteName='Home'
         screenOptions={({ route, navigation}) => ({
             tabBarIcon: ({color, focused}) => {
                 let iconName;

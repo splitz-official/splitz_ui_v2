@@ -25,10 +25,6 @@ const Login_2_OTP_Screen = ({ route }) => {
     const [pinReady, setPinReady] = useState("");
     const MAX_CODE_LENGTH = 5;
 
-    async function saveKey(key, value) {
-        await SecureStore.setItemAsync(key, value);
-    }
-
     sendNewCode = () => {
         axiosInstance
           .post("/user/initialize-verification", {
@@ -50,16 +46,15 @@ const Login_2_OTP_Screen = ({ route }) => {
         })
         .then(async (res) => {
             const { access_token } = res.data;
-            console.log(access_token)
-            saveKey("access_token", res.data.access_token);
+            // console.log(access_token)
+            await SecureStore.setItemAsync("access_token", res.data.access_token);
             axiosInstance.setAuthToken(access_token);
-    
             axiosInstance.get(`/user/`)
             .then((res) => {
                 if (!res.data.name) {
                     navigate("Username_Input_Screen");
                 } else {
-                    console.log(res.data.name, res.data.username);
+                    console.log("Logged Name: " + res.data.name, "Logged Username: " + res.data.username);
                     navigate("Bottom_Tab_Home_Navigator");
                 }
             })
