@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import Home_screen from './Home_screen';
-import SplitBillStackNavigation from '../Split_Bill_stack/Navigation_login_stack';
+import SplitBillStackNavigation from '../Split_Bill_stack/Navigation_splitbill_stack';
 
 
 const HomeStack = createStackNavigator();

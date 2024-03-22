@@ -4,9 +4,10 @@ import React from "react";
 import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold, DMSans_400Regular_Italic } from '@expo-google-fonts/dm-sans';
 
 
+import { AxiosProvider } from "./Axios/axiosContext";
 
-import LoginStackNavigation from "./splitz_app/Login_stack/Navigation";
-import { NavigationContainer } from "@react-navigation/native";
+import LoginStackNavigation from "./splitz_app/Login_stack/Navigation_login_stack";
+
 
 
 export default function App() {
@@ -22,11 +23,14 @@ export default function App() {
     return <View style={styles.loaderContainer}><ActivityIndicator size="large" /></View>;
   }
 
-  const baseURL = "http://3.14.255.133";
+  // const baseURL = "http://3.14.255.133";
   
   return (
     // <Camera_learn/>
-    <LoginStackNavigation baseURL={baseURL}/>
+
+    <AxiosProvider>
+      <LoginStackNavigation/>
+    </AxiosProvider>
 );
 }
 

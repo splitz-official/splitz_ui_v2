@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 import { 
     Ionicons,
@@ -11,14 +12,14 @@ import {
     Feather,
 } from '@expo/vector-icons';
 
-import Groups_and_Bills from './Bill_Groups_stack/Groups_and_Bills_Screen'
-import Chat from './Chat_stack/Chat';
+
 import Profile from './Profile_Stack/Profile';
 import Colors from '../../Config/Colors';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import HomeStackNavigation from './Home_Screen_stack/Navigation_home_stack';
-import Coming_soon from './Bill_Groups_stack/Coming_soon';
+import ProfileStackNavigation from './Profile_Stack/Navigation_profile_stack';
 
+
+//change icon and icon size when navigating
 
 const Tab = createBottomTabNavigator();
 
@@ -32,22 +33,20 @@ function TabGroup() {
                 let IconComponent;
 
                 if(route.name === 'Home'){
-                    return <Ionicons name='home-outline' size={iconsize} color={color}/>
-                } else if (route.name === "Groups"){
-                    return <Feather name='users' size={iconsize} color={color}/>
-                } else if (route.name === "Messages"){
-                    return <Ionicons name="chatbubbles-outline" size={iconsize} color={color}/>
+                    iconName = focused ? 'home-sharp' : 'home-outline'
+                    return <Ionicons name={iconName} size={iconsize} color={color}/>
                 } else if (route.name === "Profile"){
-                    return <Feather name="user" size={iconsize} color={color}/>
+                    iconName = focused ? 'user-alt' : 'user'
+                    return <FontAwesome5 name={iconName} size={iconsize} color={color}/>
                 }
             },
             tabBarActiveTintColor: Colors.primary,
             tabBarInactiveTintColor: Colors.mediumgray,
             headerShown: false,
             tabBarStyle: {
-                maxHeight: '10%',
+                maxHeight: '8%',
                 flex:1,
-                paddingTop: RFPercentage(2),
+                paddingTop: '2%'
                 // borderTopWidth: 0,
                 // borderWidth: 2,
                 // borderColor: 'blue'
@@ -61,9 +60,7 @@ function TabGroup() {
         })}
         >
             <Tab.Screen name='Home' component={HomeStackNavigation}/>
-            {/* <Tab.Screen name='Groups' component={Coming_soon}/> */}
-            {/* <Tab.Screen name='Messages'component={Chat}/> */}
-            <Tab.Screen name='Profile' component={Profile}/>
+            <Tab.Screen name='Profile' component={ProfileStackNavigation}/>
         </Tab.Navigator>
     )
 }

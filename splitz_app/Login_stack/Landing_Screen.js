@@ -1,7 +1,10 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import { Animated, FlatList, View, StyleSheet, SafeAreaView, Button, Image, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
+
+import axiosInstance from '../../Axios/axiosInstance';
+import { useAxios } from '../../Axios/axiosContext';
 
 
 import SlideItem from './Components/SlideItem';
@@ -17,32 +20,35 @@ import * as SecureStore from "expo-secure-store"
 function Landing({ route }) {
     console.log("Login Stack: Landing Screen")
     const { navigate } = useNavigation();
-    const { baseURL } = route.params;
-    // console.log(baseURL)
+
+    const { token } = useAxios();
+
+    useEffect(() => {
+        console.log("checking context for token")
+        if (token) {
+            console.log("is token")
+            navigate("Bottom_Tab_Home_Navigator");
+        }
+    }, [token, navigate]);
 
     handlePress = async () => {
         console.log("Verify User");
-        let token = await SecureStore.getItemAsync("access_token");
-        if (!token) {
-          console.log("User is not logged in");
-          navigate("Phone_Input_Screen");
-        }
-        axios
-          .get(baseURL + "/user/", {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token ? `Bearer ${token}` : undefined,
-            },
-          })
-          .then((res) => {
-            console.log("User is logged in");
-            navigate("Bottom_Tab_Home_Navigator", { baseURL: baseURL });
-          })
-          .catch((error) => {
-            console.log("Error: User is not logged in");
-            navigate("Phone_Input_Screen");
-          });
-      };
+        navigate("Phone_Input_Screen")
+        // let token = await SecureStore.getItemAsync("access_token");
+        // if (!token) {
+        //   console.log("User is not logged in");
+        //   navigate("Phone_Input_Screen");
+        // }
+    //     axiosInstance.get(baseURL + "/user/")
+    //   .then((res) => {
+    //     console.log("User is logged in");
+    //     navigate("Bottom_Tab_Home_Navigator");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error: User is not logged in", error);
+    //     navigate("Phone_Input_Screen");
+    //   });
+    };
 
     const scrollX = useRef(new Animated.Value(0)).current;
     const handleOnScroll = event => {

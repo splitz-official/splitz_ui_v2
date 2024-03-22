@@ -50,9 +50,9 @@ const SearchExpandable = () => {
 };
 
 
-function TopLogo() {
+function TopLogo({ style }) {
     return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
         <View>
             <RegularText style={styles.topLogoText}>splitz</RegularText>
         </View>

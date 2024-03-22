@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
@@ -9,21 +9,33 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import Large_button from './Components/Large_button';
+import TopLogo from '../../../Components/TopLogo';
+import { useAxios } from '../../../Axios/axiosContext';
+import randomColor from 'randomcolor';
 
 //user actual name not placeholder(add this in)
 
 function Profile(props) {
     const { navigate } = useNavigation();
+    const { userData } = useAxios();
+
+    const name = userData.name;
+    const username = userData.username;
+    const [profile_pic, setProfile_pic] = useState(false);
+    //how does work if the user closes the app. Maybe consider storing in securestore or something
+    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
+    
 
     const logout = async () => {
         try {
-            //ask Nikhil about needing to add backend call
             await SecureStore.deleteItemAsync('access_token');
             navigate('Landing_Screen');
         } catch (error) {
@@ -31,61 +43,25 @@ function Profile(props) {
         }
     };
 
-    
-
-    const buttonData = [
-        { 
-            id: '1', 
-            title: 'Edit Profile', 
-            IconComponent: <MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />, 
-        },
-        { 
-            id: '2', 
-            title: 'Settings', 
-            IconComponent: <Ionicons name="settings-sharp" size={RFPercentage(4)} color={Colors.primary} />, 
-        },
-        { 
-            id: '3', 
-            title: 'Invite Someone', 
-            IconComponent: <Feather name="share" size={RFPercentage(4)} color={Colors.primary} />, 
-        },
-        { 
-            id: '4', 
-            title: 'Send feedback', 
-            IconComponent: <MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />, 
-        },
-    ];
-
-    const renderButton = ({ item }) => (
-        <Large_button Iconcomponent={item.IconComponent} title={item.title} />
-    );
-
-    const renderLogoutButton = () => (
-        <TouchableOpacity onPress={logout}>
-            <Text style={{
-                color: 'red',
-                fontSize: RFValue(14),
-                paddingLeft: RFPercentage(3),
-                marginTop: 20,
-                fontFamily: 'DMSans_700Bold'
-            }}>Logout</Text>
-        </TouchableOpacity>
-    );
-
     return (
         <LinearGradient colors={['#005D1A','#C1EBCD']} 
         start={{ x: 0.5, y: 1 }}
         end={{ x: .5, y: 0 }}
         style={{flex:1}}>
             <Screen>
-                <View style={styles.add_friend_icon_container}>
+                <TopLogo/>
+                <View style={styles.top_icon_container}>
+                    <TouchableOpacity  onPress={logout} activeOpacity={.3}>
+                        <AntDesign name="logout" size={RFValue(16)} color="red" />
+                    </TouchableOpacity>
                     <TouchableOpacity activeOpacity={.8} style={styles.add_friend_icon}>
                         <Feather name="user-plus" size={RFValue(18)} color="black" />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.top_container}>
                     <ProfilePicture 
-                    isPicture={true}
+                    isPicture={profile_pic}
+                    user={name}
                     requirePicture={require('../../../placeholder_images/Rainer.png')}
                     width={RFPercentage(15)}
                     height={RFPercentage(15)}
@@ -93,20 +69,21 @@ function Profile(props) {
                         borderWidth: 2,
                         borderColor: 'white'
                     }}
+                    backgroundColor={profile_color}
+                    userTextStyle={{
+                        fontSize: RFValue(45)
+                    }}
                     />
-                    <Text style={styles.name}>Rainer Setiawan</Text>
-                    <Text style={styles.username}>@rainersetiawan</Text>
+                    {name? 
+                    <Text style={styles.name}>{name}</Text>:
+                    <Text style={styles.name}>Edit Profile</Text>
+                    }
+                    {name? 
+                    <Text style={styles.username}>@{username}</Text>:
+                    <Text style={styles.username}>Edit Profile</Text>
+                    }
                 </View>
                 <View style={styles.bottom_container}>
-                    <FlatList 
-                        data={buttonData}
-                        renderItem={renderButton}
-                        keyExtractor={item => item.id}
-                        ListFooterComponent={renderLogoutButton}
-                        showsVerticalScrollIndicator={false}
-                    />
-                </View>
-                {/* <View style={styles.bottom_container}>
                     <Large_button 
                     Iconcomponent={<MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Edit Profile'}/>
@@ -119,28 +96,20 @@ function Profile(props) {
                     <Large_button 
                     Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
-                    <TouchableOpacity
-                    onPress={logout}>
-                        <Text style={{
-                            color: 'red',
-                            fontSize: RFValue(14),
-                            paddingLeft: 30,
-                            marginTop: 10,
-                            fontFamily: 'DMSans_700Bold'
-                        }}>Logout</Text>
-                    </TouchableOpacity>
-                </View> */}
+                </View>
             </Screen>
         </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
-    add_friend_icon_container: {
-        justifyContent:'flex-end',
+    top_icon_container: {
+        justifyContent:'space-between',
+        alignItems: 'center',
         flexDirection: 'row',
-        paddingRight: RFValue(35),
-        marginTop: 35,
+        paddingRight: '10%',
+        paddingLeft: '8%',
+        // marginTop: 35,
         // borderWidth: 2
     },
     add_friend_icon:{

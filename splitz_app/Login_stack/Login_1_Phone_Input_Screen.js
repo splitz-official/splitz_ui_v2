@@ -7,6 +7,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import axios from 'axios';
 import Config from 'react-native-config';
 
+import axiosInstance from '../../Axios/axiosInstance';
 import GradientBackground from './Components/Gradient_background';
 import Colors from '../../Config/Colors';
 import Logo from './Components/Logo';
@@ -14,7 +15,6 @@ import Screen from '../../Components/Screen';
 import Login_layout from './Components/Login_layout';
 import Green_button from './Components/Green_button';
 
-//baseURL + "/user/initialize-verification"
 
 function Login_Screen_2({ route }) {
     console.log("Login Stack: Phone Input Screen")
@@ -22,11 +22,9 @@ function Login_Screen_2({ route }) {
     const { baseURL } = route.params;
     const [number, setNumber] = useState("")
 
-    // console.log(Config.BASE_URL)
-
     handleIntializeVerification = () => {
-        axios
-          .post(baseURL + "/user/initialize-verification", {
+        axiosInstance.post
+          ("/user/initialize-verification", {
             phone_number: number,
           })
           .then((res) => {

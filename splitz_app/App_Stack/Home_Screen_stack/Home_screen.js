@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize"
 import { useNavigation } from '@react-navigation/native';
 
+
 import { RegularText, Bold700Text, Medium500Text } from '../../../Config/AppText';
 import Screen from '../../../Components/Screen';
 import TopLogo from '../../../Components/TopLogo';
@@ -11,20 +12,28 @@ import Split_bill_button from './Components/Split_bill_button';
 import Join_create_buttons from './Components/Join_create_buttons';
 import Activity_list from './Components/Activity_list';
 import Placecholder_list from './Components/Placeholder_list';
+import { useAxios } from '../../../Axios/axiosContext';
 
 
 //change user name to actual user not Rainer
 
 
-function Home_screen(props) {
 
+function Home_screen(props) {
+    console.log("Home Stack: Home_Screen")
     const { navigate } = useNavigation();
+    const { userData } = useAxios();
+    const userName = userData?.name;
+
 
     return (
         <Screen>
             <View style={{flex:1}}>
                 <TopLogo/>
-                <Medium500Text style={styles.Welcometext}>Welcome Back, Rainer</Medium500Text> 
+                {userName ? 
+                    <Medium500Text style={styles.Welcometext}>Welcome Back, {userData?.name}</Medium500Text> :
+                    <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
+                }
                 <Owe_owed/>
                 <Join_create_buttons/>
                 <Placecholder_list />

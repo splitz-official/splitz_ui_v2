@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import * as SecureStore from "expo-secure-store"
 
-import Config from 'react-native-config'
+
+import axiosInstance from '../../Axios/axiosInstance'
 import GradientBackground from './Components/Gradient_background'
 import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
@@ -17,6 +18,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 
 const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")
+
     const { phone_number } = route.params;
     const { baseURL } = route.params;
     const { navigate } = useNavigation();
@@ -29,8 +31,8 @@ const Login_2_OTP_Screen = ({ route }) => {
     }
 
     sendNewCode = () => {
-        axios
-          .post(baseURL + "/user/initialize-verification", {
+        axiosInstance
+          .post("/user/initialize-verification", {
             phone_number: phone_number,
           })
           .then((res) => {
@@ -43,25 +45,23 @@ const Login_2_OTP_Screen = ({ route }) => {
     
 
     const handleOTPSubmit = async () => {
-        axios.post(baseURL + "/user/complete-verification", {
+        axiosInstance.post("/user/complete-verification", {
             phone_number: phone_number,
             otp: code,
         })
         .then(async (res) => {
+            const { access_token } = res.data;
+            console.log("response data: " + res.data)
             saveKey("access_token", res.data.access_token);
-            const access_token = await SecureStore.getItemAsync("access_token");
-            console.log("access token: ", access_token);
+            axiosInstance.setAuthToken(access_token);
     
-            axios.get(`${baseURL}/user/`, {
-                headers: {
-                    Authorization: `Bearer ${access_token}`,
-                },
-            })
+            axiosInstance.get(`/user/`)
             .then((res) => {
                 if (!res.data.name) {
                     navigate("Username_Input_Screen");
                 } else {
-                    navigate("Bottom_Tab_Home_Navigator", { baseURL: baseURL });
+                    console.log(res.data.name, res.data.username);
+                    navigate("Bottom_Tab_Home_Navigator");
                 }
             })
             .catch((error) => {
