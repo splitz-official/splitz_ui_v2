@@ -19,7 +19,6 @@ import Green_button from './Components/Green_button';
 function Login_Screen_2({ route }) {
     console.log("Login Stack: Phone Input Screen")
     const { navigate } = useNavigation();
-    const { baseURL } = route.params;
     const [number, setNumber] = useState("")
 
     handleIntializeVerification = () => {

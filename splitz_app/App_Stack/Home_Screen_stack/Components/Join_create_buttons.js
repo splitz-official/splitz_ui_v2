@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         flex: 1,
         maxWidth: '45%',
-        borderWidth: 2,
-        borderColor: Colors.lightgray,
+        borderWidth: 1,
+        borderColor: Colors.primary,
     },
     text: {
         color: Colors.primary,

@@ -11,7 +11,7 @@ export const AxiosProvider = ({ children }) => {
   const [userData, setUserData ] = useState(null);
 
   useEffect(() => {
-    console.log("Context looking for token")
+    // console.log("Context looking for token")
     const fetchToken = async () => {
       const access_token = await SecureStore.getItemAsync('access_token');
       if (access_token) {
@@ -35,7 +35,7 @@ export const AxiosProvider = ({ children }) => {
         }
     };
     fetchUserData();
-}, [token]); 
+  }, [token]); 
 
 
   return (

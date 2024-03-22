@@ -20,7 +20,6 @@ const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")
 
     const { phone_number } = route.params;
-    const { baseURL } = route.params;
     const { navigate } = useNavigation();
     const [code, setCode] = useState("");
     const [pinReady, setPinReady] = useState("");
@@ -51,7 +50,7 @@ const Login_2_OTP_Screen = ({ route }) => {
         })
         .then(async (res) => {
             const { access_token } = res.data;
-            console.log("response data: " + res.data)
+            console.log(access_token)
             saveKey("access_token", res.data.access_token);
             axiosInstance.setAuthToken(access_token);
     

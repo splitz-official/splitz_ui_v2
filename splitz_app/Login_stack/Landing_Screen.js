@@ -24,9 +24,8 @@ function Landing({ route }) {
     const { token } = useAxios();
 
     useEffect(() => {
-        console.log("checking context for token")
         if (token) {
-            console.log("is token")
+            console.log("navigaate from landing screen")
             navigate("Bottom_Tab_Home_Navigator");
         }
     }, [token, navigate]);

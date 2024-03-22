@@ -12,8 +12,6 @@ import {
     Feather,
 } from '@expo/vector-icons';
 
-
-import Profile from './Profile_Stack/Profile';
 import Colors from '../../Config/Colors';
 import HomeStackNavigation from './Home_Screen_stack/Navigation_home_stack';
 import ProfileStackNavigation from './Profile_Stack/Navigation_profile_stack';

@@ -15,10 +15,6 @@ import Placecholder_list from './Components/Placeholder_list';
 import { useAxios } from '../../../Axios/axiosContext';
 
 
-//change user name to actual user not Rainer
-
-
-
 function Home_screen(props) {
     console.log("Home Stack: Home_Screen")
     const { navigate } = useNavigation();
@@ -26,13 +22,14 @@ function Home_screen(props) {
     const userName = userData?.name;
 
 
+    //add logic for when they have a last name
+
     return (
         <Screen>
             <View style={{flex:1}}>
                 <TopLogo/>
-                {userName ? 
-                    <Medium500Text style={styles.Welcometext}>Welcome Back, {userData?.name}</Medium500Text> :
-                    <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
+                {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {userData?.name}</Medium500Text>
+                    : <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
                 }
                 <Owe_owed/>
                 <Join_create_buttons/>

@@ -4,11 +4,14 @@ import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import * as SecureStore from "expo-secure-store"
 
+
+import { useAxios } from '../../Axios/axiosContext'
 import GradientBackground from './Components/Gradient_background'
 import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../../Config/Colors'
+import axiosInstance from '../../Axios/axiosInstance'
 
 const Login_3_Username_Screen = ({ route }) => {
     console.log("Login Stack: Username Input Screen")
@@ -26,22 +29,16 @@ const Login_3_Username_Screen = ({ route }) => {
           alert("Please fill in all fields");
           return;
         }
-        const access_token = await SecureStore.getItemAsync("access_token");
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        };
-    
         const data = {
           name: name,
           username: username,
         };
-        axios
-        .put(`${baseURL}/user/update`, data, { headers: headers })
+        axiosInstance
+        .put(`/user/update`, data)
         .then((response) => {
             console.log(response.data);
             alert("Update Success!");
-            navigate("Bottom_Tab_Home_Navigator", { baseURL: baseURL });
+            navigate("Bottom_Tab_Home_Navigator");
         })
         .catch((error) => {
             Alert.alert("Failed!");
