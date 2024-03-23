@@ -1,9 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import * as SecureStore from "expo-secure-store"
-
 
 import axiosInstance from '../../Axios/axiosInstance'
 import GradientBackground from './Components/Gradient_background'
@@ -37,7 +36,16 @@ const Login_2_OTP_Screen = ({ route }) => {
             console.log(error);
           });
     };
-    
+
+    const handleCodeChange = (newCode) => {
+        setCode(newCode);
+    };
+
+    useEffect(() => {
+        if (code.length === MAX_CODE_LENGTH) {
+            handleOTPSubmit();
+        }
+    }, [code]);
 
     const handleOTPSubmit = async () => {
         axiosInstance.post("/user/complete-verification", {
@@ -80,7 +88,7 @@ const Login_2_OTP_Screen = ({ route }) => {
             <OTPInputField
             setPinReady={setPinReady}
             code={code}
-            setCode={setCode}
+            setCode={handleCodeChange}
             maxLength={MAX_CODE_LENGTH}
             ></OTPInputField>
             <View style={styles.anothercodetextcontainer}>

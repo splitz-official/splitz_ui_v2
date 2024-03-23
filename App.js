@@ -20,7 +20,7 @@ export default function App() {
   async function getData() {
     //need to consider verifying the token in the future but for now this will work for MVP
     const token = await SecureStore.getItemAsync("access_token");
-    // console.log("from app.js token: " + token);
+    console.log("from app.js token: " + token);
     SetIsLoggedIn(token);
     // console.log("from app.js isLoggedIn: " + isLoggedIn);
   }

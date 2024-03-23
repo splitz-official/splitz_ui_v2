@@ -10,6 +10,8 @@ export const AxiosProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [userData, setUserData ] = useState(null);
 
+
+  //this may no longe3r be useful since we check for token from secureStore on app.js. Think of usecase to keep this
   useEffect(() => {
     // console.log("Checking for token via securestore from context a;ldkfjals;kfja")
     const fetchToken = async () => {
@@ -23,6 +25,7 @@ export const AxiosProvider = ({ children }) => {
     fetchToken();
   }, []);
 
+  //this grabs data via axiosinstance and stores it in userData variable. This use case may change and we can maybe store in AsyncStorage instead. idk
   useEffect(() => {
     const fetchUserData = async () => {
         if (token) {

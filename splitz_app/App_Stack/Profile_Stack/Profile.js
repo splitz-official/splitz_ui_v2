@@ -29,7 +29,7 @@ function Profile(props) {
 
     const name = userData.name;
     const username = userData.username;
-    const [profile_pic, setProfile_pic] = useState(false);
+    // const [profile_pic, SetProfile_pic] = useState(false);
     //how does work if the user closes the app. Maybe consider storing in securestore or something
     const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
     const [modalVisible, setModalVisible] = useState(false);
@@ -62,7 +62,7 @@ function Profile(props) {
                 </View>
                 <View style={styles.top_container}>
                     <ProfilePicture 
-                    isPicture={profile_pic}
+                    isPicture={false}
                     user={name}
                     requirePicture={require('../../../placeholder_images/Rainer.png')}
                     width={RFPercentage(15)}

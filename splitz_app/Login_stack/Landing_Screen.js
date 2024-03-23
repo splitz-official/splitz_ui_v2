@@ -28,7 +28,7 @@ function Landing({ route }) {
     // }, [token, navigate]);
 
     handlePress = async () => {
-        console.log("Verify User");
+        console.log("From Landing_Screen: Verify User");
         navigate("Phone_Input_Screen")
         // let token = await SecureStore.getItemAsync("access_token");
         // if (!token) {
