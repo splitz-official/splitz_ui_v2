@@ -29,7 +29,7 @@ export default function App() {
     getData();
     setTimeout(() => {
       SplashScreen.hideAsync();
-    }, 1000);
+    }, 800);
   }, [])
 
   //used to log isLoggedIn since the state doesnt update in time. This way it logs again when the variable is updated. just for development

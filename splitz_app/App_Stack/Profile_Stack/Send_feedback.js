@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,30 +11,59 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 const Send_feedback = () => {
 
+    const [feedbackText, SetFeedbackText] = useState();
     const { navigate } = useNavigation();
+
+    handleSubmitFeedback = () => {
+        //add backend when endpoint is created NOT DONE
+        console.log("From Feedback_Screen. Submit Button Pressed. Feedback: " + feedbackText);
+        SetFeedbackText('');
+        navigate('profile');
+    }
 
 
   return (
     <View style={styles.container}>
         <Screen>
-            <TopLogo/>
-            <TouchableOpacity 
-            onPress={()=> navigate("profile")}
-            style={styles.backbutton}>
-                <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
-                <Text style={styles.backbuttontext}>BACK</Text>
-            </TouchableOpacity>
-            <View style={styles.title_and_gray_container}>
-                <View style={styles.feedback_title_container}>
-                    <MaterialIcons name="feedback" size={RFValue(25)} color={Colors.primary} />
-                    <Text style={styles.feedback_title_text}>Send feedback to Splitz!</Text>
-                </View>
-                <Text
-                style={styles.gray_text}
-                >
-                    This app was created for you. We are continueously looking for ways to improve your experience. We'd love to hear your ideas!
-                </Text>
-            </View>
+            <TouchableWithoutFeedback onPress={()=> {
+                console.log("dismiss keyboard");
+                Keyboard.dismiss();
+            }}>
+                <KeyboardAvoidingView>
+                    <TopLogo/>
+                    <TouchableOpacity 
+                    onPress={()=> navigate("profile")}
+                    style={styles.backbutton}>
+                        <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
+                        <Text style={styles.backbuttontext}>BACK</Text>
+                    </TouchableOpacity>
+                    <View style={styles.title_and_gray_container}>
+                        <View style={styles.feedback_title_container}>
+                            <MaterialIcons name="feedback" size={RFValue(25)} color={Colors.primary} />
+                            <Text style={styles.feedback_title_text}>Send feedback to Splitz!</Text>
+                        </View>
+                        <Text
+                        style={styles.gray_text}
+                        >
+                            This app was created for you. We are continueously looking for ways to improve your experience. We'd love to hear your ideas!
+                        </Text>
+                    </View>
+                        <TextInput 
+                        multiline={true}
+                        autoFocus={true}
+                        value={feedbackText}
+                        onChangeText={SetFeedbackText}
+                        maxLength={250}
+                        style={styles.textbox}>
+                        </TextInput>
+                    <TouchableOpacity activeOpacity={.7} style={styles.submitbutton} onPress={handleSubmitFeedback}>
+                        <Text style={{
+                            color: Colors.white, 
+                            fontFamily: 'DMSans_700Bold',
+                            fontSize: RFValue(12)}}>Submit</Text>
+                    </TouchableOpacity>
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
         </Screen>
     </View>
   )
@@ -47,9 +76,9 @@ const styles = StyleSheet.create({
     },
     backbutton: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        maxWidth: '20%',
         alignItems: 'center',
-        paddingLeft: '5%',
+        marginLeft: '5%',
         marginTop: 10,
         // borderWidth: 2,
     },
@@ -84,6 +113,29 @@ const styles = StyleSheet.create({
         color: Colors.textgray,
         fontSize: RFValue(10),
         marginTop: 8
+    },
+    textbox: {
+        marginHorizontal: '8%',
+        borderRadius: 10,
+        borderColor: Colors.lightgray,
+        borderWidth: 2,
+        marginTop: 25,
+        height: RFPercentage(20),
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        textAlignVertical: 'top',
+        fontSize: RFValue(14),
+        color: Colors.black
+    },
+    submitbutton: {
+        backgroundColor: Colors.primary,
+        height: RFPercentage(4),
+        width: RFPercentage(10),
+        marginTop: 20,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: '8%'
     }
 })
 

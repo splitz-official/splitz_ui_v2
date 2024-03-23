@@ -29,7 +29,7 @@ function Landing({ route }) {
 
     handlePress = async () => {
         console.log("From Landing_Screen: Verify User");
-        navigate("Phone_Input_Screen")
+        // navigate("Phone_Input_Screen")
         // let token = await SecureStore.getItemAsync("access_token");
         if (!token) {
           console.log("User is not logged in");
