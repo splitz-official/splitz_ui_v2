@@ -13,7 +13,6 @@ import Colors from '../../Config/Colors'
 import { RFValue } from 'react-native-responsive-fontsize'
 
 //ideas
-//consider having the screen autonavigate when the otp is typed in
 
 const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")

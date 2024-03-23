@@ -94,6 +94,7 @@ function Profile(props) {
                     Iconcomponent={<Feather name="share" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
+                    onPress={()=>navigate("feedback")}
                     Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
                 </View>

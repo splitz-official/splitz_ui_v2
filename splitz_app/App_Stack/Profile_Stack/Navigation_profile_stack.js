@@ -1,6 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import Profile from './Profile';
+import Send_feedback from './Send_feedback';
 
 
 const profileStack = createStackNavigator();
@@ -13,6 +14,10 @@ function ProfileStackGroup({}) {
             <profileStack.Screen 
             name={"profile"}
             component={Profile}
+            />
+            <profileStack.Screen
+            name={"feedback"}
+            component={Send_feedback}
             />
         </profileStack.Navigator>
     )
