@@ -1,4 +1,4 @@
-import { Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Alert, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,14 +11,18 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 const Send_feedback = () => {
 
-    const [feedbackText, SetFeedbackText] = useState();
+    const [feedbackText, setFeedbackText] = useState('');
     const { navigate } = useNavigation();
 
     handleSubmitFeedback = () => {
         //add backend when endpoint is created NOT DONE
-        console.log("From Feedback_Screen. Submit Button Pressed. Feedback: " + feedbackText);
-        SetFeedbackText('');
-        navigate('profile');
+        if(feedbackText != ''){
+            console.log("From Feedback_Screen. Submit Button Pressed. Feedback: " + feedbackText);
+            setFeedbackText('');
+            navigate('profile');
+        }else {
+            Alert.alert('No feedback :(')
+        }
     }
 
 
@@ -52,7 +56,7 @@ const Send_feedback = () => {
                         multiline={true}
                         autoFocus={true}
                         value={feedbackText}
-                        onChangeText={SetFeedbackText}
+                        onChangeText={setFeedbackText}
                         maxLength={250}
                         style={styles.textbox}>
                         </TextInput>
