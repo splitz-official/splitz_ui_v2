@@ -18,7 +18,7 @@ function Landing({ route }) {
     console.log("Login Stack: Landing Screen")
     const { navigate } = useNavigation();
 
-    const { token } = useAxios();
+    // const { token } = useAxios();
 
     // useEffect(() => {
     //     if (token) {
@@ -29,21 +29,23 @@ function Landing({ route }) {
 
     handlePress = async () => {
         console.log("From Landing_Screen: Verify User");
-        // navigate("Phone_Input_Screen")
-        // let token = await SecureStore.getItemAsync("access_token");
+        const token = await SecureStore.getItemAsync("access_token");
         if (!token) {
           console.log("User is not logged in");
           navigate("Phone_Input_Screen");
         }
-        axiosInstance.get("/user/")
-        .then((res) => {
-            console.log("User is logged in");
-            navigate("Bottom_Tab_Home_Navigator");
-        })
-        .catch((error) => {
-            console.error("Error: User is not logged in", error);
-            navigate("Phone_Input_Screen");
-        });
+        else if(token) {
+            console.log("get user from landing_screen is running")
+            axiosInstance.get("/user/")
+            .then((res) => {
+                console.log("User is logged in");
+                navigate("Bottom_Tab_Home_Navigator");
+            })
+            .catch((error) => {
+                console.error("Error: User is not logged in", error);
+                navigate("Phone_Input_Screen");
+            });
+        }
     };
 
     const scrollX = useRef(new Animated.Value(0)).current;

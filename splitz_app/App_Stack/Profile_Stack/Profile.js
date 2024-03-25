@@ -30,7 +30,7 @@ function Profile(props) {
     const name = userData.name;
     const username = userData.username;
     // const [profile_pic, SetProfile_pic] = useState(false);
-    //how does work if the user closes the app. Maybe consider storing in securestore or something
+    
     const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
     const [modalVisible, setModalVisible] = useState(false);
     
@@ -39,6 +39,7 @@ function Profile(props) {
         try {
             await SecureStore.deleteItemAsync('access_token');
             setModalVisible(false)
+            axiosInstance.setAuthToken('');
             navigate('Landing_Screen');
         } catch (error) {
             console.error('Logout error:', error);

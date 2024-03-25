@@ -18,7 +18,7 @@ export const AxiosProvider = ({ children }) => {
       const access_token = await SecureStore.getItemAsync('access_token');
       if (access_token) {
         setToken(access_token);
-        axiosInstance.setAuthToken(access_token); 
+        axiosInstance.setAuthToken(access_token);
       }
     };
 
@@ -28,15 +28,15 @@ export const AxiosProvider = ({ children }) => {
   //this grabs data via axiosinstance and stores it in userData variable. This use case may change and we can maybe store in AsyncStorage instead. idk
   useEffect(() => {
     const fetchUserData = async () => {
-        if (token) {
-            try {
-              // console.log("fetching user data from context ;adkljf")
-              const response = await axiosInstance.get('/user/');
-              setUserData(response.data);
-            } catch (error) {
-              console.error('Error fetching user data:', error);
-            }
+      if (token) {
+        try {
+          // console.log("fetching user data from context ;adkljf")
+          const response = await axiosInstance.get('/user/');
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
+      }
     };
     fetchUserData();
   }, [token]); 
