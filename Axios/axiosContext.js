@@ -13,7 +13,7 @@ export const AxiosProvider = ({ children }) => {
 
   //this may no longe3r be useful since we check for token from secureStore on app.js. Think of usecase to keep this
   useEffect(() => {
-    // console.log("Checking for token via securestore from context a;ldkfjals;kfja")
+    // console.log("Checking for token via securestore from context")
     const fetchToken = async () => {
       const access_token = await SecureStore.getItemAsync('access_token');
       if (access_token) {
@@ -30,7 +30,7 @@ export const AxiosProvider = ({ children }) => {
     const fetchUserData = async () => {
       if (token) {
         try {
-          // console.log("fetching user data from context ;adkljf")
+          // console.log("fetching user data from context")
           const response = await axiosInstance.get('/user/');
           setUserData(response.data);
         } catch (error) {

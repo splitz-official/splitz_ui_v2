@@ -35,7 +35,8 @@ function Landing({ route }) {
           navigate("Phone_Input_Screen");
         }
         else if(token) {
-            console.log("get user from landing_screen is running")
+            console.log("From landing_Screen: setting token and getting user ")
+            axiosInstance.setAuthToken(token);
             axiosInstance.get("/user/")
             .then((res) => {
                 console.log("User is logged in");

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize"
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import Join_create_buttons from './Components/Join_create_buttons';
 import Activity_list from './Components/Activity_list';
 import Placecholder_list from './Components/Placeholder_list';
 import { useAxios } from '../../../Axios/axiosContext';
+import Group_bills_switch from './Components/Group_bills_switch';
+import Groups from './Components/Groups';
 
 
 function Home_screen(props) {
@@ -21,6 +23,7 @@ function Home_screen(props) {
     const { userData } = useAxios();
     const userName = userData?.name;
 
+    const [activeButton, setActiveButton] = useState('Groups');
 
     //add logic for when they have a last name
 
@@ -33,7 +36,9 @@ function Home_screen(props) {
                 }
                 <Owe_owed/>
                 <Join_create_buttons/>
-                <Placecholder_list />
+                {/* <Placecholder_list /> */}
+                <Group_bills_switch onBillsPress={()=> setActiveButton('Bills')} onGroupsPress={()=> setActiveButton('Groups')} activeButton={activeButton}/>
+                <Groups/>
                 <Split_bill_button
                 onPress={() => {
                     console.log("Split Pressed");

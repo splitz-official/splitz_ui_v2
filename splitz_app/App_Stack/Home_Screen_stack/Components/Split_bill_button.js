@@ -20,7 +20,8 @@ function Split_bill_button({onPress}) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0,
         flexDirection: 'row',
         marginVertical: 2,
         // borderWidth: 2,

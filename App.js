@@ -11,6 +11,7 @@ import { useAxios } from "./Axios/axiosContext";
 import LoginStackNavigation from "./splitz_app/Login_stack/Navigation_login_stack";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import Bottom_Tab_Navigation from "./splitz_app/App_Stack/Bottom_Tab_Navigation";
+import axiosInstance from "./Axios/axiosInstance";
 
 
 
@@ -20,9 +21,9 @@ export default function App() {
   async function getData() {
     //need to consider verifying the token in the future but for now this will work for MVP
     const token = await SecureStore.getItemAsync("access_token");
-    // console.log("from app.js token: " + token);
-    SetIsLoggedIn(token);
-    // console.log("from app.js isLoggedIn: " + isLoggedIn);
+    if(token) {
+      SetIsLoggedIn(true);
+    }
   }
 
   useEffect(() => {
@@ -31,11 +32,6 @@ export default function App() {
       SplashScreen.hideAsync();
     }, 800);
   }, [])
-
-  //used to log isLoggedIn since the state doesnt update in time. This way it logs again when the variable is updated. just for development
-  // useEffect(() => {
-  //   console.log("from app.js isLoggedIn: " + isLoggedIn);
-  // }, [isLoggedIn]);
 
   let [fontsLoaded] = useFonts({
     DMSans_400Regular,
