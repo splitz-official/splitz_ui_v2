@@ -23,6 +23,7 @@ export default function App() {
     const token = await SecureStore.getItemAsync("access_token");
     if(token) {
       SetIsLoggedIn(true);
+      axiosInstance.setAuthToken(token);
     }
   }
 

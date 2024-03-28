@@ -13,10 +13,10 @@ const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
             <View style={[styles.inner, activeButton == 'Bills' ? styles.innerRight : styles.innerLeft]}/>
             <View style={styles.textWrapper}>
                 <TouchableOpacity activeOpacity={1} onPress={onGroupsPress} style={styles.label}>
-                    <Text style={[styles.text, activeButton === 'Groups' ? {color: 'black'} : {color: 'white'}]}>My Groups</Text>
+                    <Text style={[styles.text, activeButton === 'Groups' ? {color: Colors.primary} : {color: 'black'}]}>My Groups</Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={1} onPress={onBillsPress} style={styles.label}>
-                    <Text style={[styles.text, activeButton === 'Bills' ? {color: 'black'} : {color: 'white'}]}>My Bills</Text>
+                    <Text style={[styles.text, activeButton === 'Bills' ? {color: Colors.primary} : {color: 'black'}]}>My Bills</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     outter: {
-        width: '65%',
+        width: '80%',
         height: RFPercentage(4),
-        backgroundColor: Colors.primary,
+        backgroundColor: "#D9D9D9",
         borderRadius: 20,
         flexDirection: 'row',
         alignItems: 'center',
