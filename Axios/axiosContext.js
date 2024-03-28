@@ -11,7 +11,7 @@ export const AxiosProvider = ({ children }) => {
   const [userData, setUserData ] = useState(null);
 
 
-  //this may no longe3r be useful since we check for token from secureStore on app.js. Think of usecase to keep this
+  //potential bluetooth usecase for later
   useEffect(() => {
     // console.log("Checking for token via securestore from context")
     const fetchToken = async () => {

@@ -4,19 +4,20 @@ import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import * as SecureStore from "expo-secure-store"
 
-import axiosInstance from '../../Axios/axiosInstance'
 import GradientBackground from './Components/Gradient_background'
 import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
 import OTPInputField from './Components/OTP_Input'
 import Colors from '../../Config/Colors'
 import { RFValue } from 'react-native-responsive-fontsize'
+import { useAxios } from '../../Axios/axiosContext'
 
 //ideas
 
 const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")
 
+    const { axiosInstance } = useAxios();
     const { phone_number } = route.params;
     const { navigate } = useNavigation();
     const [code, setCode] = useState("");
@@ -58,7 +59,7 @@ const Login_2_OTP_Screen = ({ route }) => {
             axiosInstance.setAuthToken(access_token);
             axiosInstance.get(`/user/`)
             .then((res) => {
-                if (!res.data.name) {
+                if (!res.data.name) {510
                     navigate("Username_Input_Screen");
                 } else {
                     console.log("Logged Name: " + res.data.name, "Logged Username: " + res.data.username);

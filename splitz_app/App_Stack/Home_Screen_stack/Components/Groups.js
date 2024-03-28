@@ -7,7 +7,7 @@ const Groups = () => {
     const { userData, axiosInstance } = useAxios();
     const [groupsData, setGroupsData] = useState(null);
     // console.log("User ID: " + userData.id)
-    
+
 
     useEffect(() => {
         const fetchGroups = async () => {
@@ -27,7 +27,7 @@ const Groups = () => {
 
   return (
     <View>
-      
+        
     </View>
   )
 }

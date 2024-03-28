@@ -7,19 +7,20 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import axios from 'axios';
 import Config from 'react-native-config';
 
-import axiosInstance from '../../Axios/axiosInstance';
 import GradientBackground from './Components/Gradient_background';
 import Colors from '../../Config/Colors';
 import Logo from './Components/Logo';
 import Screen from '../../Components/Screen';
 import Login_layout from './Components/Login_layout';
 import Green_button from './Components/Green_button';
+import { useAxios } from '../../Axios/axiosContext';
 
 
 function Login_Screen_2({ route }) {
     console.log("Login Stack: Phone Input Screen")
     const { navigate } = useNavigation();
     const [number, setNumber] = useState("")
+    const {axiosInstance} = useAxios();
 
     handleIntializeVerification = () => {
         axiosInstance.post

@@ -13,15 +13,13 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import Bottom_Tab_Navigation from "./splitz_app/App_Stack/Bottom_Tab_Navigation";
 import axiosInstance from "./Axios/axiosInstance";
 
-
-
 export default function App() {
   const [isLoggedIn, SetIsLoggedIn] = useState(false);
 
   async function getData() {
     //need to consider verifying the token in the future but for now this will work for MVP
     const token = await SecureStore.getItemAsync("access_token");
-    const data = await axiosInstance.get("/user/")
+    const data = await axiosInstance.get("/user/");
     if(token && data.status === 200) {
       SetIsLoggedIn(true);
       axiosInstance.setAuthToken(token);

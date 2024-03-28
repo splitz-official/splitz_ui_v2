@@ -11,13 +11,13 @@ import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../../Config/Colors'
-import axiosInstance from '../../Axios/axiosInstance'
 
 const Login_3_Username_Screen = ({ route }) => {
     console.log("Login Stack: Username Input Screen")
     const { baseURL } = route.params;
     const { navigate } = useNavigation();
 
+    const { axiosInstance } = useAxios();
     const [name, setName] = useState("");
     const [username, setUsername] = useState('');
     const nameInputRef = useRef(null);
