@@ -34,7 +34,7 @@ export const AxiosProvider = ({ children }) => {
           const response = await axiosInstance.get('/user/');
           setUserData(response.data);
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error('From context: Error fetching user data:', error);
         }
       }
     };

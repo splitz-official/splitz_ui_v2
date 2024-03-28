@@ -21,9 +21,13 @@ export default function App() {
   async function getData() {
     //need to consider verifying the token in the future but for now this will work for MVP
     const token = await SecureStore.getItemAsync("access_token");
-    if(token) {
+    const data = await axiosInstance.get("/user/")
+    if(token && data.status === 200) {
       SetIsLoggedIn(true);
       axiosInstance.setAuthToken(token);
+    }else {
+      axiosInstance.setAuthToken('');
+      await SecureStore.deleteItemAsync('access_token');
     }
   }
 
