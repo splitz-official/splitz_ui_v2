@@ -25,20 +25,32 @@ function Home_screen(props) {
 
     const [activeButton, setActiveButton] = useState('Groups');
 
+    const renderActiveComponent = () => {
+        switch (activeButton) {
+            case 'Groups':
+                return <Groups />;
+            case 'Bills':
+                //will add bills component soon
+                return null;
+            default:
+                return null; 
+        }
+    };
+
     //add logic for when they have a last name
 
     return (
         <Screen>
             <View style={{flex:1}}>
                 <TopLogo/>
-                {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {userData?.name}</Medium500Text>
+                {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {userData.name}</Medium500Text>
                     : <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
                 }
                 <Owe_owed/>
                 <Join_create_buttons/>
                 {/* <Placecholder_list /> */}
                 <Group_bills_switch onBillsPress={()=> setActiveButton('Bills')} onGroupsPress={()=> setActiveButton('Groups')} activeButton={activeButton}/>
-                <Groups/>
+                {renderActiveComponent()}
                 <Split_bill_button
                 onPress={() => {
                     console.log("Split Pressed");
