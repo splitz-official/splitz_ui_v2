@@ -6,27 +6,31 @@ import Groups_list_item from './Groups_list_item';
 const Groups = () => {
 
     const { userData, axiosInstance } = useAxios();
-    const [originalGroup, setOriginalGroup] = useState(); //prob dont need
     const [formattedData, setFormattedData] = useState();
+    const [isRefreshing, setIsRefreshing] = useState(false);
     // console.log("User ID: " + userData.id)
 
 
-    useEffect(() => {
-        const fetchGroups = async () => {
+    const fetchGroups = async () => {
+        if(userData && userData.id) {
+            setIsRefreshing(true);
             try {
                 console.log("From groups screen: getting rooms")
                 const response = await axiosInstance.get(`/room/user/${userData.id}`);
-                setOriginalGroup(response.data); //prob dont need
                 setFormattedData(formatData(response.data, 3));
                 console.log(response.data);
             } catch (err) {
                 console.error("Failed to fetch groups:", err);
             }
-        };
-        if (userData && userData.id) {
-            fetchGroups();
+            setTimeout(()=> {
+                setIsRefreshing(false);
+            }, 1000)
         }
-    }, [userData]);
+    };
+
+    useEffect(() => {
+        fetchGroups();
+    }, []);
 
     const formatData = (data, numColumns) => {
         const copy = [...data];
@@ -43,6 +47,8 @@ const Groups = () => {
   return (
     <View style={{flex: 1}}>
         <FlatList
+            onRefresh={()=> fetchGroups()}
+            refreshing={isRefreshing}
             style={styles.groups_grid}
             data={formattedData}
             keyExtractor={data => data.id ? data.id.toString() : data.key}
@@ -56,7 +62,7 @@ const Groups = () => {
                         <Groups_list_item
                             title={item.room_name}
                             image={require("../../../../assets/dark_green_splitzLogo.png")}
-                            //displaying room code now since we don't have photos for each room. Maybe in the future we ask the user to add a photo or just use the profile pic of the person that created the room
+//displaying room code now since we don't have photos for each room. Maybe in the future we ask the user to add a photo or just use the profile pic of the person that created the room
                             icon_text={item.room_code}
                             onPress={() => console.log('Room Tapped', item)}
                         />

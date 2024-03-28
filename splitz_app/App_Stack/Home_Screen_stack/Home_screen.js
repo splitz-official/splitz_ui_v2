@@ -15,6 +15,7 @@ import Placecholder_list from './Components/Placeholder_list';
 import { useAxios } from '../../../Axios/axiosContext';
 import Group_bills_switch from './Components/Group_bills_switch';
 import Groups from './Components/Groups';
+import Bills from './Components/Bills';
 
 
 function Home_screen(props) {
@@ -31,7 +32,7 @@ function Home_screen(props) {
                 return <Groups />;
             case 'Bills':
                 //will add bills component soon
-                return null;
+                return <Bills/>;
             default:
                 return null; 
         }
