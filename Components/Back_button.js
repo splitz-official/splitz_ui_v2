@@ -19,20 +19,20 @@ const Back_button = ({onPress, title}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-        marginLeft: '5%',
-        marginTop: 10,
-        // borderWidth: 2,
-    },
-    text: {
-        color: Colors.darkgreen,
-        fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(12),
-        marginLeft: 5
-    }
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginLeft: '5%',
+    marginVertical: 10,
+    // borderWidth: 2,
+  },
+  text: {
+    color: Colors.darkgreen,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: RFValue(12),
+    marginLeft: 5
+  }
 })
 
 export default Back_button

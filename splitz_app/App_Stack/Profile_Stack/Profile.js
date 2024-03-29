@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal } from 'react-native';
-import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
+import randomColor from 'randomcolor';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -19,7 +19,6 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import Large_button from './Components/Large_button';
 import TopLogo from '../../../Components/TopLogo';
 import { useAxios } from '../../../Axios/axiosContext';
-import randomColor from 'randomcolor';
 
 
 function Profile(props) {
@@ -86,16 +85,18 @@ function Profile(props) {
                 </View>
                 <View style={styles.bottom_container}>
                     <Large_button 
+                    onPress={()=>navigate('edit_profile')}
                     Iconcomponent={<MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Edit Profile'}/>
-                    <Large_button 
+                    <Large_button
+                    onPress={()=>navigate('settings')}
                     Iconcomponent={<Ionicons name="settings-sharp" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Settings'}/>
                     <Large_button 
                     Iconcomponent={<Feather name="share" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
-                    onPress={()=>navigate("feedback")}
+                    onPress={()=>navigate('feedback')}
                     Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
                 </View>

@@ -10,6 +10,8 @@ export const AxiosProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [userData, setUserData ] = useState(null);
 
+  const [updateCount, setUpdateCount] = useState(0);
+
 
   //potential bluetooth usecase for later
   useEffect(() => {
@@ -39,11 +41,11 @@ export const AxiosProvider = ({ children }) => {
       }
     };
     fetchUserData();
-  }, [token]); 
+  }, [token, updateCount]); 
 
 
   return (
-    <AxiosContext.Provider value={{ axiosInstance, token, userData }}>
+    <AxiosContext.Provider value={{ axiosInstance, token, userData, setUpdateCount}}>
       {children}
     </AxiosContext.Provider>
   );
