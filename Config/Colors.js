@@ -5,5 +5,7 @@ export default {
     lightgray: '#DEDEDE',
     mediumgray: '#6e6969',
     darkgray: '#0C0C0C',
-    textgray: '#838383'
+    textgray: '#838383',
+    darkgreen: '#00340F',
+    textInputGray: '#D4D4D4'
 }

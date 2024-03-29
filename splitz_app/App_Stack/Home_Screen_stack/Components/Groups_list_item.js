@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
         margin: 2,
         height: Dimensions.get('screen').width/3,
-        marginVertical: 10,
     },
     image: {
         height: RFPercentage(8),

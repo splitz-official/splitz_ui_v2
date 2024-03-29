@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         flexDirection: 'row',
-        // marginVertical: 2,
-        // borderWidth: 2,
         backgroundColor: 'white',
         paddingVertical: 10
     },

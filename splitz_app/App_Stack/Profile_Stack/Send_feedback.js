@@ -8,6 +8,7 @@ import Screen from '../../../Components/Screen';
 import TopLogo from '../../../Components/TopLogo';
 import Colors from '../../../Config/Colors';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import Back_button from '../../../Components/Back_button';
 
 const Send_feedback = () => {
 
@@ -35,12 +36,10 @@ const Send_feedback = () => {
             }}>
                 <KeyboardAvoidingView>
                     <TopLogo/>
-                    <TouchableOpacity 
-                    onPress={()=> navigate("profile")}
-                    style={styles.backbutton}>
-                        <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
-                        <Text style={styles.backbuttontext}>BACK</Text>
-                    </TouchableOpacity>
+                    <Back_button 
+                    onPress={()=> navigate('profile')}
+                    title={'Back'}
+                    />
                     <View style={styles.title_and_gray_container}>
                         <View style={styles.feedback_title_container}>
                             <MaterialIcons name="feedback" size={RFValue(25)} color={Colors.primary} />
@@ -77,20 +76,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white'
-    },
-    backbutton: {
-        flexDirection: 'row',
-        maxWidth: '20%',
-        alignItems: 'center',
-        marginLeft: '5%',
-        marginTop: 10,
-        // borderWidth: 2,
-    },
-    backbuttontext: {
-        color: Colors.black,
-        fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(12),
-        marginLeft: 5
     },
     feedback_title_container: {
         flexDirection: 'row',
