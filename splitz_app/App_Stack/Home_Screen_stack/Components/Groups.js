@@ -53,22 +53,21 @@ const Groups = () => {
             data={formattedData}
             keyExtractor={data => data.id ? data.id.toString() : data.key}
             numColumns={3}
-            renderItem={({ item }) => (
-                (()=> {
-                    if(item.empty === true) {
-                        return <View style={styles.empty}/>
-                    }
-                    return (
-                        <Groups_list_item
-                            title={item.room_name}
-                            image={require("../../../../assets/dark_green_splitzLogo.png")}
+            renderItem={({ item }) => {
+                if(item.empty === true) {
+                    return <View style={styles.empty}/>;
+                }
+                return (
+                    <Groups_list_item
+                        title={item.room_name}
+                        image={require("../../../../assets/dark_green_splitzLogo.png")}
 //displaying room code now since we don't have photos for each room. Maybe in the future we ask the user to add a photo or just use the profile pic of the person that created the room
-                            icon_text={item.room_code}
-                            onPress={() => console.log('Room Tapped', item)}
-                        />
-                    );
-                }) ()
-            )}
+                        icon_text={item.room_code}
+                        onPress={() => console.log('Room Tapped', item)}
+                        room_details={item}
+                    />
+                );
+            }}
         />
     </View>
   )

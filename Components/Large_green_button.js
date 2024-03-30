@@ -3,11 +3,11 @@ import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'
 
-const Large_green_button = ({onPress, title}) => {
+const Large_green_button = ({onPress, title, text_style, container_style}) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, container_style]}>
         <TouchableOpacity style={styles.button} activeOpacity={.8} onPress={onPress}>
-            <Text style={styles.text}>{title}</Text>
+            <Text style={[styles.text, text_style]}>{title}</Text>
         </TouchableOpacity>
     </View>
   )
