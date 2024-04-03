@@ -7,5 +7,6 @@ export default {
     darkgray: '#0C0C0C',
     textgray: '#838383',
     darkgreen: '#00340F',
-    textInputGray: '#D4D4D4'
+    textInputGray: '#D4D4D4',
+    grey: '#DEDEDE',
 }
