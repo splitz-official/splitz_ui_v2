@@ -3,7 +3,8 @@ import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'
 
-const Large_green_button = ({ onPress, title, disabled }) => {
+
+const Large_green_button = ({ onPress, title, disabled, text_style }) => {
     // Optional: Modify the button style based on the disabled state
     const buttonStyle = disabled ? [styles.button, styles.disabledButton] : styles.button;
   
@@ -11,7 +12,7 @@ const Large_green_button = ({ onPress, title, disabled }) => {
       <View style={styles.container}>
           {/* Disable the onPress function based on the disabled prop */}
           <TouchableOpacity style={buttonStyle} activeOpacity={.8} onPress={!disabled ? onPress : null}>
-              <Text style={styles.text}>{title}</Text>
+              <Text style={[styles.text, text_style]}>{title}</Text>
           </TouchableOpacity>
       </View>
     );

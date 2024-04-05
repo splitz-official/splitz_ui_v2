@@ -1,15 +1,21 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions } from 'react-native'
 import React from 'react'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
+import { useNavigation } from '@react-navigation/native'
+import { scale } from 'react-native-size-matters'
+
 import Colors from '../../../../Config/Colors'
 
-const Groups_list_item = ({title, image, onPress, icon_text}) => {
+const Groups_list_item = ({title, image, icon_text, room_details}) => {
+
+    const { navigate } = useNavigation();
+
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity activeOpacity={.8} onPress={()=>navigate('Groups_details', { room_details })} style={styles.container}>
         {/* <Image source={image}style={styles.image}>
 
         </Image> */}
-        <View style={styles.icon_with_initial}>
+        <View style={styles.icon_no_image}>
             <Text style={{fontSize: RFValue(12)}}>{icon_text}</Text>
         </View>
         <Text style={styles.text}>{title}</Text>
@@ -38,10 +44,10 @@ const styles = StyleSheet.create({
         fontFamily: 'DMSans_700Bold',
         fontSize: RFValue(12)
     },
-    icon_with_initial: {
-        height: RFPercentage(8),
-        width: RFPercentage(8),
-        borderRadius: RFPercentage(4),
+    icon_no_image: {
+        height: scale(60),
+        width: scale(60),
+        borderRadius: scale(30),
         borderWidth: 2,
         borderColor: Colors.primary,
         marginBottom: 8,
