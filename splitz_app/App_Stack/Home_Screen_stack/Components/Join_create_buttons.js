@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RFPercentage, RFValue} from "react-native-responsive-fontsize"
+import { useNavigation } from '@react-navigation/native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -8,18 +9,22 @@ import { AntDesign } from '@expo/vector-icons';
 
 import { RegularText, Bold700Text, Medium500Text } from '../../../../Config/AppText';
 import Colors from '../../../../Config/Colors';
-
-const handlejoinbutton = () => {
-    console.log('Join with ID Pressed');
-}
-
-const handlecreatebutton = () => {
-    console.log('Create Group Pressed');
-}
+import Create_Group_screen from '../../Create_Group_stack/Create_Group_screen';
 
 
 function Join_create_buttons(props) {
     let iconsize = RFValue(18);
+    const { navigate } = useNavigation();
+
+const handlejoinbutton = () => {
+    console.log('Join with ID Pressed')
+    navigate("JoinGroupStackNavigation");
+}
+
+const handlecreatebutton = () => {
+    console.log('Create Group Pressed')
+    navigate("CreateGroupStackNavigation");
+}
 
     return (
         <View style={styles.container}>
