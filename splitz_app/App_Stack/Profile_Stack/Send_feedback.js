@@ -17,7 +17,7 @@ const Send_feedback = () => {
 
     handleSubmitFeedback = () => {
         //add backend when endpoint is created NOT DONE
-        if(feedbackText != ''){
+        if(feedbackText.trim() != ''){
             console.log("From Feedback_Screen. Submit Button Pressed. Feedback: " + feedbackText);
             setFeedbackText('');
             navigate('profile');
@@ -59,7 +59,9 @@ const Send_feedback = () => {
                         maxLength={250}
                         style={styles.textbox}>
                         </TextInput>
-                    <TouchableOpacity activeOpacity={.7} style={styles.submitbutton} onPress={handleSubmitFeedback}>
+                    <TouchableOpacity style={feedbackText.trim() !== '' ? styles.submitbutton : [styles.submitbutton, styles.disabled]} 
+                    onPress={handleSubmitFeedback}
+                    activeOpacity={.7}>
                         <Text style={{
                             color: Colors.white, 
                             fontFamily: 'DMSans_700Bold',
@@ -125,6 +127,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: '8%'
+    },
+    disabled: {
+        backgroundColor: Colors.grey
     }
 })
 

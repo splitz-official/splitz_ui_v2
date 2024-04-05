@@ -1,27 +1,38 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+
+import { useAxios } from '../../../Axios/axiosContext';
 import Screen from '../../../Components/Screen'
 import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
 import Large_green_button from '../../../Components/Large_green_button'
+import { scale } from 'react-native-size-matters';
 
 const Create_Group_screen = () => {
 
     const { navigate } = useNavigation();
     const [search, setSearch] = useState('');
-    const [group, setGroup] =useState('')
+    const [group, setGroup] = useState('')
+    const [password, setPassword] = useState('');
+    const { axiosInstance } = useAxios();
 
-    const handleContinue = () => {
+    const handleContinue = async () => {
         if(group.trim() !== "") {
-        console.log('Create Group Password')
-        navigate("Create_Group_password", {groupName: group});
+            console.log('From Create_Group_screen: handle continue to create group password screen')
+            try {
+                const body = { room_name: group.trim(), room_password: password };
+                const created_room = await axiosInstance.post(`/room/create`, body);
+                navigate("Groups_details", {room_details: created_room.data});
+            } catch (error) {
+                console.error(error);
+            }
         } else {
-            alert("Please enter a group name to continue!");
+            Alert.alert("Please enter a group name to continue!");
         }
     };
 
@@ -33,25 +44,25 @@ const Create_Group_screen = () => {
         />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
         <View style={styles.flexContainer}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
                 <View>
             <View style={styles.top_container}>
-            <View style={styles.image}/>
-            <View style={styles.input_box}>
-            <TextInput 
-                style={styles.Group_name_input}
-                placeholder='Name your group...'
-                placeholderTextColor={Colors.textgray}
-                maxLength={25}
-                value={group}
-                onChangeText={setGroup}
-                autoFocus={true}
-                keyboardType='default'
-                autoCorrect={false}
-                />
-            <View style={styles.bottom_line}/>
-            </View>
+                <View style={styles.image}/>
+                <View style={styles.input_box}>
+                    <TextInput 
+                        style={styles.Group_name_input}
+                        placeholder='Name your group...'
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        maxLength={20}
+                        value={group}
+                        onChangeText={setGroup}
+                        autoFocus={true}
+                        keyboardType='default'
+                        autoCorrect={false}
+                        />
+                    <View style={styles.bottom_line}/>
+                </View>
             </View>
 
             <View style={styles.bottom_container}>
@@ -59,7 +70,7 @@ const Create_Group_screen = () => {
                 <TextInput 
                 style={styles.textInput}
                 placeholder='Group, name, number...'
-                placeholderTextColor={Colors.textgray}
+                placeholderTextColor={Colors.textInputPlaceholder}
                 maxLength={25}
                 value={search}
                 onChangeText={setSearch}
@@ -68,17 +79,16 @@ const Create_Group_screen = () => {
                 />
                 <TouchableOpacity style={styles.QR_Code} activeOpacity={.8} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
                     <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
-                    <Text style={styles.QR_text}> Scan QR Code</Text>
+                    <Text style={styles.QR_text}>Scan QR Code</Text>
                 </TouchableOpacity>
                 <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
-
                 <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends! Invite them to create a group!</Text>
             </View>
             </View>
-            </TouchableWithoutFeedback>
             </ScrollView>
+            </TouchableWithoutFeedback>
             <Large_green_button 
-            title={'Continue'}
+            title={'Create Room'}
             onPress={handleContinue}
             disabled={group.trim()===""}
             />
@@ -93,27 +103,37 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginHorizontal: "6%",
         marginTop: "5%",
+        marginBottom: scale(10),
+        alignItems: 'center',
+        // flex: 1,
+        // borderWidth: 1
     },
     bottom_container: {
         marginHorizontal: '6%',
         marginTop: "2%",
     },
     image: {
-        height: RFPercentage(8),
-        width: RFPercentage(8),
-        borderRadius: RFPercentage(4),
-        borderWidth: 2,
+        height: scale(55),
+        width: scale(55),
+        borderRadius: scale(27.5),
+        borderWidth: 1,
         borderColor: Colors.primary,
-        marginBottom: 8,
     },
     title_text: {
         fontSize: RFValue(18),
         fontFamily: 'DMSans_700Bold',
     },
     subtitle_text: {
-        fontSize: RFValue(18),
+        fontSize: RFValue(14),
         fontFamily: 'DMSans_500Medium',
         marginTop: 20
+    },
+    Group_name_input: {
+        fontFamily: 'DMSans_700Bold',
+        fontSize: RFValue(20),
+        color: Colors.primary,
+        marginBottom: scale(5),
+        // borderWidth: 1,
     },
     textInput: {
         borderWidth: 1,
@@ -124,37 +144,32 @@ const styles = StyleSheet.create({
         fontSize: RFValue(12),
         padding: 10,
     },
-    Group_name_input: {
-        fontFamily: 'DMSans_700Bold',
-        fontWeight: "bold",
-        fontSize: RFValue(22),
-        color: Colors.primary,
-        marginTop: 10,
-        marginBottom: 10,
-    },
     input_box: {
         flexDirection:"column", 
-        marginLeft: 15,
+        marginLeft: scale(15),
+        flex: 1,
+        // borderWidth: 1
     },
     bottom_line:{
-        height: RFPercentage(0.6),
-        width: RFPercentage(31),
+        height: scale(2),
+        // minWidth: '80%',
         backgroundColor: Colors.primary,
     },
     QR_Code: {
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
-        marginTop: 15,
-        marginLeft: 5,
+        marginTop: scale(10),
+        marginLeft: scale(5),
         // borderWidth: 2
     },
     QR_text: {
         fontSize: RFValue(12), 
-        color: Colors.textgray
+        color: Colors.textgray,
+        marginLeft: scale(5)
     },
     flexContainer: {
-        flex: 1, // Make sure this container takes up all available space
+        flex: 1, 
     },
 })
 

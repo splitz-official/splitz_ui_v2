@@ -14,7 +14,8 @@ const Edit_profile_text_fields = ({description, value, extra_style, editable, us
         placeholder={value}
         value={user_value}
         onChangeText={onChangeText}
-        autoCapitalize={false}/>
+        autoCapitalize={false}
+        />
       ) : (
         <Text style={[styles.value, extra_style]}>{value}</Text>
       )}

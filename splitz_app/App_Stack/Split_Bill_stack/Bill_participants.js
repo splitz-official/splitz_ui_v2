@@ -5,6 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { scale } from 'react-native-size-matters';
 import Screen from '../../../Components/Screen'
 import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
@@ -90,8 +91,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
-        marginTop: 10,
-        marginLeft: 5,
+        marginTop: scale(10),
+        marginLeft: scale(5),
         // borderWidth: 2
     },
     QR_text: {

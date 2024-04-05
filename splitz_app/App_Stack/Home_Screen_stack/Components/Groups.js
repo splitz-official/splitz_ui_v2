@@ -60,10 +60,9 @@ const Groups = () => {
                 return (
                     <Groups_list_item
                         title={item.room_name}
-                        image={require("../../../../assets/dark_green_splitzLogo.png")}
+                        // image={require("../../../../assets/dark_green_splitzLogo.png")}
 //displaying room code now since we don't have photos for each room. Maybe in the future we ask the user to add a photo or just use the profile pic of the person that created the room
                         icon_text={item.room_code}
-                        onPress={() => console.log('Room Tapped', item)}
                         room_details={item}
                     />
                 );

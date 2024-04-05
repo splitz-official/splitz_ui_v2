@@ -9,15 +9,26 @@ import Screen from '../../../Components/Screen'
 import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
 import Large_green_button from '../../../Components/Large_green_button'
+import { useAxios } from '../../../Axios/axiosContext';
+import { scale } from 'react-native-size-matters';
 
 const Join_Group_screen = () => {
 
+
+    //how do we get room data. Can we have the output of the join endpoint be the same as the create/`/room/members/{user_id}`
+    const { axiosInstance } = useAxios();
     const { navigate } = useNavigation();
     const [id, setId] = useState('');
     const [password, setPassword] =useState('')
 
-    const handleJoin = () => {
+    const handleJoin = async () => {
         console.log("check if group exists + if password is correct")
+        try {
+            const body = { room_code: id.trim(), room_password: password };
+            const join_room = await axiosInstance.post(`/room/join`, body);
+        } catch (error) {
+            console.error(error)
+        }
     };
 
   return (
@@ -30,35 +41,35 @@ const Join_Group_screen = () => {
         <View style={styles.flexContainer}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View>
-            <View style={styles.top_container}>
-            <View style={styles.input_box}>
-            <TextInput 
-                style={styles.Group_name_input}
-                placeholder='Bill/Group ID'
-                placeholderTextColor={Colors.textgray}
-                maxLength={25}
-                value={id}
-                onChangeText={setId}
-                autoFocus={true}
-                keyboardType='default'
-                autoCorrect={false}
-                />
-            <View style={styles.bottom_line}/>
-            <TextInput 
-                style={styles.Group_name_input}
-                placeholder='Password (if available)'
-                placeholderTextColor={Colors.textgray}
-                maxLength={25}
-                value={password}
-                onChangeText={setPassword}
-                keyboardType='default'
-                autoCorrect={false}
-                secureTextEntry
-                />
-            <View style={styles.bottom_line}/>
-            </View>
-            </View>
+            <View>
+                <View style={styles.top_container}>
+                    <View style={styles.input_box}>
+                        <TextInput 
+                            style={styles.group_id_pass_input}
+                            placeholder='Bill/Group ID'
+                            placeholderTextColor={Colors.placeholderTextColor}
+                            maxLength={20}
+                            value={id}
+                            onChangeText={setId}
+                            autoFocus={true}
+                            keyboardType='default'
+                            autoCorrect={false}
+                            />
+                        <View style={styles.bottom_line}/>
+                        <TextInput 
+                            style={styles.group_id_pass_input}
+                            placeholder='Password (if available)'
+                            placeholderTextColor={Colors.placeholderTextColor}
+                            maxLength={25}
+                            value={password}
+                            onChangeText={setPassword}
+                            keyboardType='default'
+                            autoCorrect={false}
+                            secureTextEntry
+                            />
+                        <View style={styles.bottom_line}/>
+                    </View>
+                </View>
             </View>
             </TouchableWithoutFeedback>
             </ScrollView>
@@ -82,51 +93,24 @@ const styles = StyleSheet.create({
         marginHorizontal: '6%',
         marginTop: "2%",
     },
-    image: {
-        height: RFPercentage(8),
-        width: RFPercentage(8),
-        borderRadius: RFPercentage(4),
-        borderWidth: 2,
-        borderColor: Colors.primary,
-        marginBottom: 8,
-    },
-    title_text: {
-        fontSize: RFValue(18),
+    group_id_pass_input: {
         fontFamily: 'DMSans_700Bold',
-    },
-    subtitle_text: {
-        fontSize: RFValue(18),
-        fontFamily: 'DMSans_500Medium',
-        marginTop: 20
-    },
-    textInput: {
-        borderWidth: 1,
-        borderRadius: 10,
-        marginTop: 15,
-        borderColor: Colors.textInputGray,
-        fontFamily: 'DMSans_400Regular',
-        fontSize: RFValue(12),
-        padding: 10,
-    },
-    Group_name_input: {
-        fontFamily: 'DMSans_700Bold',
-        fontWeight: "bold",
         fontSize: RFValue(20),
         color: Colors.primary,
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: scale(10),
+        marginBottom: scale(5),
     },
     input_box: {
-        flexDirection:"column", 
-        marginLeft: 15,
+        justifyContent: 'center',
+        // alignItems: 'center'
     },
     bottom_line:{
-        height: RFPercentage(0.6),
-        width: RFPercentage(37),
+        height: scale(2),
         backgroundColor: Colors.primary,
+        marginBottom: scale(10)
     },
     flexContainer: {
-        flex: 1, // Make sure this container takes up all available space
+        flex: 1, 
     },
 
 })
