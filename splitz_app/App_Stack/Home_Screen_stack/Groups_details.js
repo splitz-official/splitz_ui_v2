@@ -46,7 +46,7 @@ const Groups_details = () => {
   return (
     <Screen>
         <View style={styles.top_icons}>
-            <Back_button onPress={()=> navigation.navigate('home')}/>
+            <Back_button title= {'Home'} onPress={()=> navigation.navigate('home')}/>
             <TouchableWithoutFeedback>
                 <Entypo name="share-alternative" size={scale(18)} color="black" />
             </TouchableWithoutFeedback>

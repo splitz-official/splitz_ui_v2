@@ -9,7 +9,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 import { RegularText, Bold700Text, Medium500Text } from '../../../../Config/AppText';
 import Colors from '../../../../Config/Colors';
-import Create_Group_screen from '../../Create_Group_stack/Create_Group_screen';
 
 
 function Join_create_buttons(props) {

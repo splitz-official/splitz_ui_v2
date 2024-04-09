@@ -11,7 +11,7 @@ function Split_bill_button({onPress}) {
         <View style={styles.container}>
             <TouchableOpacity style={styles.button} activeOpacity={.8} onPress={onPress}>
                 <Image resizeMode='contain' style = {styles.image} source={require('../../../../assets/occo(35).png')}></Image>
-                <Bold700Text style={styles.text}>Split Bill</Bold700Text>
+                <Bold700Text style={styles.text}>Quick Split</Bold700Text>
             </TouchableOpacity>
         </View>
     );

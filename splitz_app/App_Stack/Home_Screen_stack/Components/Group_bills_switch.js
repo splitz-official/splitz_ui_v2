@@ -5,7 +5,6 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
 
-    // const [activeButton, setActiveButton] = useState('Groups');
 
   return (
     <View style={styles.container}>
@@ -49,6 +48,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         position: 'absolute',
         alignItems: 'center',
+        // borderWidth: 1
     },  
     label: {
         // borderWidth: 2,

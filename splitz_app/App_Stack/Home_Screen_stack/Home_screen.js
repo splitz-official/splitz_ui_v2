@@ -38,8 +38,6 @@ function Home_screen(props) {
         }
     };
 
-    //add logic for when they have a last name
-
     return (
         <Screen>
             <View style={{flex:1}}>
@@ -49,7 +47,6 @@ function Home_screen(props) {
                 }
                 <Owe_owed/>
                 <Join_create_buttons/>
-                {/* <Placecholder_list /> */}
                 <Group_bills_switch onBillsPress={()=> setActiveButton('Bills')} onGroupsPress={()=> setActiveButton('Groups')} activeButton={activeButton}/>
                 {renderActiveComponent()}
                 <Split_bill_button
