@@ -25,6 +25,7 @@ function Home_screen(props) {
     const userName = userData?.name;
 
     const [activeButton, setActiveButton] = useState('Groups');
+    const [activeOption, setActiveOption] = useState('A')
 
     const renderActiveComponent = () => {
         switch (activeButton) {
@@ -52,7 +53,7 @@ function Home_screen(props) {
                 <Split_bill_button
                 onPress={() => {
                     console.log("Split Pressed");
-                    navigate("Split_bill_stack")
+                    navigate("Split_bill_stack", {from: 'Home'})
                 }}/>
             </View>
         </Screen>

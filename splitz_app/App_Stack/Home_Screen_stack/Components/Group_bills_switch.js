@@ -1,15 +1,38 @@
-import { Button, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
-import React, { useState } from 'react'
-import Colors from '../../../../Config/Colors'
+import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { scale } from 'react-native-size-matters';
+
+import Colors from '../../../../Config/Colors'
+
 
 const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
 
+    const animatedValue = useRef(new Animated.Value(activeButton === 'Bills' ? 1 : 0)).current;
+    const screenWidth = Dimensions.get('window').width;
+    const containerWidth = screenWidth * .8;
+    const switchWidth = (containerWidth * .5) - 3;
+
+    useEffect(() => {
+        Animated.timing(animatedValue, {
+            toValue: activeButton === 'Bills' ? 1 : 0,
+            duration: 200,
+            useNativeDriver: false,
+        }).start();
+    }, [activeButton]);
+
+    const switchTranslate = animatedValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [3, switchWidth], 
+    });
+
+    // activeButton == 'Bills' ? styles.innerRight : styles.innerLeft
 
   return (
     <View style={styles.container}>
-        <View activeOpacity={1} style={styles.outter}>
-            <View style={[styles.inner, activeButton == 'Bills' ? styles.innerRight : styles.innerLeft]}/>
+        <View style={styles.outter}>
+            <Animated.View style={[styles.inner, {left: switchTranslate} ]} />
             <View style={styles.textWrapper}>
                 <TouchableOpacity activeOpacity={1} onPress={onGroupsPress} style={styles.label}>
                     <Text style={[styles.text, activeButton === 'Groups' ? {color: Colors.primary} : {color: 'black'}]}>My Groups</Text>
@@ -62,7 +85,7 @@ const styles = StyleSheet.create({
         height: '90%',
         backgroundColor: 'white',
         borderRadius: 20,
-        position: 'absolute'
+        position: 'absolute',
     },
     innerRight: {
         right: 3

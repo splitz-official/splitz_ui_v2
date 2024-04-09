@@ -38,41 +38,35 @@ const Join_Group_screen = () => {
         title={'Home'}
         />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
-        <View style={styles.flexContainer}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+            <View style={{flex: 1}}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View>
-                <View style={styles.top_container}>
-                    <View style={styles.input_box}>
-                        <TextInput 
-                            style={styles.group_id_pass_input}
-                            placeholder='Bill/Group ID'
-                            placeholderTextColor={Colors.placeholderTextColor}
-                            maxLength={20}
-                            value={id}
-                            onChangeText={setId}
-                            autoFocus={true}
-                            keyboardType='default'
-                            autoCorrect={false}
-                            />
-                        <View style={styles.bottom_line}/>
-                        <TextInput 
-                            style={styles.group_id_pass_input}
-                            placeholder='Password (if available)'
-                            placeholderTextColor={Colors.placeholderTextColor}
-                            maxLength={25}
-                            value={password}
-                            onChangeText={setPassword}
-                            keyboardType='default'
-                            autoCorrect={false}
-                            secureTextEntry
-                            />
-                        <View style={styles.bottom_line}/>
-                    </View>
+                <View style={styles.container}>
+                    <TextInput 
+                        style={styles.group_id_pass_input}
+                        placeholder='Bill/Group ID'
+                        placeholderTextColor={Colors.placeholderTextColor}
+                        maxLength={20}
+                        value={id}
+                        onChangeText={setId}
+                        autoFocus={true}
+                        keyboardType='default'
+                        autoCorrect={false}
+                        />
+                    <View style={styles.bottom_line}/>
+                    {/* <TextInput 
+                        style={styles.group_id_pass_input}
+                        placeholder='Password (if available)'
+                        placeholderTextColor={Colors.placeholderTextColor}
+                        maxLength={25}
+                        value={password}
+                        onChangeText={setPassword}
+                        keyboardType='default'
+                        autoCorrect={false}
+                        secureTextEntry
+                        />
+                    <View style={styles.bottom_line}/> */}
                 </View>
-            </View>
             </TouchableWithoutFeedback>
-            </ScrollView>
             <Large_green_button 
             title={'Join'}
             onPress={handleJoin}
@@ -85,13 +79,12 @@ const Join_Group_screen = () => {
 }
 
 const styles = StyleSheet.create({
-    top_container: {
+    container: {
         marginHorizontal: "6%",
         marginTop: "35%",
-    },
-    bottom_container: {
-        marginHorizontal: '6%',
-        marginTop: "2%",
+        flex: 1,
+        // maxHeight: scale(100),
+        // borderWidth: 1
     },
     group_id_pass_input: {
         fontFamily: 'DMSans_700Bold',
@@ -99,10 +92,6 @@ const styles = StyleSheet.create({
         color: Colors.primary,
         marginTop: scale(10),
         marginBottom: scale(5),
-    },
-    input_box: {
-        justifyContent: 'center',
-        // alignItems: 'center'
     },
     bottom_line:{
         height: scale(2),

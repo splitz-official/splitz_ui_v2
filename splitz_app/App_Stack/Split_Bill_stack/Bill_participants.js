@@ -20,14 +20,14 @@ import Large_green_button from '../../../Components/Large_green_button'
 
 const Bill_participants = () => {
 
-    const { navigate } = useNavigation();
+    const Navigation = useNavigation();
     const [search, setSearch] = useState('');
 
   return (
     <Screen>
         <Back_button 
-        onPress={()=> navigate('home')}
-        title={'Home'}
+        onPress={()=> Navigation.goBack()}
+        title={'Back'}
         />
         <KeyboardAvoidingView
         behavior='height'

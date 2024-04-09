@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { RFValue } from 'react-native-responsive-fontsize'
 
 import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import { useAxios } from '../../../Axios/axiosContext'
 import Groups_member_list_item from './Components/Groups_member_list_item'
@@ -12,6 +13,7 @@ import Screen from '../../../Components/Screen'
 import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
 import Large_green_button from '../../../Components/Large_green_button'
+import Groups_receipt_list_item from './Components/Groups_receipt_list_item'
 
 const Groups_details = () => {
 
@@ -19,21 +21,22 @@ const Groups_details = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { room_details } = route.params;
-    // console.log(room_details);
+    // console.log("Room Details:", room_details);
 
 
     //can we change /room/members/{room_id} endpoint to grab all user info not just id and phone_number
     const [members, setMembers] = useState([]);
-    const [membersdropdown, setMembersDropDown] = useState(false);
+    const [membersdropdown, setMembersDropDown] = useState(true);
+    const [receipts, setReceipts] = useState(null);
+    const [receiptsDropDown, setReceiptsDropDown] = useState(true);
 
     useEffect(() => {
         const fetchRoomMembers = async () => {
             try {
                 const response = await axiosInstance.get(`/room/members/${room_details.id}`);
-                const data = response.data;
-                console.log("Fetching room members:")
-                console.log(data);
-                setMembers(data);
+                const Room_Members = response.data;
+                // console.log({Room_Members});
+                setMembers(Room_Members);
             } catch (error) {
                 console.error('Failed to fetch room members:', error);
             }
@@ -43,11 +46,30 @@ const Groups_details = () => {
         }
     }, [room_details.id]); 
 
+    useEffect(()=> {
+        const fetchRoomReceipts = async () => {
+            try {
+                // console.log("Fetching Room Receipts")
+                const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
+                const Room_Receipts = response.data;
+                console.log({Room_Receipts});
+                setReceipts(Room_Receipts);
+            } catch (error) {
+                console.error('Failed to fetch room receipts', error);
+            }
+        };
+        if (room_details.room_code) {
+            fetchRoomReceipts();
+        }
+    }, [room_details.room_code])
+
+
+    //members touchable is too wide. Adjust this later
   return (
     <Screen>
         <View style={styles.top_icons}>
             <Back_button title= {'Home'} onPress={()=> navigation.navigate('home')}/>
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={()=> console.log("Share Button Pressed")}>
                 <Entypo name="share-alternative" size={scale(18)} color="black" />
             </TouchableWithoutFeedback>
         </View>
@@ -59,11 +81,16 @@ const Groups_details = () => {
             <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
         </View>
         <View style={styles.bottom_container}>
-            <View>
+            <View style={{}}>
                 <TouchableWithoutFeedback onPress={()=> setMembersDropDown(!membersdropdown)}>
-                    <View style={styles.members_dropdown}>
+                    <View style={styles.drop_down}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
-                        {membersdropdown ? <Entypo name="chevron-small-down" size={scale(24)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
+                        {membersdropdown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
+                    </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={()=> console.log("Add Users Pressed")}>
+                    <View style={{position: 'absolute', right: 3}}>
+                        <AntDesign name="adduser" size={scale(22)} color="black" />
                     </View>
                 </TouchableWithoutFeedback>
                 {membersdropdown && (
@@ -78,12 +105,33 @@ const Groups_details = () => {
                             title={item.id}
                             subtitle={item.phone_number}
                             />
+                        }
+                    />
+                )}
+            </View>
+            <View>
+                <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
+                    <View style={[styles.drop_down, {marginTop: scale(10)}]}>
+                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts</Text>
+                        {receiptsDropDown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
+                    </View>
+                </TouchableWithoutFeedback>
+                {receiptsDropDown && (
+                    <FlatList 
+                    data={receipts}
+                    keyExtractor={item => item.id.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal={true}
+                    style={styles.receipts_list}
+                    renderItem={({ item }) => 
+                        <Groups_receipt_list_item 
+                        title={item.receipt_name}/>
                     }
                     />
                 )}
             </View>
         </View>
-        <Large_green_button text_style={{fontSize: RFValue(14)}}title={"Add Bill"}/>
+        <Large_green_button text_style={{fontSize: RFValue(14)}}title={"Add Bill"} onPress={()=> navigate('Split_bill_stack', {from: 'Group'})}/>
     </Screen>
   )
 }
@@ -122,21 +170,28 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: RFValue(12),
         color: Colors.black,
-        fontFamily: 'DMSans_400Regular'
+        fontFamily: 'DMSans_400Regular',
         // borderWidth: 1
     },
     bottom_container: {
         marginHorizontal: '6%',
         marginTop: scale(25)
     },
-    members_dropdown: {
+    drop_down: {
         flexDirection: 'row',
         justifyContent: 'Flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
+        // borderWidth: 1
     },
     members_list: {
         marginTop: scale(15),
-        paddingHorizontal: scale(5)
+        paddingHorizontal: scale(5),
+        // borderWidth: 1
+    },
+    receipts_list: {
+        marginTop: scale(15),
+        paddingHorizontal: scale(5),
+        // borderWidth: 1
     }
 })
 

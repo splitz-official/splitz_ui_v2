@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: scale(10)
+        marginHorizontal: scale(10),
+        // borderWidth: 1
     },
     picture: {
         width: scale(45),
