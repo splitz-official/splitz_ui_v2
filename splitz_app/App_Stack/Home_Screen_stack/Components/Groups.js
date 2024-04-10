@@ -15,10 +15,10 @@ const Groups = () => {
         if(userData && userData.id) {
             setIsRefreshing(true);
             try {
-                console.log("From groups screen: getting rooms")
+                // console.log("From groups screen: getting rooms")
                 const response = await axiosInstance.get(`/room/user/${userData.id}`);
                 setFormattedData(formatData(response.data, 3));
-                console.log(response.data);
+                // console.log(response.data);
             } catch (err) {
                 console.error("Failed to fetch groups:", err);
             }

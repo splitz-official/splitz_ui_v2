@@ -8,10 +8,14 @@ import Colors from '../../../../Config/Colors'
 
 const Groups_list_item = ({title, image, icon_text, room_details}) => {
 
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
 
   return (
-    <TouchableOpacity activeOpacity={.8} onPress={()=>navigate('Groups_details', { room_details })} style={styles.container}>
+    <TouchableOpacity style={styles.container} activeOpacity={.8} 
+    onPress={()=>navigation.navigate('CreateGroupStackNavigation', { 
+        screen: 'Groups_details',
+        params: { room_details }
+        })}>
         {/* <Image source={image}style={styles.image}>
 
         </Image> */}

@@ -1,15 +1,15 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { RFValue } from 'react-native-responsive-fontsize'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { RFValue } from 'react-native-responsive-fontsize';
 
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { scale } from 'react-native-size-matters';
-import Screen from '../../../Components/Screen'
-import Back_button from '../../../Components/Back_button'
-import Colors from '../../../Config/Colors'
-import Large_green_button from '../../../Components/Large_green_button'
+import Screen from '../../../Components/Screen';
+import Back_button from '../../../Components/Back_button';
+import Colors from '../../../Config/Colors';
+import Large_green_button from '../../../Components/Large_green_button';
 
 
 //TODO:
@@ -20,13 +20,15 @@ import Large_green_button from '../../../Components/Large_green_button'
 
 const Bill_participants = () => {
 
-    const Navigation = useNavigation();
+    const navigation = useNavigation();
     const [search, setSearch] = useState('');
+    const route = useRoute();
+    console.log(route.params);
 
   return (
     <Screen>
         <Back_button 
-        onPress={()=> Navigation.goBack()}
+        onPress={()=> navigation.goBack()}
         title={'Back'}
         />
         <KeyboardAvoidingView
@@ -58,6 +60,7 @@ const Bill_participants = () => {
             </View>
             <Large_green_button 
             title={'Next'}
+            onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
             />
         </KeyboardAvoidingView>
     </Screen>

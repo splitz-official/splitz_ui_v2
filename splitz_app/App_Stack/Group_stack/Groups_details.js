@@ -49,10 +49,9 @@ const Groups_details = () => {
     useEffect(()=> {
         const fetchRoomReceipts = async () => {
             try {
-                // console.log("Fetching Room Receipts")
                 const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
                 const Room_Receipts = response.data;
-                console.log({Room_Receipts});
+                // console.log({Room_Receipts});
                 setReceipts(Room_Receipts);
             } catch (error) {
                 console.error('Failed to fetch room receipts', error);
@@ -131,7 +130,13 @@ const Groups_details = () => {
                 )}
             </View>
         </View>
-        <Large_green_button text_style={{fontSize: RFValue(14)}}title={"Add Bill"} onPress={()=> navigate('Split_bill_stack', {from: 'Group'})}/>
+        <Large_green_button 
+        text_style={{fontSize: RFValue(14)}}
+        title={"Add Bill"} 
+        onPress={()=> navigation.navigate('Split_bill_stack', {
+            screen: 'upload_or_take_photo',
+            params: { from: 'Group', room_details: room_details}
+        })}/>
     </Screen>
   )
 }

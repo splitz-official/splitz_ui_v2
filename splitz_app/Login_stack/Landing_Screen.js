@@ -3,7 +3,6 @@ import { Animated, FlatList, View, StyleSheet, SafeAreaView, Button, Image, Touc
 import { useNavigation } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-import axiosInstance from '../../Axios/axiosInstance';
 import { useAxios } from '../../Axios/axiosContext';
 
 
@@ -17,6 +16,7 @@ import * as SecureStore from "expo-secure-store"
 function Landing({ route }) {
     console.log("Login Stack: Landing Screen")
     const { navigate } = useNavigation();
+    const { axiosInstance } = useAxios();
 
     // const { token } = useAxios();
 

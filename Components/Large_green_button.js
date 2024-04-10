@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'
+import { scale } from 'react-native-size-matters';
 
 
 const Large_green_button = ({ onPress, title, disabled, text_style }) => {
@@ -21,11 +22,12 @@ const Large_green_button = ({ onPress, title, disabled, text_style }) => {
   const styles = StyleSheet.create({
       container: {
           alignItems: 'center',
+          justifyContent: 'center',
           position: 'absolute',
           bottom: 0,
           flexDirection: 'row',
           backgroundColor: 'transparent',
-          paddingVertical: 10,
+          paddingVertical: scale(10),
       },
       button: {
           alignItems: 'center',

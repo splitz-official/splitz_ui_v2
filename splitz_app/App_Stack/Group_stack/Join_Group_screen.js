@@ -2,6 +2,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableO
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
+import { scale } from 'react-native-size-matters';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -10,7 +11,6 @@ import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
 import Large_green_button from '../../../Components/Large_green_button'
 import { useAxios } from '../../../Axios/axiosContext';
-import { scale } from 'react-native-size-matters';
 
 const Join_Group_screen = () => {
 

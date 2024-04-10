@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axiosInstance from './axiosInstance';
+import {axiosInstance, axiosInstanceMultipart} from './axiosInstance';
 import * as SecureStore from 'expo-secure-store';
 
 const AxiosContext = createContext();
@@ -45,7 +45,7 @@ export const AxiosProvider = ({ children }) => {
 
 
   return (
-    <AxiosContext.Provider value={{ axiosInstance, token, userData, setUpdateCount}}>
+    <AxiosContext.Provider value={{ axiosInstanceMultipart, axiosInstance, token, userData, setUpdateCount}}>
       {children}
     </AxiosContext.Provider>
   );
