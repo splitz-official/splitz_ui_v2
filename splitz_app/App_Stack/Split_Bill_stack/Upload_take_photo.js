@@ -22,20 +22,23 @@ const Upload_take_photo = () => {
     const {axiosInstance, axiosInstanceMultipart} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
-    const room_details = route.params.room_details;
-    console.log(route.params);
+    const {room_code} = route.params;
+    console.log("Room Code from route.params:" , room_code);
+    // console.log(route.params);
 
     const [receiptname, setReceiptName] = useState('');
-    const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    // const [image, setImage] = useState(null);
 
 
     const handleScanPress = async () => {
+        setLoading(true);
         console.log("Handle Scan Pressed")
         const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
 
         if (cameraPermission.granted === false) {
             Alert.alert("Access Denied, Please allow camera access to use this feature!");
+            setLoading(false);
             return;
         }
 
@@ -45,31 +48,44 @@ const Upload_take_photo = () => {
             quality: 1
         });
 
-        let imageURI = '';
-        if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
-            console.log(pickerResult.assets[0].uri);
-            setImage(pickerResult.assets[0].uri);
-            imageURI = pickerResult.assets[0].uri;
+        if (pickerResult.canceled) {
+            console.log("User canceled image pick");
+            setLoading(false);
+            return;
         }
 
-        if(route.params.room_details && !pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
-            const formData = new FormData();
-            formData.append("receipt_img", {
-                uri: imageURI,
-                type: "image/jpeg",
-                name: "receipt.jpg"
-            });
-            axiosInstanceMultipart
-            .post(`/receipts/${room_details.room_code}/upload-receipt`, formData)
-            .then((response) => {
-                res = response.data;
-                navigation.navigate('Receipt_details_stack', {
-                    screen: 'Receipt_details',
-                    params: {receipt: res}
+        if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
+            console.log(pickerResult.assets[0].uri);
+            // setImage(pickerResult.assets[0].uri);
+            const selectedImage = pickerResult.assets[0].uri;
+            console.log("From Scan a Receipt press, imageset");
+
+            if (room_code) {
+                const formData = new FormData();
+                formData.append("receipt_img", {
+                    uri: selectedImage,
+                    type: "image/jpeg",
+                    name: "receipt.jpg"
+                });
+                axiosInstanceMultipart
+                .post(`/receipts/${room_code}/upload-receipt`, formData)
+                .then((response) => {
+                    res = response.data;
+                    navigation.navigate('Receipt_details_stack', {
+                        screen: 'Receipt_details',
+                        params: {
+                            receipt: res,
+                            room_code: room_code
+                        }
+                    })
+                }).catch((error) => {
+                    console.log("Error:", error.response ? error.response.data : error.message);
+                }).finally(()=> {
+                    setLoading(false);
                 })
-            }).catch((error) => {
-                console.log("Error:", error.response ? error.response.data : error.message);
-            });
+            }
+        } else {
+            setLoading(false);
         }
     }
 
@@ -97,27 +113,29 @@ const Upload_take_photo = () => {
             return;
         }
 
-        imageURI = '';
         if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
             console.log(pickerResult.assets[0].uri);
-            setImage(pickerResult.assets[0].uri);
-            imageURI = pickerResult.assets[0].uri;
-            console.log("From uploadPress, imageURI set");
+            const selectedImage = pickerResult.assets[0].uri;
+            // setImage(pickerResult.assets[0].uri);
+            console.log("From uploadPress, imageset");
 
-            if (route.params.room_details) {
+            if (room_code) {
                 const formData = new FormData();
                 formData.append("receipt_img", {
-                    uri: imageURI,
+                    uri: selectedImage,
                     type: "image/jpeg",
                     name: "receipt.jpg"
                 });
                 axiosInstanceMultipart
-                .post(`/receipts/${room_details.room_code}/upload-receipt`, formData)
+                .post(`/receipts/${room_code}/upload-receipt`, formData)
                 .then((response) => {
                     res = response.data;
                     navigation.navigate('Receipt_details_stack', {
                         screen: 'Receipt_details',
-                        params: {receipt: res}
+                        params: {
+                            receipt: res,
+                            room_code: room_code
+                        }
                     })
                 }).catch((error) => {
                     console.log("Error:", error.response ? error.response.data : error.message);
@@ -139,7 +157,7 @@ const Upload_take_photo = () => {
             </View>
         ): (
         <>
-        <Back_button onPress={()=> navigation.goBack()} title={"Edit Participants"}/>
+        <Back_button onPress={()=> navigation.goBack()} title={"Back"}/>
         <KeyboardAvoidingView style={{flex: 1}} behavior='height'>
         <View style={{flex:1}}>
             <View style={styles.container}>

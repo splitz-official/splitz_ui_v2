@@ -27,7 +27,7 @@ const Create_Group_screen = () => {
             try {
                 const body = { room_name: group.trim(), room_password: password };
                 const created_room = await axiosInstance.post(`/room/create`, body);
-                navigate("Groups_details", {room_details: created_room.data});
+                navigate("Groups_details", {room_code: created_room.data.room_code});
             } catch (error) {
                 console.error(error);
             }

@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const Receipt_details = () => {
 
     const route = useRoute();
+    const { receipt, room_code } = route.params;
     console.log(route.params);
 
   return (

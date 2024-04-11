@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { scale } from 'react-native-size-matters'
 import { useNavigation, useRoute } from '@react-navigation/native'
@@ -20,8 +20,8 @@ const Groups_details = () => {
     const { axiosInstance } = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
-    const { room_details } = route.params;
-    // console.log("Room Details:", room_details);
+    const { room_code } = route.params;
+    const [room_details, setRoom_Details] = useState(null);
 
 
     //can we change /room/members/{room_id} endpoint to grab all user info not just id and phone_number
@@ -30,40 +30,61 @@ const Groups_details = () => {
     const [receipts, setReceipts] = useState(null);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
 
-    useEffect(() => {
-        const fetchRoomMembers = async () => {
+    useEffect(()=> {
+        const fetchRoomDetails = async () => {
+            // console.log("Fetching Room Details")
             try {
-                const response = await axiosInstance.get(`/room/members/${room_details.id}`);
-                const Room_Members = response.data;
-                // console.log({Room_Members});
-                setMembers(Room_Members);
+                const response = await axiosInstance.get(`/room/${room_code}`);
+                // console.log(response.data);
+                setRoom_Details(response.data);
             } catch (error) {
-                console.error('Failed to fetch room members:', error);
+                console.error("Error:", error);
             }
         };
-        if (room_details.id) {
+        if (room_code) {
+            fetchRoomDetails();
+        }
+    }, [room_code])
+
+    const fetchRoomMembers = async () => {
+        // console.log("Fetching Room Members");
+        try {
+            const response = await axiosInstance.get(`/room/members/${room_details.id}`);
+            setMembers(response.data);
+        } catch (error) {
+            console.error('Failed to fetch room members:', error);
+        }
+    };
+    
+    const fetchRoomReceipts = async () => {
+        // console.log("Fetching Room Receipts");
+        try {
+            const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
+            setReceipts(response.data);
+        } catch (error) {
+            console.error('Failed to fetch room receipts', error);
+        }
+    };
+
+    useEffect(() => {
+        if (room_details && room_details.id) {
             fetchRoomMembers();
         }
-    }, [room_details.id]); 
-
-    useEffect(()=> {
-        const fetchRoomReceipts = async () => {
-            try {
-                const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
-                const Room_Receipts = response.data;
-                // console.log({Room_Receipts});
-                setReceipts(Room_Receipts);
-            } catch (error) {
-                console.error('Failed to fetch room receipts', error);
-            }
-        };
-        if (room_details.room_code) {
+        if (room_details && room_details.room_code){
             fetchRoomReceipts();
         }
-    }, [room_details.room_code])
+    }, [room_details]);
 
+    // members touchable is too wide. Adjust this later
 
-    //members touchable is too wide. Adjust this later
+    if (!room_details) {
+        return (
+            <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
+                <ActivityIndicator size={"large"} color={Colors.primary}/>
+            </View>
+        );
+    }
+
   return (
     <Screen>
         <View style={styles.top_icons}>
@@ -135,7 +156,7 @@ const Groups_details = () => {
         title={"Add Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
             screen: 'upload_or_take_photo',
-            params: { from: 'Group', room_details: room_details}
+            params: { from: 'Group', room_code: room_code }
         })}/>
     </Screen>
   )

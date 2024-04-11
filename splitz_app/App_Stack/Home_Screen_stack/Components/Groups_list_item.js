@@ -6,7 +6,7 @@ import { scale } from 'react-native-size-matters'
 
 import Colors from '../../../../Config/Colors'
 
-const Groups_list_item = ({title, image, icon_text, room_details}) => {
+const Groups_list_item = ({title, image, icon_text, room_code}) => {
 
     const navigation = useNavigation();
 
@@ -14,7 +14,7 @@ const Groups_list_item = ({title, image, icon_text, room_details}) => {
     <TouchableOpacity style={styles.container} activeOpacity={.8} 
     onPress={()=>navigation.navigate('CreateGroupStackNavigation', { 
         screen: 'Groups_details',
-        params: { room_details }
+        params: { room_code }
         })}>
         {/* <Image source={image}style={styles.image}>
 
