@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Receipt_details from "./Receipt_details";
+import Receipt_items from "./Receipt_items";
 
 
 
@@ -13,7 +13,7 @@ function ReceiptDetailGroup() {
         >
             <receiptDetailStack.Screen
             name={'Receipt_details'}
-            component={Receipt_details}
+            component={Receipt_items}
             />
             
         </receiptDetailStack.Navigator>

@@ -1,0 +1,134 @@
+import React, { useState, useRef } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { RFValue } from 'react-native-responsive-fontsize';
+
+import { AntDesign } from '@expo/vector-icons';
+
+import Screen from '../../../Components/Screen';
+import Back_button from '../../../Components/Back_button';
+import Colors from '../../../Config/Colors';
+import { scale } from 'react-native-size-matters';
+import Large_green_button from '../../../Components/Large_green_button';
+
+const ManualEntry = () => {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { participants } = route.params;
+
+    const quantityInputRef = useRef(null);
+    // const priceInputRef = useRef(null);
+
+    const [items, setItems] = useState([]);
+    const [itemName, setItemName] = useState('');
+    const [itemQuantity, setItemQuantity] = useState('');
+    const [itemPrice, setItemPrice] = useState('');
+
+    const deleteItem = (index) => {
+        setItems(currentItems => currentItems.filter((_, i) => i !== index));
+    };
+
+    const addItem = () => {
+        if (!itemName.trim() || !itemQuantity.trim() || !itemPrice.trim()) return;
+        const newItem = {
+            name: itemName.trim(),
+            quantity: itemQuantity.trim(),
+            price: itemPrice.trim(),
+        };
+        setItems([...items, newItem]);
+        setItemName('');
+        setItemQuantity('');
+        setItemPrice('');
+    };
+
+    return (
+        <Screen>
+            <Back_button title={'Back'} onPress={() => navigation.goBack()} />
+            <View style={styles.inputContainer}>
+                <TextInput 
+                    style={[styles.input, {flex: 2}]}
+                    placeholder="Item Name"
+                    keyboardType='default'
+                    value={itemName}
+                    onChangeText={setItemName}
+                    autoFocus={true}
+                    returnKeyType='next'
+                    onSubmitEditing={()=> quantityInputRef.current.focus()}
+                />
+                <TextInput 
+                    style={[styles.input, {flex: 1}]}
+                    ref={quantityInputRef}
+                    placeholder="Quantity"
+                    keyboardType="numeric"
+                    value={itemQuantity}
+                    onChangeText={setItemQuantity}
+                />
+                <TextInput 
+                    style={[styles.input, {flex: 1}]}
+                    placeholder="Price"
+                    keyboardType="numeric"
+                    value={itemPrice}
+                    onChangeText={setItemPrice}
+                />
+                <TouchableOpacity style={styles.addButton} onPress={addItem}>
+                    <AntDesign name="pluscircleo" size={24} color={Colors.primary} />
+                </TouchableOpacity>
+            </View>
+            <FlatList
+                data={items}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <View style={styles.listItem}>
+                        <Text style={[styles.itemText, {flex: 1.5}]}>{item.name}</Text>
+                        <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
+                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}</Text>
+                        <TouchableOpacity style={{position: 'absolute', right: scale(10)}}activeOpacity={.5} onPress={() => deleteItem(index)}>
+                                <AntDesign name="closecircle" size={scale(16)} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                )}
+                style={{marginTop: scale(15)}}
+            />
+            <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items})}/>
+        </Screen>
+    );
+};
+
+const styles = StyleSheet.create({
+    inputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: scale(10),
+    },
+    input: {
+        borderBottomWidth: 1,
+        padding: 10,
+        margin: scale(5),
+        fontFamily: 'DMSans_500Medium',
+        fontSize: RFValue(12)
+    },
+    addButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: scale(5)
+    },
+    listItem: {
+        padding: scale(10),
+        marginVertical: scale(5),
+        marginHorizontal: scale(25),
+        backgroundColor: '#f0f0f0',
+        borderColor: Colors.primary,
+        borderWidth: 1,
+        borderRadius: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    itemText: {
+        color: 'black',
+        fontFamily: 'DMSans_500Medium',
+        fontSize: RFValue(14),
+    },
+});
+
+export default ManualEntry;

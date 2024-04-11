@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -17,7 +17,7 @@ const Join_Group_screen = () => {
 
     //how do we get room data. Can we have the output of the join endpoint be the same as the create/`/room/members/{user_id}`
     const { axiosInstance } = useAxios();
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
     const [id, setId] = useState('');
     const [password, setPassword] =useState('')
 
@@ -26,15 +26,17 @@ const Join_Group_screen = () => {
         try {
             const body = { room_code: id.trim(), room_password: password };
             const join_room = await axiosInstance.post(`/room/join`, body);
+            navigation.navigate('Groups_details', {room_code: id});
         } catch (error) {
-            console.error(error)
+            console.error(error);
+            Alert.alert("Join room failed")
         }
     };
 
   return (
     <Screen>
         <Back_button 
-        onPress={()=> navigate('home')}
+        onPress={()=> navigation.navigate('home')}
         title={'Home'}
         />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
@@ -51,6 +53,7 @@ const Join_Group_screen = () => {
                         autoFocus={true}
                         keyboardType='default'
                         autoCorrect={false}
+                        autoCapitalize='characters'
                         />
                     <View style={styles.bottom_line}/>
                     {/* <TextInput 

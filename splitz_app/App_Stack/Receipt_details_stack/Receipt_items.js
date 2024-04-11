@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Receipt_details = () => {
+const Receipt_items = () => {
 
     const route = useRoute();
     const { receipt, room_code } = route.params;
@@ -15,6 +15,8 @@ const Receipt_details = () => {
   )
 }
 
-export default Receipt_details
+const styles = StyleSheet.create({
 
-const styles = StyleSheet.create({})
+})
+
+export default Receipt_items

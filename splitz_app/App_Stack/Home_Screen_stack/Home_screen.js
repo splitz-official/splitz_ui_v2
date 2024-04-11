@@ -39,6 +39,7 @@ function Home_screen(props) {
         }
     };
 
+    //FIX FLATLIST AND GREEN BUTTON POSITIONING. GREEN BUTTON IS OVERLAPPING FLATLIST
     return (
         <Screen>
             <View style={{flex:1}}>
@@ -53,7 +54,10 @@ function Home_screen(props) {
                 <Split_bill_button
                 onPress={() => {
                     console.log("Split Pressed");
-                    navigate("Split_bill_stack", {from: 'Home'})
+                    navigate("Split_bill_stack", {
+                        screen: 'bill_participants',
+                        params: {from: 'Home'}
+                })
                 }}/>
             </View>
         </Screen>

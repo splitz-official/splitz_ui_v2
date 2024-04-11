@@ -1,9 +1,10 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
-
 import { useNavigation, useRoute } from '@react-navigation/native';
+
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import { scale } from 'react-native-size-matters';
 import Screen from '../../../Components/Screen';
@@ -25,6 +26,19 @@ const Bill_participants = () => {
     const route = useRoute();
     console.log(route.params);
 
+    const [participants, setParticipants] = useState([]);
+
+    const addParticipant = () => {
+        if (!search.trim()) return; 
+        setParticipants([...participants, search.trim()]);
+        setSearch(''); 
+    };
+
+    const removeParticipant = (index) => {
+        const updatedParticipants = participants.filter((_, i) => i !== index);
+        setParticipants(updatedParticipants);
+    };
+
   return (
     <Screen>
         <Back_button 
@@ -39,29 +53,50 @@ const Bill_participants = () => {
             <View style={styles.bottom_container}>
                 <Text style={styles.title_text}>Bill Participants</Text>
                 <Text style={styles.subtitle_text}>Find People on Splitz</Text>
-                <TextInput 
-                style={styles.textInput}
-                placeholder='Group, name, number...'
-                placeholderTextColor={Colors.textgray}
-                maxLength={25}
-                value={search}
-                onChangeText={setSearch}
-                autoFocus={true}
-                keyboardType='default'
-                autoCorrect={false}
-                />
+                <View style={styles.inputContainer}>
+                    <TextInput 
+                    style={styles.textInput}
+                    placeholder='Group, name, number...'
+                    placeholderTextColor={Colors.textgray}
+                    maxLength={25}
+                    value={search}
+                    onChangeText={setSearch}
+                    autoFocus={true}
+                    keyboardType='default'
+                    autoCorrect={false}
+                    />
+                    <TouchableOpacity style={{position: 'absolute', right: scale(20), bottom: scale(8),}} onPress={addParticipant}>
+                        <AntDesign name="pluscircleo" size={scale(20)} color={Colors.primary} />
+                    </TouchableOpacity>
+                </View>
                 <TouchableOpacity style={styles.QR_Code} activeOpacity={.8} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
                     <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
                     <Text style={styles.QR_text}> Scan QR Code</Text>
                 </TouchableOpacity>
                 <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
-
-                <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends!</Text>
+                {participants.length > 0 ? (
+                    <FlatList 
+                    data={participants}
+                    keyExtractor={(index) => index.toString()}
+                    renderItem={({item, index}) => 
+                        <View style={{flexDirection: 'row', marginVertical: scale(5), alignItems: 'center'}}>
+                            <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginRight: scale(5)}}>{item}</Text>
+                            <TouchableOpacity activeOpacity={.5} onPress={() => removeParticipant(index)}>
+                                <AntDesign name="closecircle" size={scale(16)} color="red" />
+                            </TouchableOpacity>
+                        </View>
+                    }
+                    style={styles.participants_list}
+                    />
+                ): (
+                    <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends!</Text>
+                )}
             </View>
-            <Large_green_button 
+            {/* <Large_green_button 
             title={'Next'}
             onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
-            />
+            /> */}
+            <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_entry', {participants})}/>
         </KeyboardAvoidingView>
     </Screen>
   )
@@ -89,6 +124,15 @@ const styles = StyleSheet.create({
         fontFamily: 'DMSans_400Regular',
         fontSize: RFValue(12),
         padding: 10,
+        flex: 1
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },  
+    participants_list: {
+        marginTop: scale(15),
+        // borderWidth: 1
     },
     QR_Code: {
         flexDirection: 'row',

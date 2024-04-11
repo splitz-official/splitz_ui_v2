@@ -229,7 +229,9 @@ const styles = StyleSheet.create({
         fontSize: RFValue(16),
         justifyContent: 'center',
         alignItems: 'center',
+        alignSelf: 'center',
         width: '80%',
+        textAlign: 'center'
         // borderWidth: 1
     }
 })

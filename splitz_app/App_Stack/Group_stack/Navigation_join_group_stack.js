@@ -14,6 +14,10 @@ function JoinGroupStackGroup({}) {
             <JoinGroupStack.Screen 
             name='Join_group_screen'
             component={Join_Group_screen}/>
+            <JoinGroupStack.Screen 
+            name='CreateGroupStackNavigation'
+            component={createStackNavigator}
+            />
         </JoinGroupStack.Navigator>
     )
 }
