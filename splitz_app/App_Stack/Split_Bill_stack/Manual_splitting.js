@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native'
 import React from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -25,7 +25,7 @@ const Manual_splitting = () => {
                 <Text style={styles.titles}>Members</Text>
                 <FlatList 
                 data={participants}
-                keyExtractor={(index) => index.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 horizontal={true}
                 renderItem={({ item }) => (
                     <TouchableOpacity style={styles.members_list_item}>

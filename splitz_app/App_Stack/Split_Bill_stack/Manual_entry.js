@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -16,6 +16,7 @@ const ManualEntry = () => {
     const route = useRoute();
     const { participants } = route.params;
 
+    const nameInputRef = useRef(null);
     const quantityInputRef = useRef(null);
     const taxInputRef = useRef(null);
 
@@ -27,6 +28,12 @@ const ManualEntry = () => {
     const [tax, setTax] = useState('');
     const [tip, setTip] = useState('');
     const [total, setTotal] = useState('');
+
+    const formatInput = (text) => {
+        return text.replace(/[^0-9.]/g, '')
+                   .replace(/(\..*)\./g, '$1')
+                   .replace(/(\.\d{2})\d+/g, '$1');
+    };
 
 
     useEffect(()=> {
@@ -52,87 +59,104 @@ const ManualEntry = () => {
         setItemName('');
         setItemQuantity('');
         setItemPrice('');
+        nameInputRef.current.focus()
     };
 
     return (
         <Screen>
             <Back_button title={'Back'} onPress={() => navigation.goBack()} />
-            <View style={styles.inputContainer}>
-                <TextInput 
-                    style={[styles.input, {flex: 2}]}
-                    placeholder="Item Name"
-                    keyboardType='default'
-                    value={itemName}
-                    onChangeText={setItemName}
-                    autoFocus={true}
-                    returnKeyType='next'
-                    onSubmitEditing={()=> quantityInputRef.current.focus()}
-                />
-                <TextInput 
-                    style={[styles.input, {flex: 1}]}
-                    ref={quantityInputRef}
-                    placeholder="Quantity"
-                    keyboardType="numeric"
-                    value={itemQuantity}
-                    onChangeText={setItemQuantity}
-                />
-                <TextInput 
-                    style={[styles.input, {flex: 1}]}
-                    placeholder="Price"
-                    keyboardType="numeric"
-                    value={itemPrice}
-                    onChangeText={setItemPrice}
-                />
-                <TouchableOpacity style={styles.addButton} onPress={addItem}>
-                    <AntDesign name="pluscircleo" size={24} color={Colors.primary} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.inputContainer}>
-                <TextInput 
-                    style={[styles.input, {flex: 1}]}
-                    placeholder="Tax Amount"
-                    keyboardType='numeric'
-                    value={tax}
-                    onChangeText={setTax}
-                    returnKeyType='next'
-                    onSubmitEditing={()=> taxInputRef.current.focus()}
-                />
-                <TextInput 
-                    style={[styles.input, {flex: 1}]}
-                    ref={taxInputRef}
-                    placeholder="Tip Amount"
-                    keyboardType="numeric"
-                    value={tip}
-                    onChangeText={setTip}
-                />
-            </View>
-            {items.length !== 0 ? (
-                <FlatList
-                data={items}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <View style={styles.listItem}>
-                        <Text style={[styles.itemText, {flex: 1.5}]}>{item.name}</Text>
-                        <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
-                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}</Text>
-                        <TouchableOpacity style={{position: 'absolute', right: scale(10)}}activeOpacity={.5} onPress={() => deleteItem(index)}>
-                                <AntDesign name="closecircle" size={scale(16)} color="gray" />
-                        </TouchableOpacity>
+            <KeyboardAvoidingView
+            behavior='height'
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            style={{flex: 1}}
+            >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{flex: 1}}>
+                <View style={styles.inputContainer}>
+                    <TextInput 
+                        style={[styles.input, {flex: 2}]}
+                        placeholder="Item Name"
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        keyboardType='default'
+                        value={itemName}
+                        onChangeText={setItemName}
+                        autoFocus={true}
+                        ref={nameInputRef}
+                        returnKeyType='next'
+                        onSubmitEditing={()=> quantityInputRef.current.focus()}
+                        />
+                    <TextInput 
+                        style={[styles.input, {flex: 1}]}
+                        ref={quantityInputRef}
+                        placeholder="Quantity"
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        keyboardType="numeric"
+                        value={itemQuantity}
+                        onChangeText={setItemQuantity}
+                        />
+                    <TextInput 
+                        style={[styles.input, {flex: 1}]}
+                        placeholder="Price"
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        keyboardType="numeric"
+                        value={itemPrice}
+                        onChangeText={ (text) => setItemPrice(formatInput(text))}
+                        />
+                    <TouchableOpacity style={styles.addButton} onPress={addItem}>
+                        <AntDesign name="pluscircleo" size={24} color={Colors.primary} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.inputContainer}>
+                    <TextInput 
+                        style={[styles.input, {flex: 1}]}
+                        placeholder="Tax Amount"
+                        keyboardType='numeric'
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        value={tax}
+                        onChangeText={(text) => setTax(formatInput(text))}
+                        returnKeyType='next'
+                        onSubmitEditing={()=> taxInputRef.current.focus()}
+                        />
+                    <TextInput 
+                        style={[styles.input, {flex: 1}]}
+                        ref={taxInputRef}
+                        placeholder="Tip Amount"
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        keyboardType="numeric"
+                        value={tip}
+                        onChangeText={(text) => setTip(formatInput(text))}
+                        />
+                </View>
+                {items.length !== 0 ? (
+                    <FlatList
+                    data={items}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => (
+                        <View style={styles.listItem}>
+                            <Text style={[styles.itemText, {flex: 1.5}]}>{item.name}</Text>
+                            <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
+                            <Text style={[styles.itemText, {flex: 1}]}>${item.price}</Text>
+                            <TouchableOpacity style={{position: 'absolute', right: scale(10)}}activeOpacity={.5} onPress={() => deleteItem(index)}>
+                                    <AntDesign name="closecircle" size={scale(16)} color="gray" />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    style={{marginTop: scale(15), marginBottom: scale(100)}}
+                    />
+                ) : (
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: scale(20)}}>
+                        <Text style={{textAlign: 'center', fontFamily: 'DMSans_700Bold', fontSize: RFValue(16), color: Colors.primary, paddingBottom: scale(100)}}>
+                            Add items to get started and we'll calculate the total for you!
+                        </Text>
                     </View>
                 )}
-                style={{marginTop: scale(15), marginBottom: scale(100)}}
-            />
-            ) : (
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: scale(10)}}>
-                    <Text style={{textAlign: 'center', fontFamily: 'DMSans_700Bold', fontSize: RFValue(16), color: Colors.primary, paddingBottom: scale(100)}}>
-                        Add items to get started and we'll Caculate the total for you!
-                    </Text>
+                <View style={{alignItems: 'center'}}>
+                    <Text style={styles.totalText}>Total: ${total}</Text>
                 </View>
-            )}
-            <View style={{alignItems: 'center'}}>
-                <Text style={styles.totalText}>Total: ${total}</Text>
+                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
             </View>
-            <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
+            </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </Screen>
     );
 };

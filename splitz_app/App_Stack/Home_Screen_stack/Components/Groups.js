@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useAxios } from '../../../../Axios/axiosContext'
 import Groups_list_item from './Groups_list_item';
+import { scale } from 'react-native-size-matters';
 
 const Groups = () => {
 
@@ -76,9 +77,10 @@ const styles = StyleSheet.create({
     groups_grid: {
         // marginBottom: 10,
         // marginTop: 5,
-        // borderWidth: 2,
+        // borderWidth: 1,
         paddingHorizontal: 10,
-        flex: 1
+        flex: 1,
+        marginBottom: scale(60)
     },
     empty: {
         backgroundColor: 'transparent',
