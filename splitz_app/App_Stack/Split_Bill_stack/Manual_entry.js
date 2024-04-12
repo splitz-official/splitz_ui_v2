@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -17,12 +17,25 @@ const ManualEntry = () => {
     const { participants } = route.params;
 
     const quantityInputRef = useRef(null);
-    // const priceInputRef = useRef(null);
+    const taxInputRef = useRef(null);
 
     const [items, setItems] = useState([]);
     const [itemName, setItemName] = useState('');
     const [itemQuantity, setItemQuantity] = useState('');
     const [itemPrice, setItemPrice] = useState('');
+    10
+    const [tax, setTax] = useState('');
+    const [tip, setTip] = useState('');
+    const [total, setTotal] = useState('');
+
+
+    useEffect(()=> {
+            const subtotal = items.reduce((item_value, item) => item_value + (item.quantity * item.price), 0);
+            const totalTax = parseFloat(tax) || 0;
+            const totalTip = parseFloat(tip) || 0;
+            const totalValue = subtotal + totalTax + totalTip;
+            setTotal(totalValue.toFixed(2));
+    }, [items, tax, tip])
 
     const deleteItem = (index) => {
         setItems(currentItems => currentItems.filter((_, i) => i !== index));
@@ -74,7 +87,27 @@ const ManualEntry = () => {
                     <AntDesign name="pluscircleo" size={24} color={Colors.primary} />
                 </TouchableOpacity>
             </View>
-            <FlatList
+            <View style={styles.inputContainer}>
+                <TextInput 
+                    style={[styles.input, {flex: 1}]}
+                    placeholder="Tax Amount"
+                    keyboardType='numeric'
+                    value={tax}
+                    onChangeText={setTax}
+                    returnKeyType='next'
+                    onSubmitEditing={()=> taxInputRef.current.focus()}
+                />
+                <TextInput 
+                    style={[styles.input, {flex: 1}]}
+                    ref={taxInputRef}
+                    placeholder="Tip Amount"
+                    keyboardType="numeric"
+                    value={tip}
+                    onChangeText={setTip}
+                />
+            </View>
+            {items.length !== 0 ? (
+                <FlatList
                 data={items}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
@@ -83,13 +116,23 @@ const ManualEntry = () => {
                         <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
                         <Text style={[styles.itemText, {flex: 1}]}>${item.price}</Text>
                         <TouchableOpacity style={{position: 'absolute', right: scale(10)}}activeOpacity={.5} onPress={() => deleteItem(index)}>
-                                <AntDesign name="closecircle" size={scale(16)} color="red" />
+                                <AntDesign name="closecircle" size={scale(16)} color="gray" />
                         </TouchableOpacity>
                     </View>
                 )}
-                style={{marginTop: scale(15)}}
+                style={{marginTop: scale(15), marginBottom: scale(100)}}
             />
-            <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items})}/>
+            ) : (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: scale(10)}}>
+                    <Text style={{textAlign: 'center', fontFamily: 'DMSans_700Bold', fontSize: RFValue(16), color: Colors.primary, paddingBottom: scale(100)}}>
+                        Add items to get started and we'll Caculate the total for you!
+                    </Text>
+                </View>
+            )}
+            <View style={{alignItems: 'center'}}>
+                <Text style={styles.totalText}>Total: ${total}</Text>
+            </View>
+            <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
         </Screen>
     );
 };
@@ -129,6 +172,14 @@ const styles = StyleSheet.create({
         fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(14),
     },
+    totalText: {
+        fontFamily: 'DMSans_700Bold',
+        fontSize: RFValue(16),
+        color: Colors.primary,
+        textAlign: 'center',
+        position: 'absolute',
+        bottom: scale(65),
+    }
 });
 
 export default ManualEntry;

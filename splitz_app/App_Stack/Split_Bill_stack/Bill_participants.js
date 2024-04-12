@@ -82,7 +82,7 @@ const Bill_participants = () => {
                         <View style={{flexDirection: 'row', marginVertical: scale(5), alignItems: 'center'}}>
                             <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginRight: scale(5)}}>{item}</Text>
                             <TouchableOpacity activeOpacity={.5} onPress={() => removeParticipant(index)}>
-                                <AntDesign name="closecircle" size={scale(16)} color="red" />
+                                <AntDesign name="closecircle" size={scale(16)} color="gray" />
                             </TouchableOpacity>
                         </View>
                     }
