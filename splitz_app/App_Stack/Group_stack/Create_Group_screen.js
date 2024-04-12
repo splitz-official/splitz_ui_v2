@@ -37,7 +37,7 @@ const Create_Group_screen = () => {
     };
 
   return (
-    <Screen>
+    <Screen style={{backgroundColor: Colors.white}}>
         <Back_button 
         onPress={()=> navigate('home')}
         title={'Home'}

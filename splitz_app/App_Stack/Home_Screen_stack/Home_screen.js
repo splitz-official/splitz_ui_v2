@@ -16,6 +16,8 @@ import { useAxios } from '../../../Axios/axiosContext';
 import Group_bills_switch from './Components/Group_bills_switch';
 import Groups from './Components/Groups';
 import Bills from './Components/Bills';
+import { getBackgroundColorAsync } from 'expo-system-ui';
+import Colors from '../../../Config/Colors';
 
 
 function Home_screen(props) {
@@ -41,7 +43,7 @@ function Home_screen(props) {
 
     //FIX FLATLIST AND GREEN BUTTON POSITIONING. GREEN BUTTON IS OVERLAPPING FLATLIST
     return (
-        <Screen>
+        <Screen style={{backgroundColor: Colors.white}}>
             <View style={{flex:1}}>
                 <TopLogo/>
                 {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {`${userData.name.split(' ')[0]}!`}</Medium500Text>

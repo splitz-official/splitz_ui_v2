@@ -22,7 +22,7 @@ const ManualEntry = () => {
 
     const [items, setItems] = useState([]);
     const [itemName, setItemName] = useState('');
-    const [itemQuantity, setItemQuantity] = useState('');
+    const [itemQuantity, setItemQuantity] = useState('1');
     const [itemPrice, setItemPrice] = useState('');
     10
     const [tax, setTax] = useState('');
@@ -57,7 +57,7 @@ const ManualEntry = () => {
         };
         setItems([...items, newItem]);
         setItemName('');
-        setItemQuantity('');
+        setItemQuantity('1');
         setItemPrice('');
         nameInputRef.current.focus()
     };

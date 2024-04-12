@@ -28,57 +28,51 @@ const Send_feedback = () => {
 
 
   return (
-    <View style={styles.container}>
-        <Screen>
-            <TouchableWithoutFeedback onPress={()=> {
-                console.log("dismiss keyboard");
-                Keyboard.dismiss();
-            }}>
-                <KeyboardAvoidingView>
-                    <TopLogo/>
-                    <Back_button 
-                    onPress={()=> navigate('profile')}
-                    title={'Back'}
-                    />
-                    <View style={styles.title_and_gray_container}>
-                        <View style={styles.feedback_title_container}>
-                            <MaterialIcons name="feedback" size={RFValue(25)} color={Colors.primary} />
-                            <Text style={styles.feedback_title_text}>Send feedback to Splitz!</Text>
-                        </View>
-                        <Text
-                        style={styles.gray_text}
-                        >
-                            This app was created for you. We are continueously looking for ways to improve your experience. We'd love to hear your ideas!
-                        </Text>
+    <Screen style={{backgroundColor: Colors.white}}>
+        <TouchableWithoutFeedback onPress={()=> {
+            console.log("dismiss keyboard");
+            Keyboard.dismiss();
+        }}>
+            <KeyboardAvoidingView>
+                <TopLogo/>
+                <Back_button 
+                onPress={()=> navigate('profile')}
+                title={'Back'}
+                />
+                <View style={styles.title_and_gray_container}>
+                    <View style={styles.feedback_title_container}>
+                        <MaterialIcons name="feedback" size={RFValue(25)} color={Colors.primary} />
+                        <Text style={styles.feedback_title_text}>Send feedback to Splitz!</Text>
                     </View>
-                        <TextInput 
-                        multiline={true}
-                        autoFocus={true}
-                        value={feedbackText}
-                        onChangeText={setFeedbackText}
-                        maxLength={250}
-                        style={styles.textbox}>
-                        </TextInput>
-                    <TouchableOpacity style={feedbackText.trim() !== '' ? styles.submitbutton : [styles.submitbutton, styles.disabled]} 
-                    onPress={handleSubmitFeedback}
-                    activeOpacity={.7}>
-                        <Text style={{
-                            color: Colors.white, 
-                            fontFamily: 'DMSans_700Bold',
-                            fontSize: RFValue(12)}}>Submit</Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
-            </TouchableWithoutFeedback>
-        </Screen>
-    </View>
+                    <Text
+                    style={styles.gray_text}
+                    >
+                        This app was created for you. We are continueously looking for ways to improve your experience. We'd love to hear your ideas!
+                    </Text>
+                </View>
+                    <TextInput 
+                    multiline={true}
+                    autoFocus={true}
+                    value={feedbackText}
+                    onChangeText={setFeedbackText}
+                    maxLength={250}
+                    style={styles.textbox}>
+                    </TextInput>
+                <TouchableOpacity style={feedbackText.trim() !== '' ? styles.submitbutton : [styles.submitbutton, styles.disabled]} 
+                onPress={handleSubmitFeedback}
+                activeOpacity={.7}>
+                    <Text style={{
+                        color: Colors.white, 
+                        fontFamily: 'DMSans_700Bold',
+                        fontSize: RFValue(12)}}>Submit</Text>
+                </TouchableOpacity>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white'
-    },
     feedback_title_container: {
         flexDirection: 'row',
         justifyContent: 'flex-start',

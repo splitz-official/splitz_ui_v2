@@ -77,7 +77,7 @@ const Edit_profile = () => {
     }
 
   return (
-    <Screen>
+    <Screen style={{backgroundColor: Colors.white}}>
         <TopLogo/>
         {editingprofile ? <View style={{height: RFPercentage(6)}}/> : <Back_button title={'Back'} onPress={()=>navigate('profile')}/>}
         {loading && <ActivityIndicator style={{position:'absolute', top: .5, bottom: .5, left: .5, right: .5}}size={'large'} color={Colors.primary}/>}

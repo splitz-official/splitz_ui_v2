@@ -19,11 +19,11 @@ function Owe_owed(props) {
         <View style={styles.container}>
             <TouchableOpacity style={styles.owe_owed_boxes} onPress={handleyouowepress} activeOpacity={.8}>
                     <Medium500Text style={styles.owe_owed_text}>You Owe:</Medium500Text>
-                    <Bold700Text style={styles.owed_owed_dollar_amount}>$51.72</Bold700Text>
+                    <Bold700Text style={styles.owed_owed_dollar_amount}>$0.00</Bold700Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.owe_owed_boxes} onPress={handleyoureowedpress} activeOpacity={.8}>
                     <Medium500Text style={styles.owe_owed_text}>You're Owed:</Medium500Text>
-                    <Bold700Text style={styles.owed_owed_dollar_amount}>$23.50</Bold700Text>
+                    <Bold700Text style={styles.owed_owed_dollar_amount}>$0.00</Bold700Text>
             </TouchableOpacity>
         </View>
     );

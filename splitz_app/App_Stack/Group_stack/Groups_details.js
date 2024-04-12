@@ -75,7 +75,7 @@ const Groups_details = () => {
         }
     }, [room_details]);
 
-    // members touchable is too wide. Adjust this later
+    // members and receipts touchable too wide. Adjust this later
 
     if (!room_details) {
         return (

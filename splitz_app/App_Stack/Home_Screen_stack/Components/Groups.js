@@ -25,7 +25,7 @@ const Groups = () => {
             }
             setTimeout(()=> {
                 setIsRefreshing(false);
-            }, 500)
+            }, 250)
         }
     };
 

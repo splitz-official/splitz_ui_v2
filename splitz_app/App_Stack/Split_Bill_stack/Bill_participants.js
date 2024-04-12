@@ -1,5 +1,5 @@
 import { FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -25,6 +25,8 @@ const Bill_participants = () => {
     const [search, setSearch] = useState('');
     const route = useRoute();
     console.log(route.params);
+
+    const participantInputRef = useRef();
 
     const [participants, setParticipants] = useState([]);
 
@@ -61,11 +63,15 @@ const Bill_participants = () => {
                         placeholder='Group, name, number...'
                         placeholderTextColor={Colors.textgray}
                         maxLength={25}
+                        ref={participantInputRef}
                         value={search}
                         onChangeText={setSearch}
                         autoFocus={true}
                         keyboardType='default'
-                        // onSubmitEditing={()=> addParticipant()}
+                        // onSubmitEditing={()=> {
+                        //     addParticipant()
+                        //     participantInputRef.current.focus();
+                        // }}
                         autoCorrect={false}
                         />
                         <TouchableOpacity style={{position: 'absolute', right: scale(20), bottom: scale(8),}} onPress={addParticipant}>
@@ -99,7 +105,7 @@ const Bill_participants = () => {
                 title={'Next'}
                 onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
                 /> */}
-                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_entry', {participants})}/>
+                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_entry', {participants})} disabled={participants.length === 0}/>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

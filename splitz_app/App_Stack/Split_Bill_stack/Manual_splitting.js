@@ -43,7 +43,7 @@ const Manual_splitting = () => {
                     <View style={styles.listItem}>
                         <Text style={[styles.itemText, {flex: 1.5}]}>{item.name}</Text>
                         <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
-                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}</Text>
+                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}/per</Text>
                     </View>
                 )}
                 style={{width: '100%', marginBottom: scale(100)}}
