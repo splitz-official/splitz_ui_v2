@@ -73,7 +73,7 @@ const Join_Group_screen = () => {
             <Large_green_button 
             title={'Join'}
             onPress={handleJoin}
-            disabled={id.trim() === ""}
+            disabled={id.trim().length !== 6}
             />
             </View>
         </KeyboardAvoidingView>

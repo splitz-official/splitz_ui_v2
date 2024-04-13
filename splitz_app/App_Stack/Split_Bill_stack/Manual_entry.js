@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import RNPickerSelect from 'react-native-picker-select';
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -35,6 +36,7 @@ const ManualEntry = () => {
                    .replace(/(\.\d{2})\d+/g, '$1');
     };
 
+    const quantities = Array.from({ length: 20 }, (_, i) => `${i + 1}`);
 
     useEffect(()=> {
             const subtotal = items.reduce((item_value, item) => item_value + (item.quantity * item.price), 0);
@@ -74,7 +76,7 @@ const ManualEntry = () => {
             <View style={{flex: 1}}>
                 <View style={styles.inputContainer}>
                     <TextInput 
-                        style={[styles.input, {flex: 2}]}
+                        style={[styles.input, {flex: 3}]}
                         placeholder="Item Name"
                         placeholderTextColor={Colors.textInputPlaceholder}
                         keyboardType='default'
@@ -85,8 +87,21 @@ const ManualEntry = () => {
                         returnKeyType='next'
                         onSubmitEditing={()=> quantityInputRef.current.focus()}
                         />
+                    {/* <TouchableOpacity style={[styles.input, {flex: 1}]}>
+                        <RNPickerSelect
+                            onValueChange={(value) => setItemQuantity(value)}
+                            items={[
+                                { label: '2', value: '2' },
+                                { label: '3', value: '3' },
+                                { label: '4', value: '4' },
+                            ]}
+                            style={{borderWidth: 1}}
+                            placeholder={{ label: "1", value: '1', color:Colors.black }}
+                        />
+                    </TouchableOpacity> */}
+
                     <TextInput 
-                        style={[styles.input, {flex: 1}]}
+                        style={[styles.input, {flex: .5}]}
                         ref={quantityInputRef}
                         placeholder="Quantity"
                         placeholderTextColor={Colors.textInputPlaceholder}
@@ -94,8 +109,17 @@ const ManualEntry = () => {
                         value={itemQuantity}
                         onChangeText={setItemQuantity}
                         />
+                    {/* <View style={[styles.input, {flex: 1, justifyContent: 'center'}]}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {quantities.map((qty, index) => (
+                                <TouchableOpacity key={index} style={styles.quantityButton} onPress={() => setItemQuantity(qty)}>
+                                    <Text style={styles.quantityText}>{qty}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View> */}
                     <TextInput 
-                        style={[styles.input, {flex: 1}]}
+                        style={[styles.input, {flex: 2}]}
                         placeholder="Price"
                         placeholderTextColor={Colors.textInputPlaceholder}
                         keyboardType="numeric"
@@ -150,9 +174,26 @@ const ManualEntry = () => {
                         </Text>
                     </View>
                 )}
-                <View style={{alignItems: 'center'}}>
-                    <Text style={styles.totalText}>Total: ${total}</Text>
-                </View>
+                    {tax && tip ? (
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={styles.tax_tip_text}>Tax and Tip included</Text>
+                        <Text style={styles.totalText}>Total: ${total}</Text>
+                    </View>
+                    ) : tax ? (
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={styles.tax_tip_text}>Tax included</Text>
+                        <Text style={styles.totalText}>Total: ${total}</Text>
+                    </View>
+                    ): tip ? (
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={styles.tax_tip_text}>Tip included</Text>
+                        <Text style={styles.totalText}>Total: ${total}</Text>
+                    </View>
+                    ):(
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={styles.totalText}>Total: ${total}</Text>
+                    </View>
+                    )}
                 <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
             </View>
             </TouchableWithoutFeedback>
@@ -202,6 +243,14 @@ const styles = StyleSheet.create({
         color: Colors.primary,
         textAlign: 'center',
         position: 'absolute',
+        bottom: scale(65),
+    },
+    tax_tip_text: {
+        fontFamily: 'DMSans_700Bold',
+        fontSize: RFValue(10),
+        color: Colors.primary,
+        position: 'absolute',
+        left: scale(25),
         bottom: scale(65),
     }
 });

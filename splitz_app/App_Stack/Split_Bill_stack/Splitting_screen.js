@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -11,12 +11,39 @@ import Colors from '../../../Config/Colors';
 import Large_green_button from '../../../Components/Large_green_button';
 import { items } from '../../../placeholder_data';
 
-const Manual_splitting = () => {
+const Splitting_Screen = () => {
 
     const navigation = useNavigation();
     const route = useRoute();
-    console.log(route.params);
+    // console.log(route.params);
     const {participants, total, items, tax, tip} = route.params;
+
+    const [selectedParticipant, setSelectedParticipant] = useState();
+    const [participantItems, setParticipantItems] = useState({});
+    console.log(selectedParticipant);
+
+    const calculateParticipantTotal = (participant) => {
+        const items = participantItems[participant] || [];
+        return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    };
+
+
+    const handleSelectItem = (item) => {
+        if (!selectedParticipant) return; 
+    
+        const existingItems = participantItems[selectedParticipant] || [];
+        if (existingItems.find(i => i.name === item.name)) {
+            setParticipantItems({
+                ...participantItems,
+                [selectedParticipant]: existingItems.filter(i => i.name !== item.name)
+            });
+        } else {
+            setParticipantItems({
+                ...participantItems,
+                [selectedParticipant]: [...existingItems, item]
+            });
+        }
+    };
 
   return (
     <Screen>
@@ -27,9 +54,12 @@ const Manual_splitting = () => {
                 data={participants}
                 keyExtractor={(item, index) => index.toString()}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.members_list_item}>
-                        <Text style={{padding: scale(5), fontFamily: 'DMSans_400Regular', fontSize: RFValue(14)}}>{item}</Text>
+                    <TouchableOpacity style={[styles.members_list_item, selectedParticipant === item ? styles.selected : {borderColor: 'gray', backgroundColor: Colors.lightgray}]}
+                    onPress={()=> setSelectedParticipant(prev => prev === item ? null : item)}
+                    >
+                        <Text style={[styles.members_item_text, selectedParticipant === item ? styles.members_selected_item_text : {color: Colors.mediumgray}]}>{item}</Text>
                     </TouchableOpacity>
                 )}
                 />
@@ -40,17 +70,24 @@ const Manual_splitting = () => {
                 data={items}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.listItem}>
+                    <TouchableOpacity style={[styles.listItem, participantItems[selectedParticipant]?.find(i => i.name === item.name) ? styles.selected : {}]}
+                    onPress={()=> handleSelectItem(item)}
+                    >
                         <Text style={[styles.itemText, {flex: 1.5}]}>{item.name}</Text>
                         <Text style={[styles.itemText, {flex: 1}]}>({item.quantity})</Text>
-                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}/per</Text>
-                    </View>
+                        <Text style={[styles.itemText, {flex: 1}]}>${item.price}/ea</Text>
+                    </TouchableOpacity>
                 )}
                 style={{width: '100%', marginBottom: scale(100)}}
                 />
             </View>
         <View style={{alignItems: 'center'}}>
-            <Text style={styles.totalText}>Total: ${total}</Text>
+            {selectedParticipant ? (
+                <Text style={styles.totalText}>Total for {selectedParticipant}: ${calculateParticipantTotal(selectedParticipant).toFixed(2)}</Text>
+            ) : (
+                <Text style={styles.totalText}>Total: ${total}</Text>
+            )}
+
         </View>
         <Large_green_button title={'Finish Splitting'}/>
     </Screen>
@@ -105,6 +142,20 @@ const styles = StyleSheet.create({
         fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(14),
     },
+    selected: {
+        borderColor: Colors.primary,
+        borderWidth: 2,
+        backgroundColor: '#C1EBCD'
+    },
+    members_item_text: {
+        padding: scale(5), 
+        fontFamily: 'DMSans_400Regular', 
+        fontSize: RFValue(14)
+    },
+    members_selected_item_text: {
+        fontFamily: 'DMSans_500Medium',
+        fontSize: RFValue(16)
+    }
 })
 
-export default Manual_splitting
+export default Splitting_Screen

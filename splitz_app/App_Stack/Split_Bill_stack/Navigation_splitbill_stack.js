@@ -4,7 +4,7 @@ import Take_pic from "./Take_Picture";
 import Bill_participants from "./Bill_participants";
 import Upload_take_photo from "./Upload_take_photo";
 import Manual_entry from "./Manual_entry";
-import Manual_splitting from "./Manual_splitting";
+import Splitting_Screen from "./Splitting_screen";
 
 
 
@@ -32,8 +32,8 @@ function SplitBillGroup() {
             component={Manual_entry}
             />
             <SplitBillStack.Screen 
-            name="Manual_splitting"
-            component={Manual_splitting}
+            name="Splitting_screen"
+            component={Splitting_Screen}
             />
 
         </SplitBillStack.Navigator>
