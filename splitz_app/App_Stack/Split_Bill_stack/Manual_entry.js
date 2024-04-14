@@ -194,7 +194,7 @@ const ManualEntry = () => {
                         <Text style={styles.totalText}>Total: ${total}</Text>
                     </View>
                     )}
-                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_splitting', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
+                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Quick_split', {participants, items, tax, tip, total})} disabled={items.length === 0}/>
             </View>
             </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     },
     totalText: {
         fontFamily: 'DMSans_700Bold',
-        fontSize: RFValue(16),
+        fontSize: RFValue(18),
         color: Colors.primary,
         textAlign: 'center',
         position: 'absolute',
@@ -247,11 +247,10 @@ const styles = StyleSheet.create({
     },
     tax_tip_text: {
         fontFamily: 'DMSans_700Bold',
-        fontSize: RFValue(10),
+        fontSize: RFValue(8),
         color: Colors.primary,
         position: 'absolute',
-        left: scale(25),
-        bottom: scale(65),
+        bottom: scale(85),
     }
 });
 

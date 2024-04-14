@@ -5,6 +5,8 @@ import Bill_participants from "./Bill_participants";
 import Upload_take_photo from "./Upload_take_photo";
 import Manual_entry from "./Manual_entry";
 import Splitting_Screen from "./Splitting_screen";
+import Quick_split from "./Quick_split";
+import Final_totals from "./Final_totals";
 
 
 
@@ -34,6 +36,14 @@ function SplitBillGroup() {
             <SplitBillStack.Screen 
             name="Splitting_screen"
             component={Splitting_Screen}
+            />
+            <SplitBillStack.Screen 
+            name="Quick_split"
+            component={Quick_split}
+            />
+            <SplitBillStack.Screen 
+            name="Final_Totals"
+            component={Final_totals}
             />
 
         </SplitBillStack.Navigator>

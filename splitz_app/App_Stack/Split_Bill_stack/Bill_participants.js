@@ -97,6 +97,7 @@ const Bill_participants = () => {
                         }
                         style={styles.participants_list}
                         />
+                        //Flat list is gonna warn if two people have the same name. Fix in the future
                     ): (
                         <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends!</Text>
                     )}

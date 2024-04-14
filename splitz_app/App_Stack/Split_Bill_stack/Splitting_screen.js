@@ -20,13 +20,20 @@ const Splitting_Screen = () => {
 
     const [selectedParticipant, setSelectedParticipant] = useState();
     const [participantItems, setParticipantItems] = useState({});
-    console.log(selectedParticipant);
+    console.log("Selected Participant:", selectedParticipant);
+    console.log("Participant Items:", participantItems)
+
+    const [itemSelections, setItemSelections] = useState(
+        items.reduce((acc, item) => {
+            acc[item.name] = { ...item, selectedBy: [] };
+            return acc;
+        }, {})
+    );
 
     const calculateParticipantTotal = (participant) => {
         const items = participantItems[participant] || [];
         return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     };
-
 
     const handleSelectItem = (item) => {
         if (!selectedParticipant) return; 
@@ -83,7 +90,7 @@ const Splitting_Screen = () => {
             </View>
         <View style={{alignItems: 'center'}}>
             {selectedParticipant ? (
-                <Text style={styles.totalText}>Total for {selectedParticipant}: ${calculateParticipantTotal(selectedParticipant).toFixed(2)}</Text>
+                <Text style={styles.totalText}>{selectedParticipant}'s Total': ${calculateParticipantTotal(selectedParticipant).toFixed(2)}</Text>
             ) : (
                 <Text style={styles.totalText}>Total: ${total}</Text>
             )}
@@ -115,9 +122,8 @@ const styles = StyleSheet.create({
     items_container: {
         alignItems: 'center',
         padding: scale(10),
-        flex: 1, 
-        // borderWidth: 1,
-        borderColor: 'pink'
+        flex: 1,
+        borderWidth: 1
     },
     totalText: {
         fontFamily: 'DMSans_700Bold',
