@@ -7,6 +7,7 @@ import Manual_entry from "./Manual_entry";
 import Splitting_Screen from "./Splitting_screen";
 import Quick_split from "./Quick_split";
 import Final_totals from "./Final_totals";
+import Receipt_items from "./Receipt_items";
 
 
 
@@ -44,6 +45,10 @@ function SplitBillGroup() {
             <SplitBillStack.Screen 
             name="Final_Totals"
             component={Final_totals}
+            />
+            <SplitBillStack.Screen 
+            name="Receipt_items"
+            component={Receipt_items}
             />
 
         </SplitBillStack.Navigator>

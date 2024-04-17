@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal, TextInput, Button, Touchable } from 'react-native';
 import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,6 +11,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 import Screen from '../../../Components/Screen';
@@ -19,11 +20,15 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import Large_button from './Components/Large_button';
 import TopLogo from '../../../Components/TopLogo';
 import { useAxios } from '../../../Axios/axiosContext';
+import LinearGradient_background from '../../../Components/LinearGradient_background';
+import Back_button from '../../../Components/Back_button';
+import { scale } from 'react-native-size-matters';
+import User_list_item from './Components/User_list_item';
 
 
 function Profile(props) {
-    const { navigate } = useNavigation();
-    const { userData } = useAxios();
+    const navigation = useNavigation();
+    const { userData, axiosInstance } = useAxios();
     // console.log("From Profile.js: " + userData)
 
     const name = userData.name;
@@ -31,7 +36,13 @@ function Profile(props) {
     // const [profile_pic, SetProfile_pic] = useState(false);
     
     const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
-    const [modalVisible, setModalVisible] = useState(false);
+    const [logoutmodalVisible, setLogoutModalVisible] = useState(false);
+    const [friendmodalVisible, setFriendModalVisible] = useState(false);
+    const [friendSearch, setFriendSearch] = useState('');
+    const [usersList, setUsersList] = useState([]);
+    const [filterdUsers, setFilteredUsers] = useState([]);
+
+    const userListSearchRef = useRef();
     
 
     const logout = async () => {
@@ -39,24 +50,48 @@ function Profile(props) {
             await SecureStore.deleteItemAsync('access_token');
             setModalVisible(false)
             axiosInstance.setAuthToken('');
-            navigate('Landing_Screen');
+            navigation.navigate('Landing_Screen');
         } catch (error) {
             console.error('Logout error:', error);
         }
     };
 
+    useEffect(() => {
+        if (friendmodalVisible) {
+            fetchFriends();
+        }
+    }, [friendmodalVisible]);
+
+    const fetchFriends = async () => {
+        try {
+            const response = await axiosInstance.get('/user/list');
+            setUsersList(response.data);
+            setFilteredUsers(response.data);
+            // console.log(response.data)
+        } catch (error) {
+            console.error('Failed to fetch friends:', error);
+        }
+    };
+
+    useEffect(() => {
+        const filterUsers = () => {
+            const filtered = usersList.filter(user => {
+                return user.name.toLowerCase().includes(friendSearch.toLowerCase()) ||
+                       user.username.toLowerCase().includes(friendSearch.toLowerCase());
+            });
+            setFilteredUsers(filtered);
+        };
+        filterUsers();
+    }, [friendSearch, usersList]);
+
     return (
-        <LinearGradient colors={['#005D1A','#C1EBCD']} 
-        start={{ x: 0.5, y: 1 }}
-        end={{ x: .5, y: 0 }}
-        style={{flex:1}}>
-            <Screen>
+        <LinearGradient_background>
                 <TopLogo/>
                 <View style={styles.top_icon_container}>
-                    <TouchableOpacity  onPress={() => setModalVisible(true)} activeOpacity={.3}>
+                    <TouchableOpacity  onPress={() => setLogoutModalVisible(true)} activeOpacity={.5}>
                         <AntDesign name="logout" size={RFValue(16)} color="red" />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={.8} style={styles.add_friend_icon}>
+                    <TouchableOpacity onPress={() => setFriendModalVisible(true)} activeOpacity={.5} style={styles.add_friend_icon}>
                         <Feather name="user-plus" size={RFValue(18)} color="black" />
                     </TouchableOpacity>
                 </View>
@@ -64,7 +99,7 @@ function Profile(props) {
                     <ProfilePicture 
                     isPicture={false}
                     user={name}
-                    requirePicture={require('../../../placeholder_images/Rainer.png')}
+                    // requirePicture={}
                     width={RFPercentage(15)}
                     height={RFPercentage(15)}
                     pictureStyle={{
@@ -85,29 +120,27 @@ function Profile(props) {
                 </View>
                 <View style={styles.bottom_container}>
                     <Large_button 
-                    onPress={()=>navigate('edit_profile')}
+                    onPress={()=>navigation.navigate('edit_profile')}
                     Iconcomponent={<MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Edit Profile'}/>
                     <Large_button
-                    onPress={()=>navigate('settings')}
+                    onPress={()=>navigation.navigate('settings')}
                     Iconcomponent={<Ionicons name="settings-sharp" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Settings'}/>
                     <Large_button 
                     Iconcomponent={<Feather name="share" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
-                    onPress={()=>navigate('feedback')}
+                    onPress={()=>navigation.navigate('feedback')}
                     Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
                 </View>
-
-            </Screen>
                 <Modal
                     animationType="fade"
                     transparent={true}
-                    visible={modalVisible}
+                    visible={logoutmodalVisible}
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        setLogoutModalVisible(!logoutmodalVisible);
                     }}
                 >
                     <View style={styles.modal_centeredView}>
@@ -121,7 +154,7 @@ function Profile(props) {
                             <View style={styles.modal_buttonsContainer}>
                                 <TouchableOpacity
                                     style={[styles.modal_buttons]}
-                                    onPress={() => setModalVisible(!modalVisible)}
+                                    onPress={() => setLogoutModalVisible(!logoutmodalVisible)}
                                 >
                                     <Text style={styles.modal_text}>No, stay in</Text>
                                 </TouchableOpacity>
@@ -130,11 +163,11 @@ function Profile(props) {
                                     onPress={async () => {
                                         try {
                                             await SecureStore.deleteItemAsync('access_token');
-                                            navigate('Landing_Screen');
+                                            navigation.navigate('Landing_Screen');
                                         } catch (error) {
                                             console.error('Logout error:', error);
                                         }
-                                        setModalVisible(!modalVisible);
+                                        setLogoutModalVisible(!logoutmodalVisible);
                                     }}
                                 >
                                     <Text style={styles.modal_text}>Yes, logout</Text>
@@ -143,7 +176,44 @@ function Profile(props) {
                         </View>
                     </View>
                 </Modal>
-        </LinearGradient>
+                <Modal
+                animationType="slide"
+                transparent={true}
+                visible={friendmodalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!friendmodalVisible);
+                }}
+                >
+                    <Screen>
+                        <Back_button onPress={()=> setFriendModalVisible(false)}/>
+                        <View style={{flex: 1, marginHorizontal: '6%'}}>
+                            <TouchableOpacity onPress={()=> userListSearchRef.current.focus()} activeOpacity={1} style={styles.friend_search_input_container}>
+                                <FontAwesome name="search" size={scale(20)} color={Colors.primary} />
+                                <TextInput 
+                                style = {styles.friend_search_input}
+                                placeholder='Name, @username'
+                                placeholderTextColor={Colors.textgray}
+                                maxLength={25}
+                                value={friendSearch}
+                                onChangeText={setFriendSearch}
+                                autoFocus={true}
+                                keyboardType='default'
+                                autoCorrect={false}
+                                ref={userListSearchRef}
+                                />
+                            </TouchableOpacity>
+                            <FlatList 
+                            data={filterdUsers}
+                            keyExtractor={(item) => item.id.toString()}
+                            style={styles.usersList}
+                            renderItem={({ item }) => (
+                                <User_list_item name={item.name} username={item.username}/>
+                            )}
+                            />
+                        </View>
+                    </Screen>
+                </Modal>
+        </LinearGradient_background>
     );
 }
 
@@ -238,6 +308,28 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: RFValue(12),
         fontFamily: 'DMSans_500Medium'
+    },
+    friend_modal: {
+        flex: 1,
+    },
+    friend_search_input_container: {
+        borderWidth: 1,
+        padding: scale(10),
+        borderRadius: 25,
+        borderColor: Colors.primary,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginHorizontal: '5%',
+        marginTop: '5%'
+    },
+    friend_search_input: {
+        marginLeft: scale(10),
+        fontSize: RFValue(12),
+        fontFamily: 'DMSans_400Regular',
+    },
+    usersList: {
+        flex: 1,
+        marginTop: scale(20)
     }
 })
 

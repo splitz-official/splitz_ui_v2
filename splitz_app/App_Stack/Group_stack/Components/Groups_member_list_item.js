@@ -33,12 +33,14 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(14),
+        fontSize: RFValue(12),
         color: Colors.black,
         marginTop: scale(5)
     },
     subtitle: {
-        fontFamily: 'DMSans_400Regular'
+        fontFamily: 'DMSans_400Regular',
+        fontSize: RFValue(10),
+        color: Colors.textgray
     }
 })
 

@@ -56,7 +56,7 @@ const Bill_participants = () => {
                 <View style={{flex: 1}}>
                 <View style={styles.bottom_container}>
                     <Text style={styles.title_text}>Bill Participants</Text>
-                    <Text style={styles.subtitle_text}>Find People on Splitz</Text>
+                    <Text style={styles.subtitle_text}>Add</Text>
                     <View style={styles.inputContainer}>
                         <TextInput 
                         style={styles.textInput}

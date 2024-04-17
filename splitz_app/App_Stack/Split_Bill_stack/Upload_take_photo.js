@@ -23,7 +23,7 @@ const Upload_take_photo = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const {room_code} = route.params;
-    console.log("Room Code from route.params:" , room_code);
+    // console.log("Room Code from route.params:" , room_code);
     // console.log(route.params);
 
     const [receiptname, setReceiptName] = useState('');
@@ -117,7 +117,7 @@ const Upload_take_photo = () => {
             console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
             // setImage(pickerResult.assets[0].uri);
-            console.log("From uploadPress, imageset");
+            console.log("From uploadPress, imageset", selectedImage);
 
             if (room_code) {
                 const formData = new FormData();
@@ -127,16 +127,12 @@ const Upload_take_photo = () => {
                     name: "receipt.jpg"
                 });
                 axiosInstanceMultipart
-                .post(`/receipts/${room_code}/upload-receipt`, formData)
+                .post(`/receipts/upload-receipt`, {formData, room_code: room_code})
+                // .post(`/receipts/${room_code}/upload-receipt`, formData)
                 .then((response) => {
                     res = response.data;
-                    navigation.navigate('Receipt_details_stack', {
-                        screen: 'Receipt_details',
-                        params: {
-                            receipt: res,
-                            room_code: room_code
-                        }
-                    })
+                    console.log("Upload receipt response status:" , response.status)
+                    navigation.navigate('Receipt_items', { receipt: res, room_code})
                 }).catch((error) => {
                     console.log("Error:", error.response ? error.response.data : error.message);
                 }).finally(()=> {
@@ -164,7 +160,7 @@ const Upload_take_photo = () => {
                 <TextInput 
                     style={styles.text_input}
                     placeholder={`What's this for?`}
-                    placeholderTextColor={Colors.placeholderTextColor}
+                    placeholderTextColor={Colors.textInputPlaceholder}
                     maxLength={20}
                     value={receiptname}
                     onChangeText={setReceiptName}

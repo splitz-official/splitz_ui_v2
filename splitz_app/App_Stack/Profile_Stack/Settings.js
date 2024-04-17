@@ -12,7 +12,7 @@ const Settings = () => {
 
   return (
     <Screen>
-        <TopLogo/>
+        {/* <TopLogo/> */}
         <Back_button title={'Back'} onPress={()=>navigate('profile')}/>
         <View style={styles.container}>
             <Text style={styles.title}>Settings</Text>

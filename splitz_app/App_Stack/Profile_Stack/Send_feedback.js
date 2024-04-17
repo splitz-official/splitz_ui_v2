@@ -34,7 +34,7 @@ const Send_feedback = () => {
             Keyboard.dismiss();
         }}>
             <KeyboardAvoidingView>
-                <TopLogo/>
+                {/* <TopLogo/> */}
                 <Back_button 
                 onPress={()=> navigate('profile')}
                 title={'Back'}

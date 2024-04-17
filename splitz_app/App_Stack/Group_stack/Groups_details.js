@@ -20,6 +20,7 @@ const Groups_details = () => {
     const { axiosInstance } = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
+    // console.log(route.params)
     const { room_code } = route.params;
     const [room_details, setRoom_Details] = useState(null);
 
@@ -51,6 +52,7 @@ const Groups_details = () => {
         try {
             const response = await axiosInstance.get(`/room/members/${room_details.id}`);
             setMembers(response.data);
+            // console.log(response.data)
         } catch (error) {
             console.error('Failed to fetch room members:', error);
         }
@@ -59,7 +61,9 @@ const Groups_details = () => {
     const fetchRoomReceipts = async () => {
         // console.log("Fetching Room Receipts");
         try {
+            // console.log("Fetching room receipts")
             const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
+            console.log("Fetching room receipts reponse status:", response.status)
             setReceipts(response.data);
         } catch (error) {
             console.error('Failed to fetch room receipts', error);
@@ -122,8 +126,8 @@ const Groups_details = () => {
                         style={styles.members_list}
                         renderItem={({ item }) =>
                             <Groups_member_list_item 
-                            title={item.id}
-                            subtitle={item.phone_number}
+                            title={item.name}
+                            subtitle={`@${item.username}`}
                             />
                         }
                     />

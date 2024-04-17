@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(8),
         color: Colors.primary,
         position: 'absolute',
-        bottom: scale(85),
+        bottom: scale(90),
     }
 });
 

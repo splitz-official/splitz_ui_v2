@@ -32,10 +32,11 @@ const Final_totals = () => {
         return (participantTotal + participantTaxAndTip).toFixed(2);
     };
 
+    //Fix nan when no tax and tip are inputted 
     return (
         <Screen>
             <Back_button title={'Back'} onPress={() => navigation.goBack()} />
-            <Text style={styles.title}>Final Totals</Text>
+            <Text style={styles.title}>Participant Totals</Text>
             <FlatList
                 data={participants}
                 keyExtractor={(item, index) => item + index}
@@ -45,9 +46,9 @@ const Final_totals = () => {
                         <Text style={styles.participantTotal}>${calculateParticipantTotal(item)}</Text>
                     </View>
                 )}
-                ListHeaderComponent={() => (
-                    <Text style={styles.header}>Participants' Totals</Text>
-                )}
+                // ListHeaderComponent={() => (
+                //     <Text style={styles.header}>Participants' Totals</Text>
+                // )}
             />
         </Screen>
     );

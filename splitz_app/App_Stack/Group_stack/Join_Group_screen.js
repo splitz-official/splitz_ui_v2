@@ -46,7 +46,7 @@ const Join_Group_screen = () => {
                     <TextInput 
                         style={styles.group_id_pass_input}
                         placeholder='Bill/Group ID'
-                        placeholderTextColor={Colors.placeholderTextColor}
+                        placeholderTextColor={Colors.textInputPlaceholder}
                         maxLength={20}
                         value={id}
                         onChangeText={setId}
