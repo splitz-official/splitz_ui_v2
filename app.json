@@ -7,9 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splitzlogo2.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#005D1A"
+      "image": "./assets/splash.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "cover"
     },
     "assetBundlePatterns": [
       "**/*"

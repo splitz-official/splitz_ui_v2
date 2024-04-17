@@ -48,8 +48,8 @@ function Profile(props) {
     const logout = async () => {
         try {
             await SecureStore.deleteItemAsync('access_token');
-            setModalVisible(false)
             axiosInstance.setAuthToken('');
+            setModalVisible(false)
             navigation.navigate('Landing_Screen');
         } catch (error) {
             console.error('Logout error:', error);

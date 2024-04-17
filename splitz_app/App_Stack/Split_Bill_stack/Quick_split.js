@@ -50,7 +50,7 @@ const Splitting_Screen = () => {
     };
 
     return (
-        <Screen style={{backgroundColor: Colors.white}}>
+        <Screen>
             <Back_button title={'Back'} onPress={() => navigation.goBack()} />
             <View style={styles.members_container}>
                 <Text style={styles.titles}>Members</Text>
