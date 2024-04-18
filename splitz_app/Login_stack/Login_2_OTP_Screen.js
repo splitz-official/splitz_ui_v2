@@ -17,7 +17,7 @@ import { useAxios } from '../../Axios/axiosContext'
 const Login_2_OTP_Screen = ({ route }) => {
     console.log("Login Stack: OTP Screen")
 
-    const { axiosInstance } = useAxios();
+    const { axiosInstance, setUpdateCount, setToken, setUserData } = useAxios();
     const { phone_number } = route.params;
     const { navigate } = useNavigation();
     const [code, setCode] = useState("");
@@ -57,12 +57,15 @@ const Login_2_OTP_Screen = ({ route }) => {
             // console.log(access_token)
             await SecureStore.setItemAsync("access_token", res.data.access_token);
             axiosInstance.setAuthToken(access_token);
+            setToken(access_token)
             axiosInstance.get(`/user/`)
             .then((res) => {
-                if (!res.data.name) {510
+                if (!res.data.name) {
                     navigate("Username_Input_Screen");
                 } else {
-                    console.log("Logged Name: " + res.data.name, "Logged Username: " + res.data.username);
+                    // console.log("Logged Name: " + res.data.name, "Logged Username: " + res.data.username);
+                    // console.log(res.data);
+                    setUserData(res.data);
                     navigate("Bottom_Tab_Home_Navigator");
                 }
             })

@@ -126,12 +126,14 @@ const Upload_take_photo = () => {
                     type: "image/jpeg",
                     name: "receipt.jpg"
                 });
+                formData.append("room_code", room_code)
+                //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
                 axiosInstanceMultipart
-                .post(`/receipts/upload-receipt`, {formData, room_code: room_code})
+                .post(`/receipts/upload-receipt`, formData)
                 // .post(`/receipts/${room_code}/upload-receipt`, formData)
                 .then((response) => {
                     res = response.data;
-                    console.log("Upload receipt response status:" , response.status)
+                    // console.log("Upload receipt response status:" , response.status)
                     navigation.navigate('Receipt_items', { receipt: res, room_code})
                 }).catch((error) => {
                     console.log("Error:", error.response ? error.response.data : error.message);

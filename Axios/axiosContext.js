@@ -63,7 +63,7 @@ export const AxiosProvider = ({ children }) => {
 
 
   return (
-    <AxiosContext.Provider value={{ axiosInstanceMultipart, axiosInstance, token, userData, setUpdateCount, initializing}}>
+    <AxiosContext.Provider value={{ axiosInstanceMultipart, axiosInstance, token, userData, setUpdateCount, initializing, setToken, setUserData}}>
       {children}
     </AxiosContext.Provider>
   );

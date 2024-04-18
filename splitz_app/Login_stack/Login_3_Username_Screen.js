@@ -17,7 +17,7 @@ const Login_3_Username_Screen = ({ route }) => {
     const { baseURL } = route.params;
     const { navigate } = useNavigation();
 
-    const { axiosInstance } = useAxios();
+    const { axiosInstance, setUserData } = useAxios();
     const [name, setName] = useState("");
     const [username, setUsername] = useState('');
     const nameInputRef = useRef(null);
@@ -36,8 +36,9 @@ const Login_3_Username_Screen = ({ route }) => {
         axiosInstance
         .put(`/user/update`, data)
         .then((response) => {
-            console.log(response.data);
-            alert("Update Success!");
+            // console.log(response.data);
+            // alert("Update Success!");
+            setUserData(response.data);
             navigate("Bottom_Tab_Home_Navigator");
         })
         .catch((error) => {

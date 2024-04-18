@@ -63,7 +63,8 @@ const Groups_details = () => {
         try {
             // console.log("Fetching room receipts")
             const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
-            console.log("Fetching room receipts reponse status:", response.status)
+            console.log("Fetching room receipts reponse status:", response, response.status);
+            console.log(response.data)
             setReceipts(response.data);
         } catch (error) {
             console.error('Failed to fetch room receipts', error);
