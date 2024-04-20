@@ -15,7 +15,7 @@ function CreateGroupStackGroup({}) {
     return (
         <CreateGroupStack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName='home'>
+        >
             <CreateGroupStack.Screen 
             name='Create_group_screen'
             component={Create_Group_screen}/>

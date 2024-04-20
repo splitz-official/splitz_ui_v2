@@ -8,6 +8,7 @@ import Splitting_Screen from "./Splitting_screen";
 import Quick_split from "./Quick_split";
 import Final_totals from "./Final_totals";
 import Receipt_items from "./Receipt_items";
+import CreateGroupStackNavigation from "../Group_stack/Navigation_create_group_stack";
 
 
 
@@ -50,7 +51,6 @@ function SplitBillGroup() {
             name="Receipt_items"
             component={Receipt_items}
             />
-
         </SplitBillStack.Navigator>
     )
 }

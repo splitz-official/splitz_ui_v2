@@ -84,7 +84,7 @@ const Join_Group_screen = () => {
 const styles = StyleSheet.create({
     container: {
         marginHorizontal: "6%",
-        marginTop: "35%",
+        marginTop: "25%",
         flex: 1,
         // maxHeight: scale(100),
         // borderWidth: 1

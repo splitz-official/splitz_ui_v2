@@ -1,5 +1,5 @@
-import { FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -11,11 +11,15 @@ import Screen from '../../../Components/Screen';
 import Back_button from '../../../Components/Back_button';
 import Colors from '../../../Config/Colors';
 import Large_green_button from '../../../Components/Large_green_button';
+import { useAxios } from '../../../Axios/axiosContext';
+import Participants_list_item from './Components/Participants_list_item';
+
 
 
 //TODO:
 //ADD GRID LIST WHEN FRIENDS ARE ADDED
 //ADD FILTERING OF LIST WHEN FRIENDS ARE ADDED
+//Add user as default participant
 //ADD QR FUNCTIONALITY WHEN AVAILABLE
 //think about how to add friends. Need endpoint to add others to your room
 
@@ -23,23 +27,62 @@ const Bill_participants = () => {
 
     const navigation = useNavigation();
     const [search, setSearch] = useState('');
-    const route = useRoute();
-    console.log(route.params);
-
-    const participantInputRef = useRef();
-
+    const [userList, setUserList] = useState([]);
     const [participants, setParticipants] = useState([]);
+    const [filteredUserList, setFilteredUserList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const addParticipant = () => {
-        if (!search.trim()) return; 
-        setParticipants([...participants, search.trim()]);
-        setSearch(''); 
+    const {axiosInstance} = useAxios();
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setLoading(true);
+            try {
+                const response = await axiosInstance.get('/user/list');
+                setUserList(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.log("Error: ", err)
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    useEffect(() => {
+        const filterUsers = () => {
+            if (search.trim()) {
+                const filtered = userList.filter(user => {
+                    return (user.name?.toLowerCase().includes(search.toLowerCase()) ||
+                            user.username?.toLowerCase().includes(search.toLowerCase()));
+                });
+                setFilteredUserList(filtered);
+            } else {
+                setFilteredUserList([]); 
+            }
+        };
+        filterUsers();
+    }, [search, userList]); 
+    
+    
+
+    const addParticipant = (name) => {
+        if (!name.trim()) return;
+        setParticipants(prevParticipants => [...prevParticipants, name]);
+        setSearch('');
+        setFilteredUserList([]);
     };
 
     const removeParticipant = (index) => {
         const updatedParticipants = participants.filter((_, i) => i !== index);
         setParticipants(updatedParticipants);
     };
+
+    if (loading) {
+        return <ActivityIndicator size="large" color={Colors.primary} />;
+    }
+    
 
   return (
     <Screen>
@@ -49,7 +92,6 @@ const Bill_participants = () => {
         />
         <KeyboardAvoidingView
         behavior='height'
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         style={{flex: 1}}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -62,28 +104,27 @@ const Bill_participants = () => {
                         style={styles.textInput}
                         placeholder='Group, name, number...'
                         placeholderTextColor={Colors.textgray}
-                        maxLength={25}
-                        ref={participantInputRef}
                         value={search}
                         onChangeText={setSearch}
                         autoFocus={true}
                         keyboardType='default'
-                        // onSubmitEditing={()=> {
-                        //     addParticipant()
-                        //     participantInputRef.current.focus();
-                        // }}
                         autoCorrect={false}
+                        clearButtonMode='always'
                         />
-                        <TouchableOpacity style={{position: 'absolute', right: scale(20), bottom: scale(8),}} onPress={addParticipant}>
-                            <AntDesign name="pluscircleo" size={scale(20)} color={Colors.primary} />
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={styles.QR_Code} activeOpacity={.8} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
+                        </View>
+                    {filteredUserList.length > 0 && <FlatList 
+                    data={filteredUserList}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => 
+                        <Participants_list_item name={item.name} username={item.username}/>
+                    }
+                    />}
+                    <TouchableOpacity style={styles.QR_Code} activeOpacity={.5} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
                         <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
                         <Text style={styles.QR_text}> Scan QR Code</Text>
                     </TouchableOpacity>
                     <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
-                    {participants.length > 0 ? (
+                    {/* {participants.length > 0 ? (
                         <FlatList 
                         data={participants}
                         keyExtractor={(index) => index.toString()}
@@ -97,10 +138,9 @@ const Bill_participants = () => {
                         }
                         style={styles.participants_list}
                         />
-                        //Flat list is gonna warn if two people have the same name. Fix in the future
                     ): (
                         <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends!</Text>
-                    )}
+                    )} */}
                 </View>
                 {/* <Large_green_button 
                 title={'Next'}

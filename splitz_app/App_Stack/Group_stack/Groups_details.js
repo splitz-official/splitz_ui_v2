@@ -63,8 +63,7 @@ const Groups_details = () => {
         try {
             // console.log("Fetching room receipts")
             const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
-            console.log("Fetching room receipts reponse status:", response, response.status);
-            console.log(response.data)
+            // console.log("Fetching room receipts reponse status:", response, response.status);
             setReceipts(response.data);
         } catch (error) {
             console.error('Failed to fetch room receipts', error);
@@ -158,7 +157,7 @@ const Groups_details = () => {
         </View>
         <Large_green_button 
         text_style={{fontSize: RFValue(14)}}
-        title={"Add Bill"} 
+        title={"Split Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
             screen: 'upload_or_take_photo',
             params: { from: 'Group', room_code: room_code }
