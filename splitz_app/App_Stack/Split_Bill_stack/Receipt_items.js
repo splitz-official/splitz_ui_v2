@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -38,6 +38,7 @@ const Receipt_items = () => {
   const [total, setTotal] = useState('');
   const [receiptname, setReceiptName] = useState('');
   const [userCost, setUserCost] = useState(0);
+  const initialNameRef = useRef();
 
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState('');
@@ -65,6 +66,7 @@ const Receipt_items = () => {
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
         setTotal(response.data.total_amount);
+        initialNameRef.current=response.data.receipt_name;
         setReceiptName(response.data.receipt_name);
         setLoading(false);
       } catch (error) {
@@ -90,7 +92,12 @@ const Receipt_items = () => {
 }, [selectedItems, receipt.items]);
 
   if(loading) {
-    return <ActivityIndicator size={'large'} color={Colors.primary}/>
+    return (
+      <View style={styles.loading_container}>
+        <ActivityIndicator size={'large'} color={Colors.primary}/>
+        <Text style = {styles.loading_text}>Getting receipt data!</Text>
+      </View>
+  )
   }
 
   const handleItemPress = (item) => {
@@ -104,6 +111,18 @@ const Receipt_items = () => {
       });
     }
   };
+
+  const handleReceiptRename = async() => {
+    if (receiptname !== initialNameRef.current) {
+      console.log("names are different");
+      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+        receipt_name: receiptname
+      })
+      // console.log(response);
+    }else {
+      console.log("names are same")
+    }
+  }
 
   confirmSelectedItems = () => {
     console.log(selectedItems)
@@ -176,6 +195,11 @@ const Receipt_items = () => {
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
+            returnKeyType='done'
+            onSubmitEditing={()=> (
+              console.log("Name submitted, ", receiptname),
+              handleReceiptRename()
+            )}
             />
             <Picture_name_icon name={userData.name} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
@@ -323,6 +347,25 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_500Medium',
     color: Colors.primary,
     fontSize: RFValue(12)
+  },
+  loading_container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: 'transparent'
+    // borderWidth: 1
+  },
+  loading_text: {
+      fontFamily: 'DMSans_700Bold',
+      marginTop: scale(10),
+      color: Colors.primary,
+      fontSize: RFValue(16),
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      width: '80%',
+      textAlign: 'center'
+      // borderWidth: 1
   }
 })
 

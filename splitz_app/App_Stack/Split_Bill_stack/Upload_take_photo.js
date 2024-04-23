@@ -34,13 +34,11 @@ const Upload_take_photo = () => {
     const [loading, setLoading] = useState(false);
 
     const handleScanPress = async () => {
-        setLoading(true);
         console.log("Handle Scan Pressed")
         const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
 
         if (cameraPermission.granted === false) {
             Alert.alert("Access Denied, Please allow camera access to use this feature!");
-            setLoading(false);
             return;
         }
 
@@ -52,14 +50,13 @@ const Upload_take_photo = () => {
 
         if (pickerResult.canceled) {
             console.log("User canceled image pick");
-            setLoading(false);
             return;
         }
 
         if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
-            console.log(pickerResult.assets[0].uri);
+            setLoading(true);
+            // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
-            // setImage(pickerResult.assets[0].uri);
             console.log("From uploadPress, imageset", selectedImage);
 
             if (room_code) {
@@ -69,14 +66,19 @@ const Upload_take_photo = () => {
                     type: "image/jpeg",
                     name: "receipt.jpg"
                 });
+                // const json_data = {
+                //     room_code: room_code,
+                //     receipt_name: receiptname,
+                //     user_list: []
+                // }
+                // formData.append("data", JSON.stringify(json_data));
                 formData.append("room_code", room_code)
                 //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
                 axiosInstanceMultipart
                 .post(`/receipts/upload-receipt`, formData)
-                .then((response) => {
-                    axiosInstance.put(`/receipts/${room_code}/rename-receipt/${response.id}`, {receipt_name: receiptname})
-                    // console.log("Upload receipt response status:" , response.status)
-                    navigation.navigate('Receipt_items', { receipt_id: response.data.receipt_id, room_code: response.data.room_code})
+                .then((uploadresponse) => {
+                    console.log("From Scan press, Upload successful: ", uploadresponse.data);
+                    navigation.navigate('Receipt_items', { receipt_id: uploadresponse.data.receipt_id, room_code: uploadresponse.data.room_code})
                 }).catch((error) => {
                     console.log("Error:", error.response ? error.response.data : error.message);
                 }).finally(()=> {
@@ -113,9 +115,9 @@ const Upload_take_photo = () => {
         
         if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
             setLoading(true);
-            console.log(pickerResult.assets[0].uri);
+            // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
-            console.log("From uploadPress, imageset", selectedImage);
+            // console.log("From uploadPress, imageset", selectedImage);
 
             if (room_code) {
                 const formData = new FormData();
@@ -134,7 +136,7 @@ const Upload_take_photo = () => {
                 axiosInstanceMultipart
                 .post(`/receipts/upload-receipt`, formData)
                 .then((uploadresponse) => {
-                    console.log("Upload successful: ", uploadresponse.data);
+                    console.log("From upload image press, Upload successful: ", uploadresponse.data);
                     return axiosInstance.put(`/receipts/${room_code}/rename-receipt/${uploadresponse.data.id}`, {
                         receipt_name: receiptname
                     }).then(() => {

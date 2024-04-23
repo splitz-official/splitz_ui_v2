@@ -8,6 +8,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../../../Config/Colors'
 
 const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing}) => {
+
+    const truncate = (text, maxLength) => {
+        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    };
+
   return (
     <TouchableOpacity activeOpacity={.8} style={[styles.container, isSelected ? styles.selected : {}]} onPress={onPress}>
         {/* <View style={{position: 'absolute', right: 2}}>
@@ -15,7 +20,7 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={[styles.checkbox, isSelected ? styles.selectedbox: {}]}/>
-            <Text style={styles.name}>{name} {quantity}</Text>
+            <Text style={styles.name}>{truncate(name, 15)} {quantity}</Text>
         </View>
         <Text style={styles.price}>{price}</Text>
         <Text style={styles.participants}>{participants}</Text>

@@ -50,6 +50,7 @@ function Profile(props) {
             const response = await axiosInstance.post(`/user/add-friend`, {
                 friend_id: userID
             });
+            fetchFriends();
             console.log("Friend added");
         } catch (error) {
             console.log("Error: ", error);
