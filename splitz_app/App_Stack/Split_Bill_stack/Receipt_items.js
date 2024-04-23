@@ -183,6 +183,7 @@ const Receipt_items = () => {
               data={receipt.items}
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
+              horizontal={false}
               contentContainerStyle={{justifyContent: 'center'}}
               renderItem={({ item }) => 
                 <Receipt_items_list_component 
@@ -221,7 +222,7 @@ const Receipt_items = () => {
               </View>
             </> 
             )
-          :
+            :
             (
               <>
               <View style={styles.tax_tip_container}>
@@ -234,8 +235,8 @@ const Receipt_items = () => {
               </View>
             </> 
             )
-          }
-            </View>
+            }
+          </View>
         </View>
       </TouchableWithoutFeedback>
       <Large_green_button title={"Submit"} onPress={confirmSelectedItems}/>

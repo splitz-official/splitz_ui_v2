@@ -30,18 +30,21 @@ const styles = StyleSheet.create({
         borderRadius: scale(15),
         paddingHorizontal: scale(25),
         height: verticalScale(45),
+        maxWidth: '100%',
         minWidth: '100%',
         marginVertical: verticalScale(3),
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     name: {
         fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(14)
+        fontSize: RFValue(14),
+        // borderWidth: 1
     },
     price: {
         fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(22),
+        // borderWidth: 1
     },
     selected: {
         backgroundColor: Colors.button_fill_green
