@@ -2,11 +2,17 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { RFValue } from 'react-native-responsive-fontsize'
+
+import { MaterialIcons } from '@expo/vector-icons';
+
 import Colors from '../../../../Config/Colors'
 
-const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants}) => {
+const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing}) => {
   return (
     <TouchableOpacity activeOpacity={.8} style={[styles.container, isSelected ? styles.selected : {}]} onPress={onPress}>
+        {/* <View style={{position: 'absolute', right: 2}}>
+            <MaterialIcons name="cancel" size={scale(16)} color="gray" />
+        </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={[styles.checkbox, isSelected ? styles.selectedbox: {}]}/>
             <Text style={styles.name}>{name} {quantity}</Text>

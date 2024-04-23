@@ -24,6 +24,7 @@ import Participants_list_item from './Components/Participants_list_item';
 //think about how to add friends. Need endpoint to add others to your room
 //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
 
+
 const Bill_participants = () => {
 
     const navigation = useNavigation();
@@ -36,11 +37,12 @@ const Bill_participants = () => {
     const {axiosInstance} = useAxios();
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchFriends = async () => {
             setLoading(true);
             try {
-                const response = await axiosInstance.get('/user/list');
+                const response = await axiosInstance.get('/user/get-friends');
                 setUserList(response.data);
+                setFilteredUserList(response.data);
                 setLoading(false);
             } catch (err) {
                 console.log("Error: ", err)
@@ -48,7 +50,7 @@ const Bill_participants = () => {
             }
         };
 
-        fetchUsers();
+        fetchFriends();
     }, []);
 
     useEffect(() => {
@@ -64,7 +66,7 @@ const Bill_participants = () => {
             }
         };
         filterUsers();
-    }, [search, userList]); 
+    }, [search]); 
     
     
 
@@ -113,13 +115,13 @@ const Bill_participants = () => {
                         clearButtonMode='always'
                         />
                         </View>
-                    {filteredUserList.length > 0 && <FlatList 
+                    <FlatList 
                     data={filteredUserList}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => 
                         <Participants_list_item name={item.name} username={item.username}/>
                     }
-                    />}
+                    />
                     <TouchableOpacity style={styles.QR_Code} activeOpacity={.5} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
                         <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
                         <Text style={styles.QR_text}> Scan QR Code</Text>

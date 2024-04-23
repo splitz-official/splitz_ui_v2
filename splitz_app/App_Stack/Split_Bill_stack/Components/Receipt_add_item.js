@@ -7,7 +7,9 @@ import Colors from '../../../../Config/Colors'
 const Receipt_add_item = ({ name, price, quantity,}) => {
   return (
     <View style={styles.container}>
-        <TextInput style={[styles.input, {flex: 1.5}]}/>
+        <TextInput style={[styles.input, {flex: 1.5}]}
+        placeholder='Name'
+        />
         <TextInput style={styles.input}/>
         <TextInput style={styles.input}/>
     </View>

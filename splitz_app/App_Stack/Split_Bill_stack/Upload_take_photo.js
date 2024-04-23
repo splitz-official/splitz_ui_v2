@@ -124,6 +124,12 @@ const Upload_take_photo = () => {
                     type: "image/jpeg",
                     name: "receipt.jpg"
                 });
+                // const json_data = {
+                //     room_code: room_code,
+                //     receipt_name: receiptname,
+                //     user_list: []
+                // }
+                // formData.append("data", JSON.stringify(json_data));
                 formData.append("room_code", room_code)
                 axiosInstanceMultipart
                 .post(`/receipts/upload-receipt`, formData)

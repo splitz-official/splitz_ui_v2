@@ -140,7 +140,7 @@ const Groups_details = () => {
             <View style={{height: verticalScale(225)}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
                     <View style={[styles.drop_down, {marginTop: scale(10)}]}>
-                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts</Text>
+                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts </Text>
                         {receiptsDropDown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
                     </View>
                 </TouchableWithoutFeedback>
