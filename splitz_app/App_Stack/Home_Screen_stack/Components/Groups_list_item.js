@@ -6,16 +6,15 @@ import { scale } from 'react-native-size-matters'
 
 import Colors from '../../../../Config/Colors'
 
-const Groups_list_item = ({title, image, icon_text, room_code}) => {
+const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
 
     const navigation = useNavigation();
 
   return (
-    <TouchableOpacity style={styles.container} activeOpacity={.8} 
-    onPress={()=>navigation.navigate('CreateGroupStackNavigation', { 
-        screen: 'Groups_details',
-        params: { room_code }
-        })}>
+    <TouchableOpacity 
+    style={styles.container} 
+    activeOpacity={.8} 
+    onPress={onPress}>
         {/* <Image source={image}style={styles.image}>
 
         </Image> */}

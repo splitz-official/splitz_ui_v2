@@ -10,11 +10,11 @@ import Colors from '../../../../Config/Colors';
 const screenWidth = Dimensions.get('window').width;
 // console.log(screenWidth);
 
-const Groups_receipt_list_item = ({ title, owner}) => {
+const Groups_receipt_list_item = ({ title, owner, onPress}) => {
 
 
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
             <Text style={styles.owner}>Added by: {owner}</Text>
             <Text numberOfLines={2} style={styles.name}>"{title}"</Text>

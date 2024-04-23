@@ -157,6 +157,10 @@ const Groups_details = () => {
                         <Groups_receipt_list_item 
                         title={item.receipt_name}
                         owner={item.owner_id}
+                        onPress={()=> navigation.navigate('Split_bill_stack', {
+                            screen: 'Receipt_items',
+                            params: {room_code: item.room_code, receipt_id: item.id}
+                        })}
                         />
                     }
                     />

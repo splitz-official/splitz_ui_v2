@@ -13,16 +13,20 @@ import Colors from '../../../../Config/Colors';
 
 function Join_create_buttons(props) {
     let iconsize = RFValue(18);
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
 
 const handlejoinbutton = () => {
     console.log('Join with ID Pressed')
-    navigate("JoinGroupStackNavigation");
+    navigation.navigate("Group_stack", {
+        screen: 'Join_group',
+    })
 }
 
 const handlecreatebutton = () => {
     console.log('Create Group Pressed')
-    navigate("CreateGroupStackNavigation");
+    navigation.navigate("Group_stack", {
+        screen: 'Create_group_screen',
+    })
 }
 
     return (
