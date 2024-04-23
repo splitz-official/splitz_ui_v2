@@ -22,6 +22,7 @@ import Participants_list_item from './Components/Participants_list_item';
 //Add user as default participant
 //ADD QR FUNCTIONALITY WHEN AVAILABLE
 //think about how to add friends. Need endpoint to add others to your room
+//users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
 
 const Bill_participants = () => {
 

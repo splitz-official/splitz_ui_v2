@@ -9,5 +9,6 @@ export default {
     darkgreen: '#00340F',
     textInputGray: '#D4D4D4',
     grey: '#DEDEDE',
-    textInputPlaceholder: '#9F9F9F'
+    textInputPlaceholder: '#9F9F9F',
+    button_fill_green: '#C1EBCD'
 }

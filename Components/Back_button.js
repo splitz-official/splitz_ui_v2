@@ -4,17 +4,22 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../Config/Colors';
+import { scale } from 'react-native-size-matters';
 
-const Back_button = ({onPress, title}) => {
+const Back_button = ({onPress, title, children}) => {
   return (
-    <TouchableOpacity 
-        onPress={onPress}
-        style={styles.container}
-        activeOpacity={.8}
-        >
-        <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
-        <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+    <View style={{}}>
+      <TouchableOpacity 
+          onPress={onPress}
+          style={styles.container}
+          activeOpacity={.8}
+          >
+          <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
+          <Text style={styles.text}>{title}</Text>
+          {/* {children} */}
+      </TouchableOpacity>
+      {children}
+    </View>
   )
 }
 
@@ -24,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-start',
     marginLeft: '5%',
-    marginVertical: 10,
+    marginVertical: scale(10),
     // borderWidth: 2,
   },
   text: {

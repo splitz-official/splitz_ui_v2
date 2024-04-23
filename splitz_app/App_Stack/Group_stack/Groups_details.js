@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { scale } from 'react-native-size-matters'
+import { scale, verticalScale } from 'react-native-size-matters'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { RFValue } from 'react-native-responsive-fontsize'
 
@@ -30,6 +30,7 @@ const Groups_details = () => {
     const [membersdropdown, setMembersDropDown] = useState(true);
     const [receipts, setReceipts] = useState(null);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
+    // console.log(receipts)
 
     useEffect(()=> {
         const fetchRoomDetails = async () => {
@@ -79,7 +80,7 @@ const Groups_details = () => {
         }
     }, [room_details]);
 
-    // members and receipts touchable too wide. Adjust this later
+    // members and receipts dropdown touchable too wide. Adjust this later
 
     if (!room_details) {
         return (
@@ -91,12 +92,15 @@ const Groups_details = () => {
 
   return (
     <Screen>
-        <View style={styles.top_icons}>
-            <Back_button title= {'Home'} onPress={()=> navigation.navigate('home')}/>
-            <TouchableWithoutFeedback onPress={()=> console.log("Share Button Pressed")}>
+        <Back_button 
+        title= {'Home'} 
+        onPress={()=> navigation.navigate('home')}
+        children={
+            <TouchableOpacity style={{position: 'absolute', right: '6%', bottom: scale(5)}} onPress={()=> console.log("Share Button Pressed")}>
                 <Entypo name="share-alternative" size={scale(18)} color="black" />
-            </TouchableWithoutFeedback>
-        </View>
+            </TouchableOpacity>
+        }
+        />
         <View style={styles.top_container}>
             <View style={styles.room_icon}>
                 <Text>{room_details.room_code}</Text>
@@ -133,7 +137,7 @@ const Groups_details = () => {
                     />
                 )}
             </View>
-            <View>
+            <View style={{height: verticalScale(225)}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
                     <View style={[styles.drop_down, {marginTop: scale(10)}]}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts</Text>
@@ -144,12 +148,16 @@ const Groups_details = () => {
                     <FlatList 
                     data={receipts}
                     keyExtractor={item => item.id.toString()}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
+                    showsVerticalScrollIndicator={false}
                     style={styles.receipts_list}
+                    ItemSeparatorComponent={
+                        <View style={{backgroundColor: Colors.primary, height: verticalScale(1)}}/>
+                    }
                     renderItem={({ item }) => 
                         <Groups_receipt_list_item 
-                        title={item.receipt_name}/>
+                        title={item.receipt_name}
+                        owner={item.owner_id}
+                        />
                     }
                     />
                 )}
@@ -214,12 +222,12 @@ const styles = StyleSheet.create({
         // borderWidth: 1
     },
     members_list: {
-        marginTop: scale(15),
+        marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
         // borderWidth: 1
     },
     receipts_list: {
-        marginTop: scale(15),
+        marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
         // borderWidth: 1
     }

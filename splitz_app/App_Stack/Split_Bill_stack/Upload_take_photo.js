@@ -9,6 +9,9 @@ import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
 //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
+//TODO LIST: 
+//SCAN BUTTON UPDATE
+//ADD CONDITION FOR WHEN THERE IS NO ROOM CODE
 
 import Screen from '../../../Components/Screen'
 import Back_button from '../../../Components/Back_button'

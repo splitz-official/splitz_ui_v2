@@ -2,11 +2,14 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { scale } from 'react-native-size-matters'
 import { RFValue } from 'react-native-responsive-fontsize'
+
+import { Feather } from '@expo/vector-icons';
+
 import Colors from '../../../../Config/Colors'
 
 const User_list_item = ({ name, username, onPress}) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={.5}>
+    <View style={styles.container} onPress={onPress} activeOpacity={.5}>
         {/* <Image />  */}
         <View style={styles.image}>
 
@@ -15,7 +18,10 @@ const User_list_item = ({ name, username, onPress}) => {
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.username}>@{username}</Text>
         </View>
-    </TouchableOpacity>
+        <TouchableOpacity activeOpacity={.5} style={{position: 'absolute', right: 0}}>
+            <Feather name="user-plus" size={RFValue(18)} color="black" />
+        </TouchableOpacity>
+    </View>
   )
 }
 const styles = StyleSheet.create({
