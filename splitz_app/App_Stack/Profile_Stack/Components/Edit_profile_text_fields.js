@@ -4,21 +4,18 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale } from 'react-native-size-matters'
 import Colors from '../../../../Config/Colors'
 
-const Edit_profile_text_fields = ({description, value, extra_style, editable, user_value, onChangeText}) => {
+const Edit_profile_text_fields = ({description, placeholder_value, extra_style, editable, onChangeText, placeholderColor}) => {
   return (
     <View style={styles.container} behavior='height'> 
       <Text style={[styles.description, extra_style]}>{description}</Text>
-      {editable ? (
-        <TextInput 
-        style={[styles.value, styles.editing]} 
-        placeholder={value}
-        value={user_value}
+      <TextInput 
+        style={[editable ? [styles.editing, styles.value] : styles.value]} 
+        placeholder={placeholder_value}
+        placeholderTextColor={placeholderColor}
         onChangeText={onChangeText}
-        autoCapitalize={false}
+        autoCapitalize='none'
+        readOnly={!editable}
         />
-      ) : (
-        <Text style={[styles.value, extra_style]}>{value}</Text>
-      )}
     </View>
   )
 }
@@ -42,7 +39,6 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
         fontFamily: 'DMSans_400Regular',
         fontSize: RFValue(14),
-        color: 'black'
     },
     editing: {
         borderBottomWidth: 1, 

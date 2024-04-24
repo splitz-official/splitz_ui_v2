@@ -76,6 +76,14 @@ const Edit_profile = () => {
         }
     }
 
+    if (loading) {
+        return (
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+            <ActivityIndicator size={'large'} color={Colors.primary}/>
+        </View>
+        )
+    }
+
   return (
     <Screen style={{backgroundColor: Colors.white}}>
         {/* <TopLogo/> */}
@@ -117,25 +125,31 @@ const Edit_profile = () => {
             <View>
                 <Edit_profile_text_fields 
                 description={'Display name:'}
-                value={userData?.name ?? 'Name'}
+                placeholder_value={userData?.name ?? 'Name'}
                 onChangeText={setName}
                 editable={editingprofile}
+                placeholderColor={Colors.black}
                 />
                 <Edit_profile_text_fields 
                 description={'Email:'}
-                value={userData?.email ?? 'Email'}
+                placeholder_value={userData?.email ?? 'Email'}
                 onChangeText={setEmail}
                 editable={editingprofile}
+                placeholderColor={Colors.black}
                 />
                 <Edit_profile_text_fields 
                 description={'Username:'}
-                value={`@${userData?.username ?? 'Username'}`}
+                placeholder_value={`@${userData?.username ?? 'Username'}`}
                 extra_style={{color: Colors.textgray}}
+                editable={false}
+                placeholderColor={Colors.textgray}
                 />
                 <Edit_profile_text_fields 
                 description={'Phone Number:'}
-                value={userData?.phone_number ?? 'Phone Number'}
+                placeholder_value={userData?.phone_number ?? 'Phone Number'}
                 extra_style={{color: Colors.textgray}}
+                editable={false}
+                placeholderColor={Colors.textgray}
                 />
             </View>
         </KeyboardAvoidingView>
