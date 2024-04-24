@@ -26,7 +26,7 @@ const Upload_take_photo = () => {
     const {axiosInstance, axiosInstanceMultipart} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
-    const {room_code = null} = route.params || {};
+    const { room_code = null, participants = [] } = route.params || {};
     // console.log("Room Code from route.params:" , room_code);
     // console.log(route.params);
 

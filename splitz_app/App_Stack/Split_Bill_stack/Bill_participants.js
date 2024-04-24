@@ -36,6 +36,14 @@ const Bill_participants = () => {
 
     const {axiosInstance} = useAxios();
 
+    const getRandomColor = () => {
+        // Generate random numbers for RGB
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgb(${r}, ${g}, ${b})`; // Return RGB color string
+    };
+
     useEffect(() => {
         const fetchFriends = async () => {
             setLoading(true);
@@ -55,30 +63,38 @@ const Bill_participants = () => {
 
     useEffect(() => {
         const filterUsers = () => {
+            let combinedList = [];
+    
             if (search.trim()) {
-                const filtered = userList.filter(user => {
-                    return (user.name?.toLowerCase().includes(search.toLowerCase()) ||
-                            user.username?.toLowerCase().includes(search.toLowerCase()));
-                });
-                setFilteredUserList(filtered);
-            } else {
-                setFilteredUserList([]); 
+                // Adding the "Add" option at the beginning of the list
+                combinedList.push({ id: 'temp', name: `Add "${search}" to your participant list` });
             }
+    
+            const filtered = userList.filter(user => {
+                return user.name.toLowerCase().includes(search.toLowerCase()) ||
+                       user.username.toLowerCase().includes(search.toLowerCase());
+            });
+    
+            combinedList = [...combinedList, ...filtered];
+            setFilteredUserList(combinedList);
         };
+    
         filterUsers();
-    }, [search]); 
+    }, [search, userList]); // No need to depend on 'participants' unless it affects the filtering logic
     
+    const addParticipant = (user) => {
+        const participantToAdd = typeof user === 'string' ? 
+            { name: user, id: `temp-${Math.random()}`, color: getRandomColor() } : 
+            { ...user, color: getRandomColor() }; // Assign a random color here
     
-
-    const addParticipant = (name) => {
-        if (!name.trim()) return;
-        setParticipants(prevParticipants => [...prevParticipants, name]);
-        setSearch('');
-        setFilteredUserList([]);
+        if (!participants.some(participant => participant.name === participantToAdd.name)) {
+            setParticipants([...participants, participantToAdd]);
+            setSearch(''); // Optionally clear the search input after adding
+        }
     };
 
-    const removeParticipant = (index) => {
-        const updatedParticipants = participants.filter((_, i) => i !== index);
+    const removeParticipant = (participantId) => {
+        const updatedParticipants = participants.filter(participant => participant.id !== participantId);
         setParticipants(updatedParticipants);
     };
 
@@ -97,15 +113,42 @@ const Bill_participants = () => {
         behavior='height'
         style={{flex: 1}}
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {/*<TouchableWithoutFeedback onPress={ () => {Keyboard.dismiss(); return true;}}>*/}
                 <View style={{flex: 1}}>
                 <View style={styles.bottom_container}>
                     <Text style={styles.title_text}>Bill Participants</Text>
-                    <Text style={styles.subtitle_text}>Add people below!</Text>
+                    {participants.length > 0 && (
+    <View style={styles.participantsContainer}>
+        <FlatList
+            data={participants}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment="center"
+            decelerationRate="fast"
+            keyExtractor={item => item.id.toString()}
+            onScrollBeginDrag={Keyboard.dismiss}
+            renderItem={({ item }) => (
+                <View style={styles.participantItemContainer}>
+                    <View style={[styles.participantCircle,  { backgroundColor: item.color }]}>
+                        <TouchableOpacity
+                            style={styles.removeParticipantBtn}
+                            onPress={() => removeParticipant(item.id)}
+                        >
+                            <AntDesign name="closecircle" size={RFValue(14)} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.participantName} numberOfLines={2} ellipsizeMode='tail'>{item.name}</Text>
+                </View>
+            )}
+        />
+    </View>
+)}
+
+                    <Text style={styles.subtitle_text}>Add everyone's names below:</Text>
                     <View style={styles.inputContainer}>
                         <TextInput 
                         style={styles.textInput}
-                        placeholder='Group, name, number...'
+                        placeholder='Enter a full name or username...'
                         placeholderTextColor={Colors.textgray}
                         value={search}
                         onChangeText={setSearch}
@@ -115,17 +158,40 @@ const Bill_participants = () => {
                         clearButtonMode='always'
                         />
                         </View>
-                    <FlatList 
+                        {search.trim().length > 0 && filteredUserList.length > 0 && 
+                    <FlatList
                     data={filteredUserList}
                     keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => 
-                        <Participants_list_item name={item.name} username={item.username}/>
-                    }
+                    onScrollBeginDrag={Keyboard.dismiss}
+                    renderItem={({ item }) => {
+                        if (item.id === 'temp') {
+                            return (
+                                <TouchableOpacity
+                                    style={styles.addTemporaryUser}
+                                    onPress={() => addParticipant(search.trim())}
+                                >
+                                    <Text style={styles.addTemporaryUserText}>{item.name}</Text>
+                                </TouchableOpacity>
+                            );
+                        } else {
+                            return (
+                                <Participants_list_item
+                                    name={item.name}
+                                    username={item.username}
+                                    onPress={() => addParticipant(item)}
+                                />
+                            );
+                        }
+                    }}
                     />
-                    <TouchableOpacity style={styles.QR_Code} activeOpacity={.5} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
+                    }
+
+                    {/*<TouchableOpacity style={styles.QR_Code} activeOpacity={.5} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
                         <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
                         <Text style={styles.QR_text}> Scan QR Code</Text>
                     </TouchableOpacity>
+                    }
+
                     <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
                     {/* {participants.length > 0 ? (
                         <FlatList 
@@ -149,9 +215,9 @@ const Bill_participants = () => {
                 title={'Next'}
                 onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
                 /> */}
-                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Manual_entry', {participants})} disabled={participants.length === 0}/>
+                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Upload_take_photo', {participants})} disabled={participants.length === 0}/>
                 </View>
-            </TouchableWithoutFeedback>
+            {/*</TouchableWithoutFeedback>*/}
         </KeyboardAvoidingView>
     </Screen>
   )
@@ -201,7 +267,53 @@ const styles = StyleSheet.create({
         fontSize: RFValue(12), 
         color: Colors.textgray
     },
-
-})
+    addTemporaryUser: {
+        padding: scale(10),
+        borderBottomWidth: 1,
+        borderBottomColor: '#e8e8e8',
+      },
+      addTemporaryUserText: {
+        fontSize: RFValue(12),
+        color: Colors.primary, // Use your app's theme color here
+      },
+      participantsContainer: {
+        marginTop: scale(10),
+        paddingHorizontal: scale(5),
+        height: scale(90), // Adjust the height to accommodate both the circle and the name
+    },
+    participantItemContainer: {
+        flexDirection: "column", 
+        alignItems: 'center', // Center align the items vertically
+        marginRight: scale(10),
+        justifyContent: "center",
+        alignItems: "center",
+        width: scale(65),
+        minHeight: scale(70)
+    },
+    participantCircle: {
+        width: scale(45),
+        height: scale(45),
+        borderRadius: scale(25),
+        backgroundColor: "grey", // Choose a suitable background color
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    participantName: {
+        fontSize: RFValue(12),
+        color: 'black', // Ensure the text is readable
+        marginTop: scale(5),
+        textAlign: 'center', // Center align the text
+        width: "100%"
+    },
+    removeParticipantBtn: {
+        position: 'absolute',
+        top: -5,
+        right: -5,
+        backgroundColor: 'white',
+        borderRadius: scale(100),
+        padding: scale(3),
+    },
+});
 
 export default Bill_participants
