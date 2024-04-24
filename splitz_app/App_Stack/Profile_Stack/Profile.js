@@ -41,9 +41,21 @@ function Profile(props) {
     const [friendSearch, setFriendSearch] = useState('');
     const [usersList, setUsersList] = useState([]);
     const [filterdUsers, setFilteredUsers] = useState([]);
+    const [friends, setFriends] = useState([]);
 
     const userListSearchRef = useRef();
     
+    const addFriend = async (userID) => {
+        try {
+            const response = await axiosInstance.post(`/user/add-friend`, {
+                friend_id: userID
+            });
+            fetchFriends();
+            console.log("Friend added");
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    }
 
     const logout = async () => {
         try {
@@ -58,16 +70,27 @@ function Profile(props) {
 
     useEffect(() => {
         if (friendmodalVisible) {
+            fetchUsers();
             fetchFriends();
         }
     }, [friendmodalVisible]);
 
-    const fetchFriends = async () => {
+    const fetchUsers = async () => {
         try {
             const response = await axiosInstance.get('/user/list');
-            setUsersList(response.data);
-            setFilteredUsers(response.data);
+            const usersExcludingSelf = response.data.filter(user => user.id !== userData.id)
+            setUsersList(usersExcludingSelf);
+            setFilteredUsers(usersExcludingSelf);
             // console.log(response.data)
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+        }
+    };
+
+    const fetchFriends = async () => {
+        try {
+            const response = await axiosInstance.get('/user/get-friends');
+            setFriends(response.data.map(friend => friend.id));
         } catch (error) {
             console.error('Failed to fetch friends:', error);
         }
@@ -207,7 +230,12 @@ function Profile(props) {
                             keyExtractor={(item) => item.id.toString()}
                             style={styles.usersList}
                             renderItem={({ item }) => (
-                                <User_list_item name={item.name} username={item.username}/>
+                                <User_list_item 
+                                name={item.name} 
+                                username={item.username} 
+                                onPress={()=>addFriend(item.id)} 
+                                alreadyFriends={friends.includes(item.id)}
+                                />
                             )}
                             />
                         </View>

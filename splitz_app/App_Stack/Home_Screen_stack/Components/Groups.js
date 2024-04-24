@@ -1,12 +1,15 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useAxios } from '../../../../Axios/axiosContext'
 import Groups_list_item from './Groups_list_item';
 import { scale } from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+
+import { useAxios } from '../../../../Axios/axiosContext'
 
 const Groups = () => {
 
     const { userData, axiosInstance } = useAxios();
+    const navigation = useNavigation();
     const [formattedData, setFormattedData] = useState();
     const [isRefreshing, setIsRefreshing] = useState(false);
     // console.log("User ID: " + userData.id)
@@ -61,10 +64,13 @@ const Groups = () => {
                 return (
                     <Groups_list_item
                         title={item.room_name}
+                        onPress={() => navigation.navigate("Group_stack", {
+                            screen: 'Groups_details',
+                            params: { room_code: item.room_code }
+                        })}
                         // image={require("../../../../assets/dark_green_splitzLogo.png")}
 //displaying room code now since we don't have photos for each room. Maybe in the future we ask the user to add a photo or just use the profile pic of the person that created the room
                         icon_text={item.room_code}
-                        room_code={item.room_code}
                     />
                 );
             }}

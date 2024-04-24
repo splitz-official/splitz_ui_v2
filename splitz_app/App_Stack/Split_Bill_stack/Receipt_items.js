@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
@@ -21,9 +21,9 @@ const Receipt_items = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-  // const { receipt_id, room_code } = route.params;
-  const receipt_id = '32'
-  const room_code = '0K23HE'
+  const { receipt_id, room_code } = route.params;
+  // const receipt_id = '32'
+  // const room_code = '0K23HE'
   // console.log(receipt_id, room_code);
   const userID = userData.id;
   const [receipt, setReceipt] = useState([]);
@@ -37,6 +37,9 @@ const Receipt_items = () => {
   const [tip, setTip] = useState('');
   const [total, setTotal] = useState('');
   const [receiptname, setReceiptName] = useState('');
+  const [userCost, setUserCost] = useState(0);
+  const initialNameRef = useRef();
+  const [editingName, setEditingName] = useState(false);
 
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState('');
@@ -51,9 +54,9 @@ const Receipt_items = () => {
 
       setLoading(true);
       try {
-        console.log("Fetching receipt data")
+        // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
-        console.log(response.data);
+        // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
@@ -64,19 +67,38 @@ const Receipt_items = () => {
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
         setTotal(response.data.total_amount);
+        initialNameRef.current=response.data.receipt_name;
         setReceiptName(response.data.receipt_name);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);
         setLoading(false);
       }
+      console.log("Selected Items: ", selectedItems)
     };
 
     fetchReceipt();
   }, []); 
 
+  useEffect(() => {
+    const calculateTotal = () => {
+        const total = selectedItems.reduce((acc, itemId) => {
+            const item = receipt.items.find(item => item.id === itemId);
+            return acc + (item ? item.item_cost * item.item_quantity : 0);
+        }, 0);
+        setUserCost(total);
+    };
+
+    calculateTotal();
+}, [selectedItems, receipt.items]);
+
   if(loading) {
-    return <ActivityIndicator size={'large'} color={Colors.primary}/>
+    return (
+      <View style={styles.loading_container}>
+        <ActivityIndicator size={'large'} color={Colors.primary}/>
+        <Text style = {styles.loading_text}>Getting receipt data!</Text>
+      </View>
+  )
   }
 
   const handleItemPress = (item) => {
@@ -91,10 +113,23 @@ const Receipt_items = () => {
     }
   };
 
+  const handleReceiptRename = async() => {
+    if (receiptname !== initialNameRef.current) {
+      console.log("names are different: ", receiptname);
+      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+        receipt_name: receiptname
+      })
+      // console.log(response);
+    }else {
+      console.log("names are same")
+    }
+  }
+
   confirmSelectedItems = () => {
     console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
+      navigation.navigate("Bill_totals")
       // navigation.navigate("totals")
     }else {
       const user_selected_items = {
@@ -135,10 +170,9 @@ const Receipt_items = () => {
     <Screen>
         <Back_button title={room_code ? 'Back' : 'Home'} onPress={() => {
           if (room_code) {
-            navigation.navigate('CreateGroupStackNavigation', {
-              screen: 'Group_details', 
-              params: {room_code: room_code}
-            });
+            // console.log("button is pressed and room_code exists")
+            // console.log(navigation.getState());
+            navigation.navigate('Groups_details', {room_code: room_code})
           } else {
             navigation.navigate('home');
           }
@@ -159,10 +193,16 @@ const Receipt_items = () => {
             <TextInput 
             style={styles.receipt_name}
             value={receiptname}
+            onFocus={()=> setEditingName(true)}
             onChangeText={setReceiptName}
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
+            // returnKeyType='done'
+            // onSubmitEditing={()=> (
+            //   console.log("Name submitted, ", receiptname),
+            //   handleReceiptRename()
+            // )}
             />
             <Picture_name_icon name={userData.name} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
@@ -170,12 +210,13 @@ const Receipt_items = () => {
               data={receipt.items}
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
+              horizontal={false}
               contentContainerStyle={{justifyContent: 'center'}}
               renderItem={({ item }) => 
                 <Receipt_items_list_component 
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
-                price={`$${item.item_cost}`}
+                price={item.item_cost}
                 onPress={()=> handleItemPress(item)}
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
@@ -194,26 +235,57 @@ const Receipt_items = () => {
               {editing && addingItem &&
               <Receipt_add_item />
               }
-              {/* <Text>USER TOTAL</Text> */}
-            </View>
+            <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
+            {selectedItems.length > 0 ?
+            (
+            <>
+              <View style={styles.tax_tip_container}>
+                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
+                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
+              </View>
+              <View style={styles.total_container}>
+                <Text style={styles.total_text}>Your total:</Text>
+                <Text style={styles.total_text}>{userCost}</Text>
+              </View>
+            </> 
+            )
+            :
+            (
+              <>
+              <View style={styles.tax_tip_container}>
+                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
+                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
+              </View>
+              <View style={styles.total_container}>
+                <Text style={styles.total_text}>Total:</Text>
+                <Text style={styles.total_text}>{total}</Text>
+              </View>
+            </> 
+            )
+            }
+          </View>
         </View>
       </TouchableWithoutFeedback>
-      <Large_green_button title={"Submit"} onPress={confirmSelectedItems}/>
+      {editingName ? (
+        <Large_green_button 
+          title={"Confirm Name"} 
+          onPress={() => {
+              handleReceiptRename();
+              Keyboard.dismiss();
+              setEditingName(false);
+          }}
+        />
+      ) : (
+        <Large_green_button 
+            title={"Submit"} 
+            onPress={confirmSelectedItems}
+        />
+      )}
       </KeyboardAvoidingView>
-          <View style={{alignSelf: 'center', width: '88%', backgroundColor: Colors.primary, height: scale(2), position: 'absolute', bottom: verticalScale(75)}}/>
-          <View style={styles.total_tax_tip}>
-            <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14)}}>Tip: ${tip}</Text>
-            <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14)}}>Tax: ${tax}</Text>
-            <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18)}}>Total: ${total}</Text>
-          </View>
+          
     </Screen>
   )
 }
-
-// ()=> navigation.navigate('CreateGroupStackNavigation', {
-//   screen: 'Group_details',
-//   params: {room_code: receipt.room_code}
-//   })
 
 const styles = StyleSheet.create({
   container: {
@@ -231,17 +303,32 @@ const styles = StyleSheet.create({
   items_container: {
     alignItems: 'center',
     marginTop: verticalScale(10),
-    height: verticalScale(320),
+    height: verticalScale(350),
     // borderWidth: 1
   },
-  total_tax_tip: {
+  tax_tip_container: {
     flexDirection: 'row',
     // borderWidth: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
-    position: 'absolute',
-    bottom: verticalScale(50)
+  },
+  total_container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: verticalScale(5),
+    marginRight: scale(5),
+    alignItems: 'center'
+  },
+  tax_tip_text: {
+    fontFamily: 'DMSans_500Medium', 
+    fontSize: RFValue(14),
+    color: Colors.primary
+  },
+  total_text: {
+    fontFamily: 'DMSans_700Bold', 
+    fontSize: RFValue(18)
   },
   edit_done: {
     borderBottomWidth: 2, 
@@ -277,6 +364,25 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_500Medium',
     color: Colors.primary,
     fontSize: RFValue(12)
+  },
+  loading_container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: 'transparent'
+    // borderWidth: 1
+  },
+  loading_text: {
+      fontFamily: 'DMSans_700Bold',
+      marginTop: scale(10),
+      color: Colors.primary,
+      fontSize: RFValue(16),
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      width: '80%',
+      textAlign: 'center'
+      // borderWidth: 1
   }
 })
 

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'
 import { RFValue } from 'react-native-responsive-fontsize'
 
 import { Entypo } from '@expo/vector-icons';
@@ -22,14 +22,14 @@ const Groups_details = () => {
     const route = useRoute();
     // console.log(route.params)
     const { room_code } = route.params;
+    console.log(room_code);
     const [room_details, setRoom_Details] = useState(null);
 
-
-    //can we change /room/members/{room_id} endpoint to grab all user info not just id and phone_number
     const [members, setMembers] = useState([]);
     const [membersdropdown, setMembersDropDown] = useState(true);
     const [receipts, setReceipts] = useState(null);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     // console.log(receipts)
 
     useEffect(()=> {
@@ -62,8 +62,7 @@ const Groups_details = () => {
     const fetchRoomReceipts = async () => {
         // console.log("Fetching Room Receipts");
         try {
-            // console.log("Fetching room receipts")
-            const response = await axiosInstance.get(`/receipts/${room_details.room_code}`);
+            const response = await axiosInstance.get(`/receipts/${room_code}`);
             // console.log("Fetching room receipts reponse status:", response, response.status);
             setReceipts(response.data);
         } catch (error) {
@@ -75,10 +74,15 @@ const Groups_details = () => {
         if (room_details && room_details.id) {
             fetchRoomMembers();
         }
-        if (room_details && room_details.room_code){
-            fetchRoomReceipts();
-        }
     }, [room_details]);
+    
+    useFocusEffect(
+        useCallback(() => {
+            if (room_code) {
+                fetchRoomReceipts();
+            }
+        }, [room_code])
+    );
 
     // members and receipts dropdown touchable too wide. Adjust this later
 
@@ -140,7 +144,7 @@ const Groups_details = () => {
             <View style={{height: verticalScale(225)}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
                     <View style={[styles.drop_down, {marginTop: scale(10)}]}>
-                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts</Text>
+                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts </Text>
                         {receiptsDropDown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
                     </View>
                 </TouchableWithoutFeedback>
@@ -148,6 +152,8 @@ const Groups_details = () => {
                     <FlatList 
                     data={receipts}
                     keyExtractor={item => item.id.toString()}
+                    onRefresh={()=> fetchRoomReceipts()}
+                    refreshing={isRefreshing}
                     showsVerticalScrollIndicator={false}
                     style={styles.receipts_list}
                     ItemSeparatorComponent={
@@ -157,6 +163,10 @@ const Groups_details = () => {
                         <Groups_receipt_list_item 
                         title={item.receipt_name}
                         owner={item.owner_id}
+                        onPress={()=> navigation.navigate('Split_bill_stack', {
+                            screen: 'Receipt_items',
+                            params: {room_code: item.room_code, receipt_id: item.id}
+                        })}
                         />
                     }
                     />

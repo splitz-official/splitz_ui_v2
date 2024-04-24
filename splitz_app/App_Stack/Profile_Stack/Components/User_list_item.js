@@ -7,9 +7,9 @@ import { Feather } from '@expo/vector-icons';
 
 import Colors from '../../../../Config/Colors'
 
-const User_list_item = ({ name, username, onPress}) => {
+const User_list_item = ({ name, username, onPress, alreadyFriends}) => {
   return (
-    <View style={styles.container} onPress={onPress} activeOpacity={.5}>
+    <View style={styles.container} activeOpacity={.5}>
         {/* <Image />  */}
         <View style={styles.image}>
 
@@ -18,8 +18,8 @@ const User_list_item = ({ name, username, onPress}) => {
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.username}>@{username}</Text>
         </View>
-        <TouchableOpacity activeOpacity={.5} style={{position: 'absolute', right: 0}}>
-            <Feather name="user-plus" size={RFValue(18)} color="black" />
+        <TouchableOpacity activeOpacity={alreadyFriends ? 1 : .5} style={{position: 'absolute', right: 0}} onPress={alreadyFriends ? null : onPress}>
+            {alreadyFriends ?  <Feather name="user-check" size={scale(20)} color="black" /> : <Feather name="user-plus" size={scale(20)} color="black" />}
         </TouchableOpacity>
     </View>
   )

@@ -45,11 +45,12 @@ const Bill_participants = () => {
     };
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchFriends = async () => {
             setLoading(true);
             try {
-                const response = await axiosInstance.get('/user/list');
+                const response = await axiosInstance.get('/user/get-friends');
                 setUserList(response.data);
+                setFilteredUserList(response.data);
                 setLoading(false);
             } catch (err) {
                 console.log("Error: ", err)
@@ -57,7 +58,7 @@ const Bill_participants = () => {
             }
         };
 
-        fetchUsers();
+        fetchFriends();
     }, []);
 
     useEffect(() => {
@@ -117,31 +118,31 @@ const Bill_participants = () => {
                 <View style={styles.bottom_container}>
                     <Text style={styles.title_text}>Bill Participants</Text>
                     {participants.length > 0 && (
-                        <View style={styles.participantsContainer}>
-                        <FlatList
-                            data={participants}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            snapToAlignment="center"
-                            decelerationRate="fast"
-                            keyExtractor={item => item.id.toString()}
-                            onScrollBeginDrag={Keyboard.dismiss}
-                            renderItem={({ item }) => (
-                                <View style={styles.participantItemContainer}>
-                                    <View style={[styles.participantCircle,  { backgroundColor: item.color }]}>
-                                        <TouchableOpacity
-                                            style={styles.removeParticipantBtn}
-                                            onPress={() => removeParticipant(item.id)}
-                                        >
-                                            <AntDesign name="closecircle" size={RFValue(14)} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                    <Text style={styles.participantName} numberOfLines={2} ellipsizeMode='tail'>{item.name}</Text>
-                                </View>
-                            )}
-                        />
+    <View style={styles.participantsContainer}>
+        <FlatList
+            data={participants}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment="center"
+            decelerationRate="fast"
+            keyExtractor={item => item.id.toString()}
+            onScrollBeginDrag={Keyboard.dismiss}
+            renderItem={({ item }) => (
+                <View style={styles.participantItemContainer}>
+                    <View style={[styles.participantCircle,  { backgroundColor: item.color }]}>
+                        <TouchableOpacity
+                            style={styles.removeParticipantBtn}
+                            onPress={() => removeParticipant(item.id)}
+                        >
+                            <AntDesign name="closecircle" size={RFValue(14)} color="red" />
+                        </TouchableOpacity>
                     </View>
-                    )}
+                    <Text style={styles.participantName} numberOfLines={2} ellipsizeMode='tail'>{item.name}</Text>
+                </View>
+            )}
+        />
+    </View>
+)}
 
                     <Text style={styles.subtitle_text}>Add everyone's names below:</Text>
                     <View style={styles.inputContainer}>
