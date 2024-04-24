@@ -148,8 +148,12 @@ const Receipt_items = () => {
         .then((response) => {
           // Update the displayed values with the updated data
           if (response.data == true) {
-            Alert.alert("Items Selected Successfully!");
-            // navigation.navigate();
+            // Alert.alert("Items Selected Successfully!");
+            console.log("Items added successfullyalfjad;lskfja!: ")
+            navigation.navigate("Bill_totals", {
+              room_code: room_code,
+              receipt_id: receipt_id
+            })
           } else {
             Alert.alert("Error", "Item could not be added.");
           }

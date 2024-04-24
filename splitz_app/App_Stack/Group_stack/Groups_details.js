@@ -109,11 +109,13 @@ const Groups_details = () => {
             <View style={styles.room_icon}>
                 <Text>{room_details.room_code}</Text>
             </View>
-            <Text style={styles.title}>{room_details.room_name}</Text>
-            <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+            <View style={{justifyContent: 'space-between'}}>
+                <Text style={styles.title}>{room_details.room_name}</Text>
+                <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+            </View>
         </View>
         <View style={styles.bottom_container}>
-            <View style={{}}>
+            <View style={{flex: .35}}>
                 <TouchableWithoutFeedback onPress={()=> setMembersDropDown(!membersdropdown)}>
                     <View style={styles.drop_down}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
@@ -141,7 +143,7 @@ const Groups_details = () => {
                     />
                 )}
             </View>
-            <View style={{height: verticalScale(225)}}>
+            <View style={{flex: .65}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
                     <View style={[styles.drop_down, {marginTop: scale(10)}]}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts </Text>
@@ -155,6 +157,7 @@ const Groups_details = () => {
                     onRefresh={()=> fetchRoomReceipts()}
                     refreshing={isRefreshing}
                     showsVerticalScrollIndicator={false}
+                    // contentContainerStyle={{flex: 1}}
                     style={styles.receipts_list}
                     ItemSeparatorComponent={
                         <View style={{backgroundColor: Colors.primary, height: verticalScale(1)}}/>
@@ -193,10 +196,10 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
     },
     top_container: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: scale(30),
+        marginTop: '6%',
         // borderWidth: 1,
     },
     room_icon: {
@@ -207,7 +210,8 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: scale(8)
+        // marginBottom: scale(8)
+        marginRight: scale(10)
     },
     title: {
         fontFamily: 'DMSans_700Bold',
@@ -223,7 +227,10 @@ const styles = StyleSheet.create({
     },
     bottom_container: {
         marginHorizontal: '6%',
-        marginTop: scale(25)
+        marginTop: scale(25),
+        height: verticalScale(390),
+        // borderWidth: 1,
+        // borderColor: 'blue'
     },
     drop_down: {
         flexDirection: 'row',
@@ -232,13 +239,15 @@ const styles = StyleSheet.create({
         // borderWidth: 1
     },
     members_list: {
-        marginTop: verticalScale(10),
+        // marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
         // borderWidth: 1
     },
     receipts_list: {
-        marginTop: verticalScale(10),
+        // marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
+        // height: '50%',
+        // flex: 1
         // borderWidth: 1
     }
 })
