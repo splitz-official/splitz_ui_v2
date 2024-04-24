@@ -39,6 +39,7 @@ const Receipt_items = () => {
   const [receiptname, setReceiptName] = useState('');
   const [userCost, setUserCost] = useState(0);
   const initialNameRef = useRef();
+  const [editingName, setEditingName] = useState(false);
 
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState('');
@@ -114,7 +115,7 @@ const Receipt_items = () => {
 
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
-      console.log("names are different");
+      console.log("names are different: ", receiptname);
       const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
       })
@@ -128,6 +129,7 @@ const Receipt_items = () => {
     console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
+      navigation.navigate("Bill_totals")
       // navigation.navigate("totals")
     }else {
       const user_selected_items = {
@@ -191,15 +193,16 @@ const Receipt_items = () => {
             <TextInput 
             style={styles.receipt_name}
             value={receiptname}
+            onFocus={()=> setEditingName(true)}
             onChangeText={setReceiptName}
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
-            returnKeyType='done'
-            onSubmitEditing={()=> (
-              console.log("Name submitted, ", receiptname),
-              handleReceiptRename()
-            )}
+            // returnKeyType='done'
+            // onSubmitEditing={()=> (
+            //   console.log("Name submitted, ", receiptname),
+            //   handleReceiptRename()
+            // )}
             />
             <Picture_name_icon name={userData.name} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
@@ -263,7 +266,21 @@ const Receipt_items = () => {
           </View>
         </View>
       </TouchableWithoutFeedback>
-      <Large_green_button title={"Submit"} onPress={confirmSelectedItems}/>
+      {editingName ? (
+        <Large_green_button 
+          title={"Confirm Name"} 
+          onPress={() => {
+              handleReceiptRename();
+              Keyboard.dismiss();
+              setEditingName(false);
+          }}
+        />
+      ) : (
+        <Large_green_button 
+            title={"Submit"} 
+            onPress={confirmSelectedItems}
+        />
+      )}
       </KeyboardAvoidingView>
           
     </Screen>
