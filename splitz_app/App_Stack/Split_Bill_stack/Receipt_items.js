@@ -22,6 +22,7 @@ const Receipt_items = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { receipt_id, room_code } = route.params;
+  // console.log(room_code);
   // const receipt_id = '32'
   // const room_code = '0K23HE'
   // console.log(receipt_id, room_code);
@@ -56,7 +57,7 @@ const Receipt_items = () => {
       try {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
-        // console.log(response.data);
+        // console.log(response.data.items);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
@@ -74,7 +75,7 @@ const Receipt_items = () => {
         console.log("Error: ", error);
         setLoading(false);
       }
-      console.log("Selected Items: ", selectedItems)
+      // console.log("Selected Items: ", selectedItems)
     };
 
     fetchReceipt();
@@ -129,7 +130,10 @@ const Receipt_items = () => {
     console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
-      navigation.navigate("Bill_totals")
+      navigation.navigate("Bill_totals", {
+        room_code: room_code,
+        receipt_id: receipt_id
+      })
       // navigation.navigate("totals")
     }else {
       const user_selected_items = {
@@ -172,7 +176,8 @@ const Receipt_items = () => {
           if (room_code) {
             // console.log("button is pressed and room_code exists")
             // console.log(navigation.getState());
-            navigation.navigate('Groups_details', {room_code: room_code})
+            // navigation.navigate('Groups_details', {room_code: room_code})
+            navigation.goBack();
           } else {
             navigation.navigate('home');
           }
@@ -193,7 +198,8 @@ const Receipt_items = () => {
             <TextInput 
             style={styles.receipt_name}
             value={receiptname}
-            onFocus={()=> setEditingName(true)}
+            onFocus={()=>setEditingName(true)}
+            onBlur={()=>setEditingName(false)}
             onChangeText={setReceiptName}
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
@@ -216,7 +222,7 @@ const Receipt_items = () => {
                 <Receipt_items_list_component 
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
-                price={item.item_cost}
+                price={item.item_cost * item.item_quantity}
                 onPress={()=> handleItemPress(item)}
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
@@ -272,7 +278,7 @@ const Receipt_items = () => {
           onPress={() => {
               handleReceiptRename();
               Keyboard.dismiss();
-              setEditingName(false);
+              // setEditingName(false);
           }}
         />
       ) : (

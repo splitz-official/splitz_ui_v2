@@ -10,5 +10,6 @@ export default {
     textInputGray: '#D4D4D4',
     grey: '#DEDEDE',
     textInputPlaceholder: '#9F9F9F',
-    button_fill_green: '#C1EBCD'
+    button_fill_green: '#C1EBCD',
+    backgroundFillGray: '#D9D9D9'
 }

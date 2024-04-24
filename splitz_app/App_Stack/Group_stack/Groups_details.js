@@ -22,7 +22,7 @@ const Groups_details = () => {
     const route = useRoute();
     // console.log(route.params)
     const { room_code } = route.params;
-    console.log(room_code);
+    // console.log(room_code);
     const [room_details, setRoom_Details] = useState(null);
 
     const [members, setMembers] = useState([]);
@@ -164,7 +164,7 @@ const Groups_details = () => {
                         title={item.receipt_name}
                         owner={item.owner_id}
                         onPress={()=> navigation.navigate('Split_bill_stack', {
-                            screen: 'Receipt_items',
+                            screen: 'Bill_totals',
                             params: {room_code: item.room_code, receipt_id: item.id}
                         })}
                         />
@@ -177,7 +177,7 @@ const Groups_details = () => {
         text_style={{fontSize: RFValue(14)}}
         title={"Split Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
-            screen: 'upload_or_take_photo',
+            screen: 'upload_take_photo',
             params: { from: 'Group', room_code: room_code }
         })}/>
     </Screen>
