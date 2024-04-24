@@ -22,7 +22,7 @@ const Groups_details = () => {
     const route = useRoute();
     // console.log(route.params)
     const { room_code } = route.params;
-    console.log(room_code);
+    // console.log(room_code);
     const [room_details, setRoom_Details] = useState(null);
 
     const [members, setMembers] = useState([]);
@@ -109,23 +109,21 @@ const Groups_details = () => {
             <View style={styles.room_icon}>
                 <Text>{room_details.room_code}</Text>
             </View>
-            <Text style={styles.title}>{room_details.room_name}</Text>
-            <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+            <View style={{justifyContent: 'space-between'}}>
+                <Text style={styles.title}>{room_details.room_name}</Text>
+                <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+            </View>
         </View>
         <View style={styles.bottom_container}>
-            <View style={{}}>
-                <TouchableWithoutFeedback onPress={()=> setMembersDropDown(!membersdropdown)}>
-                    <View style={styles.drop_down}>
-                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
-                        {membersdropdown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
-                    </View>
-                </TouchableWithoutFeedback>
+            <View style={{flex: .35}}>
+                <View style={styles.drop_down}>
+                    <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
+                </View>
                 <TouchableWithoutFeedback onPress={()=> console.log("Add Users Pressed")}>
                     <View style={{position: 'absolute', right: 3}}>
                         <AntDesign name="adduser" size={scale(22)} color="black" />
                     </View>
                 </TouchableWithoutFeedback>
-                {membersdropdown && (
                     <FlatList 
                         data={members}
                         keyExtractor={item => item.id.toString()}
@@ -139,11 +137,10 @@ const Groups_details = () => {
                             />
                         }
                     />
-                )}
             </View>
-            <View style={{height: verticalScale(225)}}>
+            <View style={{flex: .65}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
-                    <View style={[styles.drop_down, {marginTop: scale(10)}]}>
+                    <View style={[styles.drop_down]}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts </Text>
                         {receiptsDropDown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
                     </View>
@@ -164,7 +161,7 @@ const Groups_details = () => {
                         title={item.receipt_name}
                         owner={item.owner_id}
                         onPress={()=> navigation.navigate('Split_bill_stack', {
-                            screen: 'Receipt_items',
+                            screen: 'Bill_totals',
                             params: {room_code: item.room_code, receipt_id: item.id}
                         })}
                         />
@@ -177,7 +174,7 @@ const Groups_details = () => {
         text_style={{fontSize: RFValue(14)}}
         title={"Split Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
-            screen: 'upload_or_take_photo',
+            screen: 'upload_take_photo',
             params: { from: 'Group', room_code: room_code }
         })}/>
     </Screen>
@@ -193,10 +190,10 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
     },
     top_container: {
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: scale(30),
+        marginTop: '6%',
         // borderWidth: 1,
     },
     room_icon: {
@@ -207,7 +204,8 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: scale(8)
+        // marginBottom: scale(8)
+        marginRight: scale(10)
     },
     title: {
         fontFamily: 'DMSans_700Bold',
@@ -223,7 +221,10 @@ const styles = StyleSheet.create({
     },
     bottom_container: {
         marginHorizontal: '6%',
-        marginTop: scale(25)
+        marginTop: scale(25),
+        height: verticalScale(390),
+        // borderWidth: 1,
+        // borderColor: 'blue'
     },
     drop_down: {
         flexDirection: 'row',
@@ -232,13 +233,15 @@ const styles = StyleSheet.create({
         // borderWidth: 1
     },
     members_list: {
-        marginTop: verticalScale(10),
+        // marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
         // borderWidth: 1
     },
     receipts_list: {
-        marginTop: verticalScale(10),
+        // marginTop: verticalScale(10),
         paddingHorizontal: scale(5),
+        // height: '50%',
+        // flex: 1
         // borderWidth: 1
     }
 })

@@ -76,22 +76,29 @@ const Edit_profile = () => {
         }
     }
 
+    if (loading) {
+        return (
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+            <ActivityIndicator size={'large'} color={Colors.primary}/>
+        </View>
+        )
+    }
+
   return (
-    <Screen style={{backgroundColor: Colors.white}}>
+    <Screen>
         {/* <TopLogo/> */}
-        {editingprofile ? <View style={{height: RFPercentage(6)}}/> : <Back_button title={'Back'} onPress={()=>navigate('profile')}/>}
-        {loading && <ActivityIndicator style={{position:'absolute', top: .5, bottom: .5, left: .5, right: .5}}size={'large'} color={Colors.primary}/>}
+        <Back_button title={'Back'} onPress={()=>navigate('profile')} disabled={editingprofile}/>
         <KeyboardAvoidingView behavior='height' style={styles.container}>
             <View style={styles.top_title_icon}>
                 <Text style={styles.title}>Edit Profile</Text>
                 {editingprofile ? (
-                    <TouchableOpacity activeOpacity={.8} style={{justifyContent: 'center', alignItems: 'center'}}onPress={handleSubmit}>
+                    <TouchableOpacity activeOpacity={.8} style={styles.edit_icon}onPress={handleSubmit}>
                         <Text style={{fontSize: RFValue(14), color: Colors.primary, fontFamily: 'DMSans_500Medium'}}>Done</Text>
                     </TouchableOpacity>
                 ): (
                     <TouchableOpacity 
                     activeOpacity={.8}
-                    style={{alignItems: 'center', justifyContent: 'center'}}
+                    style={styles.edit_icon}
                     onPress={()=>setEditingProfile(true)}>
                         <FontAwesome name="circle" size={RFValue(45)} color={Colors.primary} />
                         <View style={{position: 'absolute'}}>
@@ -114,28 +121,34 @@ const Edit_profile = () => {
                     userTextStyle={styles.profile_pic_text}
                     />
             </View>
-            <View>
+            <View style={{marginTop: '5%'}}>
                 <Edit_profile_text_fields 
                 description={'Display name:'}
-                value={userData?.name ?? 'Name'}
+                placeholder_value={userData?.name ?? 'Name'}
                 onChangeText={setName}
                 editable={editingprofile}
+                placeholderColor={Colors.black}
                 />
                 <Edit_profile_text_fields 
                 description={'Email:'}
-                value={userData?.email ?? 'Email'}
+                placeholder_value={userData?.email ?? 'Email'}
                 onChangeText={setEmail}
                 editable={editingprofile}
+                placeholderColor={Colors.black}
                 />
                 <Edit_profile_text_fields 
                 description={'Username:'}
-                value={`@${userData?.username ?? 'Username'}`}
+                placeholder_value={`@${userData?.username ?? 'Username'}`}
                 extra_style={{color: Colors.textgray}}
+                editable={false}
+                placeholderColor={Colors.textgray}
                 />
                 <Edit_profile_text_fields 
                 description={'Phone Number:'}
-                value={userData?.phone_number ?? 'Phone Number'}
+                placeholder_value={userData?.phone_number ?? 'Phone Number'}
                 extra_style={{color: Colors.textgray}}
+                editable={false}
+                placeholderColor={Colors.textgray}
                 />
             </View>
         </KeyboardAvoidingView>
@@ -161,11 +174,18 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 2,
-        marginTop: scale(20),
+        marginTop: '15%',
         marginBottom: scale(30)
     },
     profile_pic_text: {
         fontSize: RFValue(45)
+    },
+    edit_icon: {
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        position: 'absolute',
+        right: scale(5),
+        // borderWidth: 1, 
     }
 })
 

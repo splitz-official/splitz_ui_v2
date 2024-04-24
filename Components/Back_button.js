@@ -6,16 +6,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../Config/Colors';
 import { scale } from 'react-native-size-matters';
 
-const Back_button = ({onPress, title, children}) => {
+const Back_button = ({onPress, title, children, disabled}) => {
   return (
     <View style={{}}>
       <TouchableOpacity 
-          onPress={onPress}
+          onPress={disabled ? null : onPress}
           style={styles.container}
           activeOpacity={.8}
           >
-          <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={Colors.primary} />
-          <Text style={styles.text}>{title}</Text>
+          <MaterialIcons name="arrow-back-ios-new" size={RFValue(14)} color={disabled ? Colors.white : Colors.primary} />
+          <Text style={disabled ? styles.disabled :styles.text}>{title}</Text>
           {/* {children} */}
       </TouchableOpacity>
       {children}
@@ -34,6 +34,12 @@ const styles = StyleSheet.create({
   },
   text: {
     color: Colors.darkgreen,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: RFValue(12),
+    marginLeft: 5
+  },
+  disabled: {
+    color: Colors.white,
     fontFamily: 'DMSans_500Medium',
     fontSize: RFValue(12),
     marginLeft: 5
