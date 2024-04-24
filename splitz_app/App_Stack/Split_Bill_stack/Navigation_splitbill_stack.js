@@ -28,7 +28,7 @@ function SplitBillGroup() {
             component={Bill_participants}
             />
             <SplitBillStack.Screen 
-            name="upload_take_photo"
+            name="Upload_take_photo"
             component={Upload_take_photo}
             />
             <SplitBillStack.Screen 

@@ -44,7 +44,7 @@ const Bill_totals = () => {
       try {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
-        console.log(response.data.items);
+        // console.log(response.data.items);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);

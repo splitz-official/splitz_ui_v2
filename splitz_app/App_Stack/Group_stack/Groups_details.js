@@ -174,7 +174,7 @@ const Groups_details = () => {
         text_style={{fontSize: RFValue(14)}}
         title={"Split Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
-            screen: 'upload_take_photo',
+            screen: 'Upload_take_photo',
             params: { from: 'Group', room_code: room_code }
         })}/>
     </Screen>
