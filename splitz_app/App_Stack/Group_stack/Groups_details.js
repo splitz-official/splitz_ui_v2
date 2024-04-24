@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'
 import { RFValue } from 'react-native-responsive-fontsize'
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-toast-message';
 
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -31,6 +33,17 @@ const Groups_details = () => {
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     // console.log(receipts)
+
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(room_code);
+        Toast.show({
+            type: 'success',
+            text1: 'Copied to clipboard',
+            position: 'bottom',
+            autoHide: true,
+            visibilityTime: 1000
+        })
+    }
 
     useEffect(()=> {
         const fetchRoomDetails = async () => {
@@ -111,7 +124,9 @@ const Groups_details = () => {
             </View>
             <View style={{justifyContent: 'space-between'}}>
                 <Text style={styles.title}>{room_details.room_name}</Text>
-                <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+                <TouchableWithoutFeedback onPressIn={copyToClipboard}>
+                    <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+                </TouchableWithoutFeedback>
             </View>
         </View>
         <View style={styles.bottom_container}>
@@ -210,7 +225,8 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: 'DMSans_700Bold',
         fontSize: RFValue(26),
-        color: Colors.primary
+        color: Colors.primary,
+        marginBottom: verticalScale(5),
         // borderWidth: 1,
     },
     subtitle: {

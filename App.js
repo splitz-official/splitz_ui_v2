@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useFonts, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold } from '@expo-google-fonts/dm-sans';
 import * as SecureStore from "expo-secure-store"
 import * as SplashScreen from 'expo-splash-screen';
+import Toast from 'react-native-toast-message';
 
 import { AxiosProvider } from "./Axios/axiosContext";
 import { useAxios } from "./Axios/axiosContext";
@@ -35,6 +36,7 @@ const AppContent = () => {
   return (
     <NavigationContainer>
         <LoginStackNavigation initialRouteName={token ? "Bottom_Tab_Home_Navigator" : "Landing_Screen"}/>
+        <Toast />
     </NavigationContainer>
   )
 
