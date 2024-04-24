@@ -1,12 +1,12 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
-import { scale } from 'react-native-size-matters'
+import { scale, verticalScale } from 'react-native-size-matters'
 import Colors from '../../../../Config/Colors'
 
 const Edit_profile_text_fields = ({description, placeholder_value, extra_style, editable, onChangeText, placeholderColor}) => {
   return (
-    <View style={styles.container} behavior='height'> 
+    <View style={styles.container}> 
       <Text style={[styles.description, extra_style]}>{description}</Text>
       <TextInput 
         style={[editable ? [styles.editing, styles.value] : styles.value]} 
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: scale(25),
         alignItems: 'center',
-        marginVertical: scale(10),
+        height: verticalScale(40),
         // borderWidth: 2
     },
     description: {

@@ -85,21 +85,20 @@ const Edit_profile = () => {
     }
 
   return (
-    <Screen style={{backgroundColor: Colors.white}}>
+    <Screen>
         {/* <TopLogo/> */}
-        {editingprofile ? <View style={{height: RFPercentage(6)}}/> : <Back_button title={'Back'} onPress={()=>navigate('profile')}/>}
-        {loading && <ActivityIndicator style={{position:'absolute', top: .5, bottom: .5, left: .5, right: .5}}size={'large'} color={Colors.primary}/>}
+        <Back_button title={'Back'} onPress={()=>navigate('profile')} disabled={editingprofile}/>
         <KeyboardAvoidingView behavior='height' style={styles.container}>
             <View style={styles.top_title_icon}>
                 <Text style={styles.title}>Edit Profile</Text>
                 {editingprofile ? (
-                    <TouchableOpacity activeOpacity={.8} style={{justifyContent: 'center', alignItems: 'center'}}onPress={handleSubmit}>
+                    <TouchableOpacity activeOpacity={.8} style={styles.edit_icon}onPress={handleSubmit}>
                         <Text style={{fontSize: RFValue(14), color: Colors.primary, fontFamily: 'DMSans_500Medium'}}>Done</Text>
                     </TouchableOpacity>
                 ): (
                     <TouchableOpacity 
                     activeOpacity={.8}
-                    style={{alignItems: 'center', justifyContent: 'center'}}
+                    style={styles.edit_icon}
                     onPress={()=>setEditingProfile(true)}>
                         <FontAwesome name="circle" size={RFValue(45)} color={Colors.primary} />
                         <View style={{position: 'absolute'}}>
@@ -122,7 +121,7 @@ const Edit_profile = () => {
                     userTextStyle={styles.profile_pic_text}
                     />
             </View>
-            <View>
+            <View style={{marginTop: '5%'}}>
                 <Edit_profile_text_fields 
                 description={'Display name:'}
                 placeholder_value={userData?.name ?? 'Name'}
@@ -175,11 +174,18 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 2,
-        marginTop: scale(20),
+        marginTop: '15%',
         marginBottom: scale(30)
     },
     profile_pic_text: {
         fontSize: RFValue(45)
+    },
+    edit_icon: {
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        position: 'absolute',
+        right: scale(5),
+        // borderWidth: 1, 
     }
 })
 
