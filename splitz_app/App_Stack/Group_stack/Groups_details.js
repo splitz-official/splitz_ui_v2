@@ -116,18 +116,14 @@ const Groups_details = () => {
         </View>
         <View style={styles.bottom_container}>
             <View style={{flex: .35}}>
-                <TouchableWithoutFeedback onPress={()=> setMembersDropDown(!membersdropdown)}>
-                    <View style={styles.drop_down}>
-                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
-                        {membersdropdown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
-                    </View>
-                </TouchableWithoutFeedback>
+                <View style={styles.drop_down}>
+                    <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
+                </View>
                 <TouchableWithoutFeedback onPress={()=> console.log("Add Users Pressed")}>
                     <View style={{position: 'absolute', right: 3}}>
                         <AntDesign name="adduser" size={scale(22)} color="black" />
                     </View>
                 </TouchableWithoutFeedback>
-                {membersdropdown && (
                     <FlatList 
                         data={members}
                         keyExtractor={item => item.id.toString()}
@@ -141,11 +137,10 @@ const Groups_details = () => {
                             />
                         }
                     />
-                )}
             </View>
             <View style={{flex: .65}}>
                 <TouchableWithoutFeedback onPress={()=> setReceiptsDropDown(!receiptsDropDown)}>
-                    <View style={[styles.drop_down, {marginTop: scale(10)}]}>
+                    <View style={[styles.drop_down]}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Receipts </Text>
                         {receiptsDropDown ? <Entypo name="chevron-small-down" size={scale(22)} color="black" /> : <Entypo name="chevron-small-up" size={scale(24)} color="black" />}
                     </View>
@@ -157,7 +152,6 @@ const Groups_details = () => {
                     onRefresh={()=> fetchRoomReceipts()}
                     refreshing={isRefreshing}
                     showsVerticalScrollIndicator={false}
-                    // contentContainerStyle={{flex: 1}}
                     style={styles.receipts_list}
                     ItemSeparatorComponent={
                         <View style={{backgroundColor: Colors.primary, height: verticalScale(1)}}/>
