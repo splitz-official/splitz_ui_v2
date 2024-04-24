@@ -176,12 +176,12 @@ const Receipt_items = () => {
 
   return (
     <Screen>
-        <Back_button title={room_code ? 'Back' : 'Home'} onPress={() => {
+        <Back_button title={room_code ? 'Group' : 'Home'} onPress={() => {
           if (room_code) {
             // console.log("button is pressed and room_code exists")
             // console.log(navigation.getState());
-            // navigation.navigate('Groups_details', {room_code: room_code})
-            navigation.goBack();
+            navigation.navigate('Groups_details', {room_code: room_code});
+            // navigation.goBack();
           } else {
             navigation.navigate('home');
           }

@@ -50,7 +50,7 @@ const Groups_details = () => {
             // console.log("Fetching Room Details")
             try {
                 const response = await axiosInstance.get(`/room/${room_code}`);
-                // console.log(response.data);
+                console.log(response.data);
                 setRoom_Details(response.data);
             } catch (error) {
                 console.error("Error:", error);
@@ -97,6 +97,11 @@ const Groups_details = () => {
         }, [room_code])
     );
 
+    //is this useful since create group only allows names to be 20 characters
+    const truncate = (text, maxLength) => {
+        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    };
+
     // members and receipts dropdown touchable too wide. Adjust this later
 
     if (!room_details) {
@@ -123,7 +128,7 @@ const Groups_details = () => {
                 <Text>{room_details.room_code}</Text>
             </View>
             <View style={{justifyContent: 'space-between'}}>
-                <Text style={styles.title}>{room_details.room_name}</Text>
+                <Text style={styles.title}>{truncate(room_details.room_name, 12)}</Text>
                 <TouchableWithoutFeedback onPressIn={copyToClipboard}>
                     <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
                 </TouchableWithoutFeedback>
@@ -224,7 +229,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'DMSans_700Bold',
-        fontSize: RFValue(26),
+        fontSize: RFValue(24),
         color: Colors.primary,
         marginBottom: verticalScale(5),
         // borderWidth: 1,
