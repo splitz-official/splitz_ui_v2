@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale } from 'react-native-size-matters';
 import * as ImagePicker from 'expo-image-picker';
+import LottieView from 'lottie-react-native';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -160,7 +161,12 @@ const Upload_take_photo = () => {
     <Screen>
         {loading ? (
             <View style={styles.loading_container}>
-                <ActivityIndicator size={'large'} color={Colors.primary}/>
+                {/* <ActivityIndicator size={'large'} color={Colors.primary}/> */}
+                <LottieView 
+                source={require('../../../assets/loading_bar_animation.json')} 
+                autoPlay={true}
+                resizeMode='contain'
+                style={{width: '100%', height: '40%'}}/>
                 <Text style = {styles.loading_text}>We are processing your receipt, you will be redirected soon!</Text>
             </View>
         ): (
@@ -230,7 +236,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1,
-        backgroundColor: 'transparent'
+        // backgroundColor: 'transparent'
         // borderWidth: 1
     },
     loading_text: {
@@ -242,8 +248,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         width: '80%',
-        textAlign: 'center'
-        // borderWidth: 1
+        textAlign: 'center',
+        // borderWidth: 1,
+        // flex: 1
     }
 })
 

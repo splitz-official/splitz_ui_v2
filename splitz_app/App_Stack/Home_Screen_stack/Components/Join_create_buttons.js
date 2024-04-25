@@ -9,6 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 import { RegularText, Bold700Text, Medium500Text } from '../../../../Config/AppText';
 import Colors from '../../../../Config/Colors';
+import { verticalScale } from 'react-native-size-matters';
 
 
 function Join_create_buttons(props) {
@@ -50,7 +51,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: 5
+        marginTop: verticalScale(15),
+        // marginBottom: verticalScale(10)
+        // borderWidth: 1
     },
     join_group_button: {
         flexDirection: 'row',
@@ -58,11 +61,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 15,
         marginHorizontal: 5,
-        paddingVertical: 10,
+        paddingVertical: verticalScale(12),
         flex: 1,
         maxWidth: '45%',
         borderWidth: 1,
         borderColor: Colors.primary,
+        backgroundColor: 'white',
+        shadowColor: Colors.black,
+        shadowOpacity: .3,
+        shadowRadius:4,
+        shadowOffset: {
+            height: 4,
+        }
     },
     text: {
         color: Colors.primary,

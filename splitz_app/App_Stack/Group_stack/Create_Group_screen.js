@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -42,30 +42,25 @@ const Create_Group_screen = () => {
         onPress={()=> navigate('home')}
         title={'Home'}
         />
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
-        <View style={styles.flexContainer}>
+        <KeyboardAvoidingView behavior={'height'} style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-                <View>
-            <View style={styles.top_container}>
-                <View style={styles.image}/>
-                <View style={styles.input_box}>
-                    <TextInput 
-                        style={styles.Group_name_input}
-                        placeholder='Name your group...'
-                        placeholderTextColor={Colors.textInputPlaceholder}
-                        maxLength={20}
-                        value={group}
-                        onChangeText={setGroup}
-                        autoFocus={true}
-                        keyboardType='default'
-                        autoCorrect={false}
-                        />
-                    <View style={styles.bottom_line}/>
-                </View>
+            <View style={styles.container}>
+                <TextInput 
+                    style={styles.Group_name_input}
+                    placeholder='Name your group...'
+                    placeholderTextColor={Colors.textInputPlaceholder}
+                    maxLength={20}
+                    value={group}
+                    onChangeText={setGroup}
+                    autoFocus={true}
+                    keyboardType='default'
+                    autoCorrect={false}
+                    />
+                <View style={styles.bottom_line}/>
+                <Image source={require('../../../assets/create_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/>
             </View>
 
-            <View style={styles.bottom_container}>
+            {/* <View style={styles.bottom_container}>
                 <Text style={styles.subtitle_text}>Add Group Members</Text>
                 <TextInput 
                 style={styles.textInput}
@@ -83,27 +78,36 @@ const Create_Group_screen = () => {
                 </TouchableOpacity>
                 <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
                 <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends! Invite them to create a group!</Text>
-            </View>
-            </View>
-            </ScrollView>
+            </View> */}
             </TouchableWithoutFeedback>
             <Large_green_button 
             title={'Create Room'}
             onPress={handleContinue}
             disabled={group.trim()===""}
             />
-            </View>
         </KeyboardAvoidingView>
     </Screen>
   )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        marginHorizontal: "6%",
+        marginTop: "20%",
+        flex: 1,
+    },
+    Group_name_input: {
+        fontFamily: 'DMSans_700Bold',
+        fontSize: RFValue(20),
+        color: Colors.primary,
+        marginBottom: scale(5),
+        // borderWidth: 1,
+    },
     top_container: {
         flexDirection: "row",
         marginHorizontal: "6%",
-        marginTop: "5%",
-        marginBottom: scale(10),
+        marginTop: "20%",
+        // marginBottom: scale(10),
         alignItems: 'center',
         // flex: 1,
         // borderWidth: 1
@@ -128,13 +132,6 @@ const styles = StyleSheet.create({
         fontFamily: 'DMSans_500Medium',
         marginTop: 20
     },
-    Group_name_input: {
-        fontFamily: 'DMSans_700Bold',
-        fontSize: RFValue(20),
-        color: Colors.primary,
-        marginBottom: scale(5),
-        // borderWidth: 1,
-    },
     textInput: {
         borderWidth: 1,
         borderRadius: 10,
@@ -152,7 +149,7 @@ const styles = StyleSheet.create({
     },
     bottom_line:{
         height: scale(2),
-        // minWidth: '80%',
+        minWidth: '80%',
         backgroundColor: Colors.primary,
     },
     QR_Code: {
@@ -167,9 +164,6 @@ const styles = StyleSheet.create({
         fontSize: RFValue(12), 
         color: Colors.textgray,
         marginLeft: scale(5)
-    },
-    flexContainer: {
-        flex: 1, 
     },
 })
 

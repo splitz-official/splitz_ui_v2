@@ -2,7 +2,7 @@ import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, TouchableWithou
 import { Animated } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 import Colors from '../../../../Config/Colors'
 
@@ -49,8 +49,8 @@ const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
 const styles = StyleSheet.create({
     container: {
         // flex: 1,
-        marginTop: 20,
-        marginBottom: 10,
+        marginTop: verticalScale(25),
+        marginBottom: verticalScale(10),
         justifyContent: 'center',
         alignItems: 'center'
     },

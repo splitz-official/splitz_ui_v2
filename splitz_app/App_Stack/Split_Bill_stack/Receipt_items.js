@@ -85,7 +85,8 @@ const Receipt_items = () => {
     const calculateTotal = () => {
         const total = selectedItems.reduce((acc, itemId) => {
             const item = receipt.items.find(item => item.id === itemId);
-            return acc + (item ? item.item_cost * item.item_quantity : 0);
+            const total = acc + (item ? ((item.item_cost * item.item_quantity) / (item.users.length || 1)) : 0)
+            return total;
         }, 0);
         setUserCost(total);
     };
@@ -127,7 +128,7 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    console.log(selectedItems)
+    // console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
       navigation.navigate("Bill_totals", {
@@ -214,7 +215,7 @@ const Receipt_items = () => {
             //   handleReceiptRename()
             // )}
             />
-            <Picture_name_icon name={userData.name} icon_name_styles={{marginTop: verticalScale(20)}}/>
+            <Picture_name_icon name={userData.name.split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
               <FlatList 
               data={receipt.items}
@@ -254,8 +255,8 @@ const Receipt_items = () => {
                 <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
               </View>
               <View style={styles.total_container}>
-                <Text style={styles.total_text}>Your total:</Text>
-                <Text style={styles.total_text}>{userCost}</Text>
+                <Text style={styles.total_text}>Your subtotal:</Text>
+                <Text style={styles.total_text}>{userCost.toFixed(2)}</Text>
               </View>
             </> 
             )
@@ -287,7 +288,7 @@ const Receipt_items = () => {
         />
       ) : (
         <Large_green_button 
-            title={"Submit"} 
+            title={"Confirm items"} 
             onPress={confirmSelectedItems}
         />
       )}

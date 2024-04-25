@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 
 
@@ -26,14 +26,17 @@ const Bill_totals = () => {
   const [receipt, setReceipt] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [tax, setTax] = useState('');
-  const [tip, setTip] = useState('');
+  const [tax, setTax] = useState(0);
+  const [tip, setTip] = useState(0);
   const [total, setTotal] = useState('');
+  const [receiptSubTotal, setReceiptSubTotal] = useState(0);
   const [userCost, setUserCost] = useState(0);
   const initialNameRef = useRef();
   const [activeUsers, setActiveUsers] = useState([]);
+  const [activeusers_and_costs, setActiveUsers_and_Costs] = useState([]);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const fetchReceipt = async () => {
       if (!room_code || !receipt_id) {
         console.log('Missing parameters: room_code or receipt_id');
@@ -44,34 +47,40 @@ const Bill_totals = () => {
       try {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
-        // console.log(response.data.items);
+        // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
+
+        const Receipt_subTotal = response.data.items.reduce((acc, item) => {
+          return acc + (item.item_cost * item.item_quantity);
+        }, 0);
+        setReceiptSubTotal(Receipt_subTotal);
         
-        const usersMap = new Map();
-        response.data.items.forEach(item => {
-          item.users.forEach(user => {
-            if(!usersMap.has(user.id)){
-              usersMap.set(user.id, {
-                id: user.id,
-                name: user.name.split(' ')[0],
-                username: user.username
-              });
-            }
-          });
-        });
-        const uniqueUsers = Array.from(usersMap.values())
-        setActiveUsers(uniqueUsers);
+        // const usersMap = new Map();
+        // response.data.items.forEach(item => {
+        //   item.users.forEach(user => {
+        //     if(!usersMap.has(user.id)){
+        //       usersMap.set(user.id, {
+        //         id: user.id,
+        //         name: user.name.split(' ')[0],
+        //         username: user.username
+        //       });
+        //     }
+        //   });
+        // });
+        // const uniqueUsers = Array.from(usersMap.values())
+        // setActiveUsers(uniqueUsers);
         // console.log(uniqueUsers)
 
         setReceipt(response.data); 
         setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
-        setTotal(response.data.total_amount);
+        setTotal(response.data.total_amount.toFixed(2));
         initialNameRef.current=response.data.receipt_name;
         setReceiptName(response.data.receipt_name);
+        calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);
@@ -79,28 +88,46 @@ const Bill_totals = () => {
       }
       // console.log("Selected Items: ", selectedItems) this doesn't update in time before the variable is set so ignore first initial result 
     };
-
     fetchReceipt();
-  }, []); 
+  }, [])
+);
 
-  const calculateUserTotals = (items, taxAmount, tipAmount) => {
+
+  //when you first render the page the tax and tip amount are not set in time 
+  const calculateUserTotals = (items, taxAmount, tipAmount, subTotal) => {
     const userCosts = new Map();
+    const totalTaxAndTip = taxAmount + tipAmount;
+    // console.log(taxAmount, tipAmount, subTotal)
 
-    items.forEach(item=> {
-      const pricePerUser = item.item_cost / item.users.length;
-      item.users.forEach(user=> {
-        if (!userCosts.has(user.id)){
+    items.forEach(item => {
+      const pricePerUser = (item.item_cost * item.item_quantity) / (item.users.length || 1);
+      item.users.forEach(user => {
+        if (!userCosts.has(user.id)) {
           userCosts.set(user.id, {
             name: user.name,
+            username: user.username,
+            id: user.id,
             subtotal: 0,
             totalCost: 0
           });
         }
         let currentUser = userCosts.get(user.id);
         currentUser.subtotal += pricePerUser;
-      })
-    })
-  }
+      });
+    });
+
+    userCosts.forEach((user) => {
+      // const userSubtotal = user.subtotal;
+      const taxTipProportion = totalTaxAndTip === 0 ? 0 : ((user.subtotal / subTotal) * (totalTaxAndTip));
+      // console.log(typeof userSubtotal, typeof subTotal, typeof taxTipProportion)
+      user.totalCost = (user.subtotal + taxTipProportion).toFixed(2);
+    });
+
+    const userCost_array =  Array.from(userCosts.values());
+    setActiveUsers_and_Costs(userCost_array);
+    // console.log(userCost_array);
+}
+
 
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
@@ -125,7 +152,9 @@ const Bill_totals = () => {
 
   return (
     <Screen>
-      <Back_button title={"Back"} onPress={()=> navigation.goBack()}/>
+      <Back_button title={"Group"} onPress={()=> navigation.navigate('Groups_details', {
+        room_code: room_code
+      })}/>
       <KeyboardAvoidingView
       behavior='height'
       style={{flex: 1}}
@@ -144,10 +173,12 @@ const Bill_totals = () => {
           />
         <View style={styles.top_total_container}>
           <Text style={styles.top_total_text}>{total}</Text>
+          <Text style={[styles.top_total_text, {fontSize: RFValue(12)}]}>Bill Total</Text>
         </View>
       <View style={styles.list_container}>
+        {activeusers_and_costs ==[] ? null : <Text style={styles.list_message}>Totals below include proportional tax and tip</Text>}
         <FlatList 
-        data={activeUsers}
+        data={activeusers_and_costs}
         // style={{borderWidth: 1}}
         contentContainerStyle={{flexGrow: 1}}
         keyExtractor={item => item.id.toString()}
@@ -159,7 +190,7 @@ const Bill_totals = () => {
           </>
         }
         renderItem={({ item })=> (
-          <User_total_list_item name={item.name} first_letter={item.name[0]}/>
+          <User_total_list_item name={item.name.split(' ')[0]} first_letter={item.name[0]} price={item.totalCost}/>
         )}
         />
       </View>
@@ -230,6 +261,13 @@ const styles = StyleSheet.create({
       width: '80%',
       textAlign: 'center'
       // borderWidth: 1
+  },
+  list_message: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: RFValue(8),
+    textAlign: 'center',
+    color: Colors.textgray,
+    // borderWidth: 1,
   }
 })
 

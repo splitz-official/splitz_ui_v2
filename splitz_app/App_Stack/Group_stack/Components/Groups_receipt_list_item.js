@@ -16,8 +16,8 @@ const Groups_receipt_list_item = ({ title, owner, onPress}) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
-            <Text style={styles.owner}>Added by: {owner}</Text>
             <Text numberOfLines={2} style={styles.name}>"{title}"</Text>
+            <Text style={styles.owner}>Added by: {owner}</Text>
         </View>
     </TouchableWithoutFeedback>
   )
@@ -29,11 +29,11 @@ const styles = StyleSheet.create({
         height: verticalScale(55),
         // borderWidth: 1,
     },
-    owner: {
-        fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(14)
-    },
     name: {
+        fontFamily: 'DMSans_500Medium',
+        fontSize: RFValue(12)
+    },
+    owner: {
         fontFamily: 'DMSans_400Regular',
         fontSize: RFValue(10),
         color: Colors.black,
