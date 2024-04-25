@@ -49,7 +49,7 @@ function Home_screen(props) {
                 {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {`${userData.name.split(' ')[0]}!`}</Medium500Text>
                     : <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
                 }
-                <Owe_owed/>
+                {/* <Owe_owed/> */}
                 <Join_create_buttons/>
                 <Group_bills_switch onBillsPress={()=> setActiveButton('Bills')} onGroupsPress={()=> setActiveButton('Groups')} activeButton={activeButton}/>
                 {renderActiveComponent()}

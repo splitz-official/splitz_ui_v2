@@ -10,6 +10,10 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
 
     const navigation = useNavigation();
 
+    const truncate = (text, maxLength) => {
+        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    };
+
   return (
     <TouchableOpacity 
     style={styles.container} 
@@ -21,7 +25,7 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
         <View style={styles.icon_no_image}>
             <Text style={{fontSize: RFValue(12)}}>{icon_text}</Text>
         </View>
-        <Text style={styles.text}>{title}</Text>
+        <Text style={styles.text} numberOfLines={2}>{title}</Text>
     </TouchableOpacity>
   )
 }
@@ -29,11 +33,12 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
 const styles = StyleSheet.create({
     container:{
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingTop: '5%',
         flex: 1,
-        // borderWidth: 2,
         margin: 2,
         height: Dimensions.get('screen').width/3,
+        // borderWidth: 2,
     },
     image: {
         height: RFPercentage(8),

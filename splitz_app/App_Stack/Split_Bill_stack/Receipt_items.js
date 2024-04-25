@@ -214,7 +214,7 @@ const Receipt_items = () => {
             //   handleReceiptRename()
             // )}
             />
-            <Picture_name_icon name={userData.name} icon_name_styles={{marginTop: verticalScale(20)}}/>
+            <Picture_name_icon name={userData.name.split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
               <FlatList 
               data={receipt.items}
@@ -287,7 +287,7 @@ const Receipt_items = () => {
         />
       ) : (
         <Large_green_button 
-            title={"Submit"} 
+            title={"Confirm items"} 
             onPress={confirmSelectedItems}
         />
       )}
