@@ -33,12 +33,12 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
 const styles = StyleSheet.create({
     container:{
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: '5%',
         flex: 1,
         margin: 2,
         height: Dimensions.get('screen').width/3,
-        // borderWidth: 2,
+        justifyContent: "flex-start",
+        flexGrow: 1,
+        paddingTop: '5%',
     },
     image: {
         height: RFPercentage(8),
@@ -47,10 +47,16 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: Colors.primary,
         marginBottom: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
     },
     text: {
         fontFamily: 'DMSans_700Bold',
-        fontSize: RFValue(12)
+        fontSize: RFValue(12),
+        textAlign: 'center',
+        width: "100%",
+        paddingTop: scale(2),
     },
     icon_no_image: {
         height: scale(60),
@@ -60,7 +66,8 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary,
         marginBottom: 8,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: "relative",
     }
 })
 

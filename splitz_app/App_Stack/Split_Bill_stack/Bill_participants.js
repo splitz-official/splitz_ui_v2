@@ -282,29 +282,32 @@ const styles = StyleSheet.create({
         height: scale(90), // Adjust the height to accommodate both the circle and the name
     },
     participantItemContainer: {
-        flexDirection: "column", 
+        flexDirection: "column",
         alignItems: 'center', // Center align the items vertically
         marginRight: scale(10),
-        justifyContent: "center",
-        alignItems: "center",
         width: scale(65),
-        minHeight: scale(70)
+        minHeight: scale(70),
+        justifyContent: "flex-start", // Align items starting from the top
+        display: 'flex',
+        flexGrow: 1,
     },
     participantCircle: {
         width: scale(45),
         height: scale(45),
         borderRadius: scale(25),
-        backgroundColor: "grey", // Choose a suitable background color
+        backgroundColor: "grey",
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
+        marginBottom: scale(5), // Maintain a small gap between the circle and the name
+        marginTop: scale(5),
     },
     participantName: {
         fontSize: RFValue(12),
-        color: 'black', // Ensure the text is readable
-        marginTop: scale(5),
-        textAlign: 'center', // Center align the text
-        width: "100%"
+        color: 'black',
+        textAlign: 'center',
+        width: "100%",
+        paddingTop: scale(2), // Minimal padding to ensure text is close to the circle
     },
     removeParticipantBtn: {
         position: 'absolute',
