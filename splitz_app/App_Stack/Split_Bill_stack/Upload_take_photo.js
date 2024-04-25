@@ -27,7 +27,8 @@ const Upload_take_photo = () => {
     const {axiosInstance, axiosInstanceMultipart} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
-    const { room_code = null, participants = [] } = route.params || {};
+    const { room_code = null, participants = null } = route.params || {};
+    // console.log(route.params);
     // console.log("Room Code from route.params:" , room_code);
     // console.log(route.params);
 
@@ -189,7 +190,7 @@ const Upload_take_photo = () => {
                 <View style={styles.bottom_line}/>
             </View>
             <TouchableOpacity onPress={()=> navigation.navigate("Receipt_items")}>
-                <Text>GO TO RECEIPT - IGNORE THIS BUTTON IT IS FOR DEVELOPMENT ONLY</Text>
+                {/* <Text>GO TO RECEIPT - IGNORE THIS BUTTON IT IS FOR DEVELOPMENT ONLY</Text> */}
             </TouchableOpacity>
             <View style={{flexDirection: 'row', position: 'absolute', bottom: 0, backgroundColor: 'transparent'}}>
                 <Large_green_outline_button 
