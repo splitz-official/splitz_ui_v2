@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -68,6 +68,7 @@ const Join_Group_screen = () => {
                         secureTextEntry
                         />
                     <View style={styles.bottom_line}/> */}
+                    <Image source={require('../../../assets/join_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/>
                 </View>
             </TouchableWithoutFeedback>
             <Large_green_button 

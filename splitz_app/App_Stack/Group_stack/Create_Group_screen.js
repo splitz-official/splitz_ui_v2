@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, ScrollView, Alert, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -57,6 +57,7 @@ const Create_Group_screen = () => {
                     autoCorrect={false}
                     />
                 <View style={styles.bottom_line}/>
+                <Image source={require('../../../assets/create_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/>
             </View>
 
             {/* <View style={styles.bottom_container}>
