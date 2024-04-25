@@ -39,7 +39,7 @@ const Groups_details = () => {
         Toast.show({
             type: 'success',
             text1: 'Copied to clipboard',
-            position: 'bottom',
+            position: 'top',
             autoHide: true,
             visibilityTime: 1000
         })
