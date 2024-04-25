@@ -20,10 +20,10 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={[styles.checkbox, isSelected ? styles.selectedbox: {}]}/>
-            <Text style={styles.name}>{truncate(name, 15)} {quantity}</Text>
+            <Text style={styles.name}>{truncate(name, 18)} {quantity}</Text>
         </View>
         <Text style={styles.price}>{price}</Text>
-        <Text style={styles.participants}>{participants}</Text>
+        <Text style={styles.participants}>selected by: {participants}</Text>
     </TouchableOpacity>
   )
 }

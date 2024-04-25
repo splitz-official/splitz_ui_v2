@@ -85,7 +85,8 @@ const Receipt_items = () => {
     const calculateTotal = () => {
         const total = selectedItems.reduce((acc, itemId) => {
             const item = receipt.items.find(item => item.id === itemId);
-            return acc + (item ? item.item_cost * item.item_quantity : 0);
+            const total = acc + (item ? ((item.item_cost * item.item_quantity) / (item.users.length || 1)) : 0)
+            return total;
         }, 0);
         setUserCost(total);
     };
@@ -127,7 +128,7 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    console.log(selectedItems)
+    // console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
       navigation.navigate("Bill_totals", {
@@ -254,8 +255,8 @@ const Receipt_items = () => {
                 <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
               </View>
               <View style={styles.total_container}>
-                <Text style={styles.total_text}>Your total:</Text>
-                <Text style={styles.total_text}>{userCost}</Text>
+                <Text style={styles.total_text}>Your subtotal:</Text>
+                <Text style={styles.total_text}>{userCost.toFixed(2)}</Text>
               </View>
             </> 
             )

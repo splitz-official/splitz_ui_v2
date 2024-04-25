@@ -80,7 +80,7 @@ const Bill_totals = () => {
         setTotal(response.data.total_amount.toFixed(2));
         initialNameRef.current=response.data.receipt_name;
         setReceiptName(response.data.receipt_name);
-        const userTotals = calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
+        calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);
@@ -97,7 +97,7 @@ const Bill_totals = () => {
   const calculateUserTotals = (items, taxAmount, tipAmount, subTotal) => {
     const userCosts = new Map();
     const totalTaxAndTip = taxAmount + tipAmount;
-    console.log(taxAmount, tipAmount, subTotal)
+    // console.log(taxAmount, tipAmount, subTotal)
 
     items.forEach(item => {
       const pricePerUser = (item.item_cost * item.item_quantity) / (item.users.length || 1);
@@ -117,10 +117,10 @@ const Bill_totals = () => {
     });
 
     userCosts.forEach((user) => {
-      const userSubtotal = user.subtotal;
-      const taxTipProportion = totalTaxAndTip === 0 ? 0 : ((userSubtotal / subTotal) * (totalTaxAndTip));
-      console.log(userSubtotal, subTotal, taxTipProportion)
-      user.totalCost = (userSubtotal + taxTipProportion).toFixed(2);
+      // const userSubtotal = user.subtotal;
+      const taxTipProportion = totalTaxAndTip === 0 ? 0 : ((user.subtotal / subTotal) * (totalTaxAndTip));
+      // console.log(typeof userSubtotal, typeof subTotal, typeof taxTipProportion)
+      user.totalCost = (user.subtotal + taxTipProportion).toFixed(2);
     });
 
     const userCost_array =  Array.from(userCosts.values());
@@ -176,6 +176,7 @@ const Bill_totals = () => {
           <Text style={[styles.top_total_text, {fontSize: RFValue(12)}]}>Bill Total</Text>
         </View>
       <View style={styles.list_container}>
+        {activeusers_and_costs ==[] ? null : <Text style={styles.list_message}>Totals below include proportional tax and tip</Text>}
         <FlatList 
         data={activeusers_and_costs}
         // style={{borderWidth: 1}}
@@ -260,6 +261,13 @@ const styles = StyleSheet.create({
       width: '80%',
       textAlign: 'center'
       // borderWidth: 1
+  },
+  list_message: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: RFValue(8),
+    textAlign: 'center',
+    color: Colors.textgray,
+    // borderWidth: 1,
   }
 })
 
