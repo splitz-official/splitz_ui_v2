@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         paddingHorizontal: 10,
         flex: 1,
-        marginBottom: scale(60)
+        marginBottom: scale(50)
     },
     empty: {
         backgroundColor: 'transparent',
