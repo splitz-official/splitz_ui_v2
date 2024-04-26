@@ -1,18 +1,22 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Groups_list_item from './Groups_list_item';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAxios } from '../../../../Axios/axiosContext'
+import LottieView from 'lottie-react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import Colors from '../../../../Config/Colors';
 
 const Groups = () => {
 
     const { userData, axiosInstance } = useAxios();
     const navigation = useNavigation();
-    const [formattedData, setFormattedData] = useState();
+    const [formattedData, setFormattedData] = useState([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
     // console.log("User ID: " + userData.id)
+    let empty_data = [];
 
 
     const fetchGroups = async () => {
@@ -55,6 +59,22 @@ const Groups = () => {
             refreshing={isRefreshing}
             style={styles.groups_grid}
             data={formattedData}
+            ListEmptyComponent={
+                <>
+                <View style={{alignItems: 'center'}}>
+                    <LottieView 
+                    source={require('../../../../assets/welcome_animation.json')}
+                    autoPlay={true}
+                    resizeMode='contain'
+                    style={{width:'100%',height: verticalScale(300), borderWidth: 1}}
+                    >
+                        <Text style={styles.welcome_text}>
+                            Create a group or split a bill to get started!
+                        </Text>
+                    </LottieView>
+                </View>
+                </>
+            }
             keyExtractor={data => data.id ? data.id.toString() : data.key}
             numColumns={3}
             renderItem={({ item }) => {
@@ -83,15 +103,26 @@ const styles = StyleSheet.create({
         // marginBottom: 10,
         // marginTop: 5,
         // borderWidth: 1,
-        paddingHorizontal: 10,
+        // borderColor: 'blue',
+        paddingHorizontal: scale(10),
         flex: 1,
-        marginBottom: scale(50)
+        marginBottom: '18%'
     },
     empty: {
         backgroundColor: 'transparent',
         flex: 1,
         // borderWidth: 2,
         margin: 2
+    },
+    welcome_text: {
+        position: 'absolute', 
+        // borderWidth: 1, 
+        width: '100%', 
+        textAlign: 'center', 
+        bottom: '10%',
+        fontFamily: 'DMSans_500Medium',
+        fontSize: RFValue(14),
+        color: Colors.primary
     }
 })
 
