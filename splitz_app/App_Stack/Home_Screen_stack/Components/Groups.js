@@ -15,6 +15,7 @@ const Groups = () => {
     const navigation = useNavigation();
     const [formattedData, setFormattedData] = useState([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [dataFetched, setDataFetched] = useState(false);
     // console.log("User ID: " + userData.id)
     let empty_data = [];
 
@@ -29,10 +30,12 @@ const Groups = () => {
                 // console.log(response.data);
             } catch (err) {
                 console.error("Failed to fetch groups:", err);
+            } finally {
+                setTimeout(()=> {
+                    setIsRefreshing(false);
+                }, 250)
+                setDataFetched(true);
             }
-            setTimeout(()=> {
-                setIsRefreshing(false);
-            }, 250)
         }
     };
 
@@ -60,20 +63,19 @@ const Groups = () => {
             style={styles.groups_grid}
             data={formattedData}
             ListEmptyComponent={
-                <>
+                (dataFetched && 
                 <View style={{alignItems: 'center'}}>
                     <LottieView 
                     source={require('../../../../assets/welcome_animation.json')}
                     autoPlay={true}
                     resizeMode='contain'
-                    style={{width:'100%',height: verticalScale(300), borderWidth: 1}}
+                    style={{width:'100%',height: verticalScale(300)}}
                     >
                         <Text style={styles.welcome_text}>
                             Create a group or split a bill to get started!
                         </Text>
                     </LottieView>
-                </View>
-                </>
+                </View>)
             }
             keyExtractor={data => data.id ? data.id.toString() : data.key}
             numColumns={3}

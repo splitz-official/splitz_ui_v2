@@ -5,6 +5,7 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import { RFValue } from 'react-native-responsive-fontsize'
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
+import * as Haptics from 'expo-haptics';
 
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -139,7 +140,7 @@ const Groups_details = () => {
                 <View style={styles.drop_down}>
                     <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
                 </View>
-                <TouchableWithoutFeedback onPress={()=> console.log("Add Users Pressed")}>
+                <TouchableWithoutFeedback onPress={()=> Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}>
                     <View style={{position: 'absolute', right: 3}}>
                         <AntDesign name="adduser" size={scale(22)} color="black" />
                     </View>
@@ -205,7 +206,10 @@ const Groups_details = () => {
                 <View style={styles.modal}>
                     <View style={styles.share_modal_top}>
                         <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(16), color: Colors.primary}}>Share group</Text>
-                        <TouchableOpacity activeOpacity={.7} style={styles.modal_share_button}>
+                        <TouchableOpacity 
+                        activeOpacity={.7} 
+                        style={styles.modal_share_button} 
+                        onPress={()=> Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}>
                             <Entypo name="share-alternative" size={scale(16)} color="white" />
                             <Text style={{color: Colors.white, marginLeft: scale(10), fontFamily: 'DMSans_700Bold', fontSize: RFValue(14)}}>Share link</Text>
                         </TouchableOpacity>

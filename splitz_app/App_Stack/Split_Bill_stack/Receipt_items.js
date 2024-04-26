@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
-
+import * as Haptics from 'expo-haptics';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
@@ -228,7 +228,11 @@ const Receipt_items = () => {
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
                 price={item.item_cost * item.item_quantity}
-                onPress={()=> handleItemPress(item)}
+                onPress={()=> {
+                  handleItemPress(item)
+                  Haptics.selectionAsync()
+                }
+                }
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
                   item.users

@@ -1,14 +1,23 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
+import * as Haptics from 'expo-haptics';
 
 import Colors from '../Config/Colors'
 import { scale } from 'react-native-size-matters'
 
 const Large_green_outline_button = ( { title, onPress, icon_component, disabled}) => {
+
+    const handlePress = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("haptic")
+        // if (onPress) onPress();
+        onPress();
+      };
+
   return (
     <View style={styles.container}>
-        <TouchableOpacity style={disabled ? [styles.button, styles.disabled] : styles.button} onPress={!disabled ? onPress : null} activeOpacity={.8}>
+        <TouchableOpacity style={disabled ? [styles.button, styles.disabled] : styles.button} onPress={!disabled ? handlePress : null} activeOpacity={.8}>
             {icon_component}
             <Text style={disabled ? [styles.text, styles.disabled_text] : styles.text} >{title}</Text>
         </TouchableOpacity>
