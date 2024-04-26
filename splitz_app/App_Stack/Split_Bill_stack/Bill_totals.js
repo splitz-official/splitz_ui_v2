@@ -92,6 +92,17 @@ const Bill_totals = () => {
   }, [])
 );
 
+function First_last_initial(fullName) {
+  const parts = fullName.trim().split(' ');  
+  if (parts.length === 1) {
+      return parts[0];
+  } else {
+      const firstName = parts[0];
+      const lastNameInitial = parts[parts.length - 1].charAt(0);  
+      return `${firstName} ${lastNameInitial}.`; 
+  }
+}
+
 
   //when you first render the page the tax and tip amount are not set in time 
   const calculateUserTotals = (items, taxAmount, tipAmount, subTotal) => {
@@ -190,7 +201,7 @@ const Bill_totals = () => {
           </>
         }
         renderItem={({ item })=> (
-          <User_total_list_item name={item.name.split(' ')[0]} first_letter={item.name[0]} price={item.totalCost}/>
+          <User_total_list_item name={First_last_initial(item.name)} first_letter={item.name[0]} price={item.totalCost}/>
         )}
         />
       </View>

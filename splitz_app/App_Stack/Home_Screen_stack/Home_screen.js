@@ -28,6 +28,7 @@ function Home_screen(props) {
 
     const [activeButton, setActiveButton] = useState('Groups');
     const [activeOption, setActiveOption] = useState('A')
+    
 
     const renderActiveComponent = () => {
         switch (activeButton) {
@@ -41,12 +42,11 @@ function Home_screen(props) {
         }
     };
 
-    //FIX FLATLIST AND GREEN BUTTON POSITIONING. GREEN BUTTON IS OVERLAPPING FLATLIST
     return (
         <Screen style={{backgroundColor: Colors.white}}>
             <View style={{flex:1}}>
                 <TopLogo/>
-                {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {`${userData.name.split(' ')[0]}!`}</Medium500Text>
+                {userName ? <Medium500Text style={styles.Welcometext}>Welcome Back, {`${userData.name.trim().split(' ')[0]}!`}</Medium500Text>
                     : <Medium500Text style={styles.Welcometext}>Welcome Back!</Medium500Text> 
                 }
                 {/* <Owe_owed/> */}
