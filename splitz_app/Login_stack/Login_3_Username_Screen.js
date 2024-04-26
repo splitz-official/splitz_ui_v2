@@ -14,7 +14,6 @@ import Colors from '../../Config/Colors'
 
 const Login_3_Username_Screen = ({ route }) => {
     console.log("Login Stack: Username Input Screen")
-    const { baseURL } = route.params;
     const { navigate } = useNavigation();
 
     const { axiosInstance, setUserData } = useAxios();

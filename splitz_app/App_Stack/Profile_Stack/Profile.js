@@ -163,7 +163,7 @@ function Profile(props) {
                     transparent={true}
                     visible={logoutmodalVisible}
                     onRequestClose={() => {
-                        setLogoutModalVisible(!logoutmodalVisible);
+                        setLogoutModalVisible(false);
                     }}
                 >
                     <View style={styles.modal_centeredView}>
@@ -204,7 +204,7 @@ function Profile(props) {
                 transparent={true}
                 visible={friendmodalVisible}
                 onRequestClose={() => {
-                    setModalVisible(!friendmodalVisible);
+                    setModalVisible(false);
                 }}
                 >
                     <Screen>
