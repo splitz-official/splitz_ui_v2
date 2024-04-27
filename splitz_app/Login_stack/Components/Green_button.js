@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Colors from '../../../Config/Colors'
 import { RFValue } from 'react-native-responsive-fontsize'
+import { scale } from 'react-native-size-matters'
 
 const Green_button = ({children, onPress, buttonstyle}) => {
   return (
@@ -19,11 +20,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: Colors.primary,
-        marginLeft: 20,
-        marginTop: 20,
-        marginBottom: 15,
-        // paddingVertical: 15,
-        height: RFValue(45),
+        alignSelf: "center",
+        marginTop: scale(40),
+        width: scale(320),
+        height: scale(45),
         borderRadius: 10,
     },
       buttontext: {

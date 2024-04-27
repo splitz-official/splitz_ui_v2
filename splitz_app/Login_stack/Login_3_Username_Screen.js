@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Keyboard } from 'react-native'
+import { StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
@@ -11,10 +11,11 @@ import Login_layout from './Components/Login_layout'
 import Green_button from './Components/Green_button'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../../Config/Colors'
+import { scale } from 'react-native-size-matters'
+import Screen from '../../Components/Screen'
 
 const Login_3_Username_Screen = ({ route }) => {
     console.log("Login Stack: Username Input Screen")
-    const { baseURL } = route.params;
     const { navigate } = useNavigation();
 
     const { axiosInstance, setUserData } = useAxios();
@@ -49,9 +50,13 @@ const Login_3_Username_Screen = ({ route }) => {
 
   return (
       <GradientBackground showBottomView={true}>
-        <Login_layout //login layout has keyboard avoiding view for anyone wondering
-        title_text={"What's your name?"}
-        subtitle_text={"Please set your full name and username!"}>
+        <Screen style={{backgroundColor: Colors.white}}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+            <View style={{flex: 1}}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{justifyContent: "flex-start"}}>
+            <Text style={styles.titleText}>What's your name?</Text>
+            <Text style={styles.helperText}>Please set your full name and username!</Text>
             <Text style={styles.header}>Full Name:</Text>
             <View style={styles.textinputcontainer}>
                 <TextInput 
@@ -80,33 +85,38 @@ const Login_3_Username_Screen = ({ route }) => {
                 />
             </View>
             <Green_button onPress={handleCreatePress}>Create Account</Green_button>
-        </Login_layout>
+            </View>
+</TouchableWithoutFeedback>
+</View>
+</KeyboardAvoidingView>
+</Screen>
     </GradientBackground>
   )
 }
 
 const styles = StyleSheet.create({
     header: {
-        marginLeft: 20,
-        marginTop: 25,
-        marginBottom: 15,
+        marginLeft: scale(20),
+        marginTop: scale(20),
+        marginBottom: scale(15),
         fontSize: RFValue(14),
         fontFamily: 'DMSans_700Bold'
     },
     textinputcontainer: {
-        borderWidth: 2,
-        borderRadius: 15,
-        marginLeft: 20,
-        marginBottom: 20,
+        borderWidth: scale(2),
+        borderRadius: scale(15),
+        marginLeft: scale(20),
+        marginBottom: scale(5),
+        marginRight: scale(20),
         borderColor: Colors.lightgray,
-        paddingBottom: 15,
-        paddingTop: 20,
-        paddingHorizontal: 15,
+        paddingBottom: scale(15),
+        paddingTop: scale(20),
+        paddingHorizontal: scale(15),
         shadowColor: Colors.mediumgray,
-        shadowOpacity: .3,
-        shadowRadius: 3,
+        shadowOpacity: scale(.3),
+        shadowRadius: scale(3),
         shadowOffset: {
-            height:3,
+            height:scale(3),
             width: 0
         }
     },
@@ -114,8 +124,23 @@ const styles = StyleSheet.create({
         fontSize: RFValue(16)
     },
     button: {
-        marginBottom: 500
-    }
+        marginBottom: scale(500),
+        marginRight: scale(20)
+    },
+    titleText: {
+        marginLeft: scale(20),
+        marginTop: scale(50),
+        marginBottom: scale(5),
+        fontSize: RFValue(20),
+        fontFamily: 'DMSans_700Bold'
+    },
+    helperText: {
+        marginLeft: scale(20),
+        marginBottom: scale(10),
+        fontSize: RFValue(12),
+        fontFamily: 'DMSans_400Regular',
+        color: Colors.mediumgray
+    },
 })
 
 export default Login_3_Username_Screen
