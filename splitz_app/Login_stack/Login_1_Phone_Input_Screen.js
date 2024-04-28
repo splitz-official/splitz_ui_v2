@@ -16,7 +16,7 @@ import Green_button from './Components/Green_button';
 import { useAxios } from '../../Axios/axiosContext';
 
 
-function Login_Screen_2({ route }) {
+function Login_1_Phone_Input_Screen({ route }) {
     console.log("Login Stack: Phone Input Screen")
     const { navigate } = useNavigation();
     const [number, setNumber] = useState("")
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
       },
 })
 
-export default Login_Screen_2;
+export default Login_1_Phone_Input_Screen;
