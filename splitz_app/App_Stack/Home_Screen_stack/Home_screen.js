@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize"
 import { useNavigation } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';
 
 import { RegularText, Bold700Text, Medium500Text } from '../../../Config/AppText';
 import Screen from '../../../Components/Screen';

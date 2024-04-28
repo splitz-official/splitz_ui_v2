@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image,} from 'react-native'
 import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'

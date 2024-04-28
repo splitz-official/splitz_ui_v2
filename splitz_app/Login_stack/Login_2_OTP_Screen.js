@@ -19,7 +19,7 @@ const Login_2_OTP_Screen = ({ route }) => {
 
     const { axiosInstance, setUpdateCount, setToken, setUserData } = useAxios();
     const { phone_number } = route.params;
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
     const [code, setCode] = useState("");
     const [pinReady, setPinReady] = useState("");
     const MAX_CODE_LENGTH = 5;
@@ -61,12 +61,12 @@ const Login_2_OTP_Screen = ({ route }) => {
             axiosInstance.get(`/user/`)
             .then((res) => {
                 if (!res.data.name) {
-                    navigate("Username_Input_Screen");
+                    navigation.navigate("Username_Input_Screen");
                 } else {
                     // console.log("Logged Name: " + res.data.name, "Logged Username: " + res.data.username);
                     // console.log(res.data);
                     setUserData(res.data);
-                    navigate("Bottom_Tab_Home_Navigator");
+                    navigation.navigate("Bottom_Tab_Home_Navigator");
                 }
             })
             .catch((error) => {
