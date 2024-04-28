@@ -16,7 +16,7 @@ import Screen from '../../Components/Screen'
 
 const Login_3_Username_Screen = ({ route }) => {
     console.log("Login Stack: Username Input Screen")
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
 
     const { axiosInstance, setUserData } = useAxios();
     const [name, setName] = useState("");
@@ -40,7 +40,7 @@ const Login_3_Username_Screen = ({ route }) => {
             // console.log(response.data);
             // alert("Update Success!");
             setUserData(response.data);
-            navigate("Bottom_Tab_Home_Navigator");
+            navigation.navigate("Bottom_Tab_Home_Navigator");
         })
         .catch((error) => {
             Alert.alert("Failed!");

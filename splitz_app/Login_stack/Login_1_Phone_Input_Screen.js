@@ -18,7 +18,7 @@ import { useAxios } from '../../Axios/axiosContext';
 
 function Login_1_Phone_Input_Screen({ route }) {
     console.log("Login Stack: Phone Input Screen")
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
     const [number, setNumber] = useState("")
     const {axiosInstance} = useAxios();
 
@@ -29,7 +29,7 @@ function Login_1_Phone_Input_Screen({ route }) {
           })
           .then((res) => {
             console.log(number);
-            navigate("OTP_Screen", { phone_number: number });
+            navigation.navigate("OTP_Screen", { phone_number: number });
           })
           .catch((error) => {
             console.log(error);

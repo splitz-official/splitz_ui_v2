@@ -1,18 +1,25 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image,} from 'react-native'
 import React from 'react'
 import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'
 import { scale } from 'react-native-size-matters';
-
+import * as Haptics from 'expo-haptics';
 
 const Large_green_button = ({ onPress, title, disabled, text_style }) => {
     // Optional: Modify the button style based on the disabled state
     const buttonStyle = disabled ? [styles.button, styles.disabledButton] : styles.button;
+
+    const handlePress = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("haptic")
+        // if (onPress) onPress();
+        onPress();
+      };
   
     return (
       <View style={styles.container}>
           {/* Disable the onPress function based on the disabled prop */}
-          <TouchableOpacity style={buttonStyle} activeOpacity={.8} onPress={!disabled ? onPress : null}>
+          <TouchableOpacity style={buttonStyle} activeOpacity={.8} onPress={!disabled ? handlePress : null}>
               <Text style={[styles.text, text_style]}>{title}</Text>
           </TouchableOpacity>
       </View>
@@ -22,6 +29,7 @@ const Large_green_button = ({ onPress, title, disabled, text_style }) => {
   const styles = StyleSheet.create({
       container: {
           alignItems: 'center',
+        //   borderWidth: 1,
           justifyContent: 'center',
           position: 'absolute',
           bottom: 0,

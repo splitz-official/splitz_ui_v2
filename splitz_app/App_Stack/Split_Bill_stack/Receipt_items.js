@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
-
+import * as Haptics from 'expo-haptics';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
@@ -215,7 +215,7 @@ const Receipt_items = () => {
             //   handleReceiptRename()
             // )}
             />
-            <Picture_name_icon name={userData.name.split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
+            <Picture_name_icon name={userData.name.trim().split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
             <View style={[styles.items_container]}>
               <FlatList 
               data={receipt.items}
@@ -228,12 +228,16 @@ const Receipt_items = () => {
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
                 price={item.item_cost * item.item_quantity}
-                onPress={()=> handleItemPress(item)}
+                onPress={()=> {
+                  handleItemPress(item)
+                  Haptics.selectionAsync()
+                }
+                }
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
                   item.users
                     .filter(user => user.id !== userID) 
-                    .map(user => user.name.split(' ')[0])  
+                    .map(user => user.name.trim().split(' ')[0])  
                     .join(", ")
                   : ""}
                 /> 

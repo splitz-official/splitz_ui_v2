@@ -20,7 +20,6 @@ import Colors from '../../../Config/Colors';
 import Large_green_outline_button from '../../../Components/Large_green_outline_button';
 import { useAxios } from '../../../Axios/axiosContext';
 
-//lottie-react-native for loading screen in the future
 
 const Upload_take_photo = () => {
 

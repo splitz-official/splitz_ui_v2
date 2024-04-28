@@ -81,7 +81,7 @@ const Create_Group_screen = () => {
             </View> */}
             </TouchableWithoutFeedback>
             <Large_green_button 
-            title={'Create Room'}
+            title={'Create Group'}
             onPress={handleContinue}
             disabled={group.trim()===""}
             />

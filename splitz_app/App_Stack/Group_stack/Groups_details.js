@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity, Modal } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'
 import { RFValue } from 'react-native-responsive-fontsize'
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
+import * as Haptics from 'expo-haptics';
 
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -28,10 +29,10 @@ const Groups_details = () => {
     const [room_details, setRoom_Details] = useState(null);
 
     const [members, setMembers] = useState([]);
-    const [membersdropdown, setMembersDropDown] = useState(true);
     const [receipts, setReceipts] = useState(null);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [shareModal, setShareModal] = useState(false);
     // console.log(receipts)
 
     const copyToClipboard = async () => {
@@ -50,7 +51,7 @@ const Groups_details = () => {
             // console.log("Fetching Room Details")
             try {
                 const response = await axiosInstance.get(`/room/${room_code}`);
-                console.log(response.data);
+                // console.log(response.data);
                 setRoom_Details(response.data);
             } catch (error) {
                 console.error("Error:", error);
@@ -118,7 +119,7 @@ const Groups_details = () => {
         title= {'Home'} 
         onPress={()=> navigation.navigate('home')}
         children={
-            <TouchableOpacity style={{position: 'absolute', right: '6%', bottom: scale(5)}} onPress={()=> console.log("Share Button Pressed")}>
+            <TouchableOpacity style={{position: 'absolute', right: '6%', bottom: scale(5)}} onPress={()=> setShareModal(true)}>
                 <Entypo name="share-alternative" size={scale(18)} color="black" />
             </TouchableOpacity>
         }
@@ -139,7 +140,7 @@ const Groups_details = () => {
                 <View style={styles.drop_down}>
                     <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(18), marginRight: scale(5)}}>Members</Text>
                 </View>
-                <TouchableWithoutFeedback onPress={()=> console.log("Add Users Pressed")}>
+                <TouchableWithoutFeedback onPress={()=> Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}>
                     <View style={{position: 'absolute', right: 3}}>
                         <AntDesign name="adduser" size={scale(22)} color="black" />
                     </View>
@@ -190,6 +191,37 @@ const Groups_details = () => {
                 )}
             </View>
         </View>
+        <Modal 
+        animationType='fade'
+        transparent={true}
+        visible={shareModal}
+        onRequestClose={() => {
+            setShareModal(false);
+        }}
+        >
+            <View style={styles.modal_view}>
+                <TouchableWithoutFeedback onPress={()=> setShareModal(false)}>
+                    <View style={{flex: .7}}/>
+                </TouchableWithoutFeedback>
+                <View style={styles.modal}>
+                    <View style={styles.share_modal_top}>
+                        <Text style={{fontFamily: 'DMSans_700Bold', fontSize: RFValue(16), color: Colors.primary}}>Share group</Text>
+                        <TouchableOpacity 
+                        activeOpacity={.7} 
+                        style={styles.modal_share_button} 
+                        onPress={()=> Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}>
+                            <Entypo name="share-alternative" size={scale(16)} color="white" />
+                            <Text style={{color: Colors.white, marginLeft: scale(10), fontFamily: 'DMSans_700Bold', fontSize: RFValue(14)}}>Share link</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{height: verticalScale(2), backgroundColor: Colors.primary, width: '88%'}}/>
+                    <View style={{width: '100%', paddingHorizontal: '20%'}}>
+                        <Text style={{fontFamily: 'DMSans_500Medium', color: Colors.primary, fontSize: RFValue(20), textAlign: 'left'}}>Join ID</Text>
+                        <Text style={{fontSize: RFValue(26), fontFamily: 'DMSans_700Bold', color: Colors.primary, textAlign: 'right'}}>{room_code}</Text>
+                    </View>
+                </View>
+            </View>
+        </Modal>
         <Large_green_button 
         text_style={{fontSize: RFValue(14)}}
         title={"Split Bill"} 
@@ -263,6 +295,43 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(5),
         // height: '50%',
         // flex: 1
+        // borderWidth: 1
+    },
+    modal_view: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        // borderWidth: 2,
+        // borderColor: 'blue'
+    },
+    modal: {
+        width: '100%',
+        backgroundColor: Colors.white,
+        // height: verticalScale(200),
+        flex: .3,
+        borderTopLeftRadius: scale(20),
+        borderTopRightRadius: scale(20),
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        paddingBottom: '5%',
+        shadowColor: Colors.black,
+        shadowOpacity: .25,
+        shadowRadius:4,
+        shadowOffset: {
+            height: -4,
+        }
+    },
+    modal_share_button: {
+        backgroundColor: Colors.primary,
+        marginTop: verticalScale(15),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: verticalScale(40),
+        width: scale(170),
+        borderRadius: scale(15)
+    },
+    share_modal_top: {
+        alignItems: 'center',
         // borderWidth: 1
     }
 })
