@@ -33,7 +33,7 @@ const Send_feedback = () => {
             console.log("dismiss keyboard");
             Keyboard.dismiss();
         }}>
-            <KeyboardAvoidingView>
+            <KeyboardAvoidingView style={{flex: 1}} behavior='padding'>
                 {/* <TopLogo/> */}
                 <Back_button 
                 onPress={()=> navigate('profile')}

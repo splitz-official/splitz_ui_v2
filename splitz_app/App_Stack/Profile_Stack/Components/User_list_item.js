@@ -6,14 +6,12 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import { Feather } from '@expo/vector-icons';
 
 import Colors from '../../../../Config/Colors'
+import Profile_picture from '../../../../Components/Profile_picture';
 
-const User_list_item = ({ name, username, onPress, alreadyFriends}) => {
+const User_list_item = ({ name, username, onPress, alreadyFriends, image, initials}) => {
   return (
     <View style={styles.container} activeOpacity={.5}>
-        {/* <Image />  */}
-        <View style={styles.image}>
-
-        </View>
+        <Profile_picture name={name} image={image} sizing_style={{height: scale(40), width: scale(40)}} text_sizing={{fontSize: RFValue(14)}}/>
         <View style={styles.text_container}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.username}>@{username}</Text>
@@ -31,12 +29,6 @@ const styles = StyleSheet.create({
         paddingVertical: verticalScale(5),
         // marginVertical: verticalScale(4),
         // borderWidth: 1
-    },
-    image: {
-        borderWidth: 1,
-        height: scale(40),
-        width: scale(40),
-        borderRadius: scale(20)
     },
     text_container: {
         marginLeft: scale(10)

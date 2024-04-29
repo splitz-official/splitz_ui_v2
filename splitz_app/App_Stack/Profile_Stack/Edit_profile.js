@@ -1,9 +1,9 @@
-import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import ProfilePicture from 'react-native-profile-picture';
 import randomColor from 'randomcolor';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -23,13 +23,13 @@ import Edit_profile_text_fields from './Components/Edit_profile_text_fields';
 
 const Edit_profile = () => {
 
-    const { userData, axiosInstance, setUpdateCount, axiosInstanceMultipart } = useAxios();
-    const { navigate } = useNavigation();
+    const { userData, axiosInstance, setUpdateCount } = useAxios();
+    const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef(null);
 
     const [editingprofile, setEditingProfile] = useState(false);
-    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
+    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark', hue: 'green'}));
 
 
     const [initialname, setInitialName] = useState(userData.name);
@@ -39,7 +39,8 @@ const Edit_profile = () => {
     const [name, setName] = useState(userData.name);
     const [email, setEmail] = useState(userData.email);
     const [image, setImage] = useState(userData.profile_picture_url);
-    // console.log(email, name);
+    // console.log(userData);
+    // console.log(name, email, image);
 
     useEffect(()=> {
         return ()=> {
@@ -103,6 +104,7 @@ const Edit_profile = () => {
         });
 
         if (!_image.canceled) {
+            setLoading(true);
             const selectedImage = _image.assets[0].uri;
             console.log(selectedImage);
             const formData = new FormData();
@@ -111,13 +113,16 @@ const Edit_profile = () => {
                 type: "image/jpeg",
                 name: "profile_picture.jpg"
             });
-            await axiosInstanceMultipart.post('/user/upload-profile-picture', formData)
+            await axiosInstance.post('/user/upload-profile-picture', formData)
             .then((response) => {
                 console.log(response);
                 setUpdateCount(count => count + 1);
             })
             .catch((error) => {
                 console.log("Upload Error: ", error);
+            })
+            .finally(()=>{
+                setLoading(false);
             })
         }
     }
@@ -133,8 +138,8 @@ const Edit_profile = () => {
   return (
     <Screen>
         {/* <TopLogo/> */}
-        <Back_button title={'Back'} onPress={()=>navigate('profile')} disabled={editingprofile}/>
-        <KeyboardAvoidingView behavior='height' style={styles.container}>
+        <Back_button title={'Back'} onPress={()=> navigation.navigate('profile')} disabled={editingprofile}/>
+        <KeyboardAvoidingView behavior='padding' style={styles.container} keyboardVerticalOffset={verticalScale(10)}>
             <View style={styles.top_title_icon}>
                 <Text style={styles.title}>Edit Profile</Text>
                 {editingprofile ? (
@@ -153,10 +158,11 @@ const Edit_profile = () => {
                     </TouchableOpacity>
                 )}
             </View>
+            <ScrollView style={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
             <View style={[styles.image_outer_container]}>
                 <View style={styles.image_inner_container}>
                     {image ? (
-                        <Image resizeMode='cover' source={{ uri: image }} style={styles.imageStyle} /> 
+                        <Image resizeMode='cover' source={{uri: image}} style={styles.imageStyle} /> 
                     ) : (
                         <View style={[styles.imageStyle, {backgroundColor: profile_color}]}>
                             <Text style={styles.no_image_text}>{getInitials(name)}</Text>
@@ -200,6 +206,7 @@ const Edit_profile = () => {
                 placeholderColor={Colors.textgray}
                 />
             </View>
+        </ScrollView>
         </KeyboardAvoidingView>
     </Screen>
   )

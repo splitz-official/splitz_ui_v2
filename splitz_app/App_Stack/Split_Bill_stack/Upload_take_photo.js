@@ -11,7 +11,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
 //TODO LIST: 
-//SCAN BUTTON UPDATE
 //ADD CONDITION FOR WHEN THERE IS NO ROOM CODE
 
 import Screen from '../../../Components/Screen'
@@ -23,7 +22,7 @@ import { useAxios } from '../../../Axios/axiosContext';
 
 const Upload_take_photo = () => {
 
-    const {axiosInstance, axiosInstanceMultipart} = useAxios();
+    const {axiosInstance} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
     const { room_code = null, participants = null } = route.params || {};
@@ -49,20 +48,7 @@ const Upload_take_photo = () => {
             quality: 1
         });
 
-        if (pickerResult.canceled) {
-            console.log("User canceled image pick");
-            return;
-        }
-
-        if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
-            setLoading(true);
-            // console.log(pickerResult.assets[0].uri);
-            const selectedImage = pickerResult.assets[0].uri;
-            console.log("From scanPress", selectedImage);
-            uploadImage(selectedImage);
-        } else {
-            setLoading(false);
-        }
+        uploadImage(pickerResult);
     }
 
     const handleUploadPress = async () => {
@@ -81,49 +67,49 @@ const Upload_take_photo = () => {
             quality: 1
         });
         
+        uploadImage(pickerResult);
+    }
+
+    const uploadImage = async (pickerResult) => {
         if (pickerResult.canceled) {
-            console.log("User canceled image pick");
+            console.log("user canceled image pick")
             return;
         }
-        
+
         if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
             setLoading(true);
             // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
             console.log("From uploadPress", selectedImage);
-            uploadImage(selectedImage);
+            const formData = new FormData();
+            formData.append("receipt_img", {
+                uri: selectedImage,
+                type: "image/jpeg",
+                name: "receipt.jpg"
+            });
+            const json_data = {
+                room_code: room_code,
+                receipt_name: receiptname,
+                user_list: []
+            }
+            formData.append("data", JSON.stringify(json_data));
+
+            axiosInstance
+                .post(`/receipts/upload-receipt`, formData)
+                .then((uploadresponse) => {
+                    console.log("Upload receipt successful: ", uploadresponse.data);
+                    navigation.navigate('Receipt_items', { 
+                        receipt_id: uploadresponse.data.id, 
+                        room_code: uploadresponse.data.room_code
+                    })
+                }).catch((error) => {
+                    console.log("Error:", error);
+                }).finally(()=> {
+                    setLoading(false);
+                })
         } else {
             setLoading(false);
         }
-    }
-
-    const uploadImage = async (_image) => {
-        const formData = new FormData();
-        formData.append("receipt_img", {
-            uri: _image,
-            type: "image/jpeg",
-            name: "receipt.jpg"
-        });
-        const json_data = {
-            room_code: room_code,
-            receipt_name: receiptname,
-            user_list: []
-        }
-        formData.append("data", JSON.stringify(json_data));
-
-        axiosInstanceMultipart
-            .post(`/receipts/upload-receipt`, formData)
-            .then((uploadresponse) => {
-                console.log("Upload receipt successful: ", uploadresponse.data);
-                navigation.navigate('Receipt_items', { 
-                    receipt_id: uploadresponse.data.id, 
-                    room_code: uploadresponse.data.room_code
-                })
-            }).catch((error) => {
-                console.log("Error:", error);
-            }).finally(()=> {
-                setLoading(false);
-            })
     }
 
   return (

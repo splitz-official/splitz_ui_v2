@@ -11,8 +11,8 @@ import Receipt_items_list_component from './Components/Receipt_items_list_compon
 import Back_button from '../../../Components/Back_button';
 import Large_green_button from '../../../Components/Large_green_button';
 import { useAxios } from '../../../Axios/axiosContext';
-import Picture_name_icon from '../../../Components/Picture_name_icon';
 import Receipt_add_item from './Components/Receipt_add_item';
+import Profile_picture from '../../../Components/Profile_picture';
 
 //add item endpoint and rename receipt endpoint
 
@@ -215,7 +215,10 @@ const Receipt_items = () => {
             //   handleReceiptRename()
             // )}
             />
-            <Picture_name_icon name={userData.name.trim().split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
+            <View style={{alignItems: 'center', marginTop: '5%'}}>
+                <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={{height: scale(50), width: scale(50)}} text_sizing={{fontSize: RFValue(18)}}/>
+                <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginTop: scale(5)}}>You</Text>
+            </View>
             <View style={[styles.items_container]}>
               <FlatList 
               data={receipt.items}

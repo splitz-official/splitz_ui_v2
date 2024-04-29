@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal, TextInput, Button, Touchable } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal, TextInput, Button, Touchable, Image, ScrollView } from 'react-native';
 import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,6 +25,7 @@ import LinearGradient_background from '../../../Components/LinearGradient_backgr
 import Back_button from '../../../Components/Back_button';
 import { scale } from 'react-native-size-matters';
 import User_list_item from './Components/User_list_item';
+import Profile_picture from '../../../Components/Profile_picture';
 
 
 function Profile(props) {
@@ -34,15 +35,17 @@ function Profile(props) {
 
     const name = userData.name;
     const username = userData.username;
-    // const [profile_pic, SetProfile_pic] = useState(false);
+    const profile_pic = userData.profile_picture_url;
+    // const image = null;
     
-    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
+    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark', hue: 'green'}));
     const [logoutmodalVisible, setLogoutModalVisible] = useState(false);
     const [friendmodalVisible, setFriendModalVisible] = useState(false);
     const [friendSearch, setFriendSearch] = useState('');
     const [usersList, setUsersList] = useState([]);
     const [filterdUsers, setFilteredUsers] = useState([]);
     const [friends, setFriends] = useState([]);
+    const [test, setTest] = useState([]);
 
     const userListSearchRef = useRef();
     
@@ -87,6 +90,7 @@ function Profile(props) {
         try {
             const response = await axiosInstance.get('/user/list');
             const usersExcludingSelf = response.data.filter(user => user.id !== userData.id)
+            setTest(response.data);
             setUsersList(usersExcludingSelf);
             setFilteredUsers(usersExcludingSelf);
             // console.log(response.data)
@@ -94,6 +98,12 @@ function Profile(props) {
             console.error('Failed to fetch users:', error);
         }
     };
+
+    function getInitials(fullName) {
+        const parts = fullName.trim().split(' '); 
+        const initials = parts.slice(0,2).map(part => part.charAt(0).toUpperCase());  
+        return initials.join(''); 
+    }
 
     const fetchFriends = async () => {
         try {
@@ -127,28 +137,11 @@ function Profile(props) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.top_container}>
-                    <ProfilePicture 
-                    isPicture={false}
-                    user={name}
-                    // requirePicture={}
-                    width={RFPercentage(15)}
-                    height={RFPercentage(15)}
-                    pictureStyle={{
-                        borderWidth: 2,
-                        borderColor: 'white'
-                    }}
-                    backgroundColor={profile_color}
-                    userTextStyle={styles.profile_text}
-                    />
-                    {name? 
-                    <Text style={styles.name}>{name}</Text>:
-                    <Text style={styles.name}>Edit Profile</Text>
-                    }
-                    {name? 
-                    <Text style={styles.username}>@{username}</Text>:
-                    <Text style={styles.username}>Edit Profile</Text>
-                    }
+                    <Profile_picture image={profile_pic} name={name} sizing_style={{height: scale(150), width: scale(150)}} text_sizing={{fontSize: RFValue(75)}}/>
+                    <Text style={styles.name}>{name}</Text>
+                    <Text style={styles.username}>@{username}</Text>
                 </View>
+                {/* <ScrollView> */}
                 <View style={styles.bottom_container}>
                     <Large_button 
                     onPress={()=>navigation.navigate('edit_profile')}
@@ -166,6 +159,7 @@ function Profile(props) {
                     Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
                 </View>
+                {/* </ScrollView> */}
                 <Modal
                     animationType="fade"
                     transparent={true}
@@ -185,7 +179,7 @@ function Profile(props) {
                             <View style={styles.modal_buttonsContainer}>
                                 <TouchableOpacity
                                     style={[styles.modal_buttons]}
-                                    onPress={() => setLogoutModalVisible(!logoutmodalVisible)}
+                                    onPress={() => setLogoutModalVisible(false)}
                                 >
                                     <Text style={styles.modal_text}>No, stay in</Text>
                                 </TouchableOpacity>
@@ -236,6 +230,8 @@ function Profile(props) {
                                 username={item.username} 
                                 onPress={()=>addFriend(item.id)} 
                                 alreadyFriends={friends.includes(item.id)}
+                                image={item.profile_picture_url}
+                                initials={getInitials(item.name)}
                                 />
                             )}
                             />
@@ -288,12 +284,12 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
         backgroundColor: 'white',
         flex: 1,
-        marginHorizontal: 20,
-        marginTop: 40,
-        borderTopRightRadius: 20,
-        borderTopLeftRadius: 20,
-        paddingHorizontal: 20,
-        paddingVertical: RFPercentage(2)
+        marginHorizontal: scale(20),
+        marginTop: '10%',
+        borderTopRightRadius: scale(20),
+        borderTopLeftRadius: scale(20),
+        paddingHorizontal: scale(20),
+        paddingVertical: '2%'
     },
     modalView: {
         backgroundColor: "white",
@@ -359,7 +355,7 @@ const styles = StyleSheet.create({
     usersList: {
         flex: 1,
         marginTop: scale(20)
-    }
+    },
 })
 
 export default Profile;

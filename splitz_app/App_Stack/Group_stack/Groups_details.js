@@ -50,7 +50,7 @@ const Groups_details = () => {
         try {
             const result = await Share.share({
                 message:
-                "Omada | An app that revolutionizes the way friends split bills"
+                "Omada | An app that revolutionizes the way friends split bills",
             });
             if (result.action === Share.sharedAction) {
                 if(result.activityType) {
@@ -175,6 +175,7 @@ const Groups_details = () => {
                             <Groups_member_list_item 
                             title={item.name}
                             subtitle={`@${item.username}`}
+                            image={item.profile_picture_url}
                             />
                         }
                     />
