@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
 import randomColor from 'randomcolor';
+import Toast from 'react-native-toast-message';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -51,6 +52,13 @@ function Profile(props) {
                 friend_id: userID
             });
             fetchFriends();
+            Toast.show({
+                type: 'success',
+                text1: 'Friend added!',
+                position: 'top',
+                autoHide: true,
+                visibilityTime: 1000
+            })
             console.log("Friend added");
         } catch (error) {
             console.log("Error: ", error);
@@ -61,7 +69,7 @@ function Profile(props) {
         try {
             await SecureStore.deleteItemAsync('access_token');
             axiosInstance.setAuthToken('');
-            setModalVisible(false)
+            setLogoutModalVisible(false)
             navigation.navigate('Landing_Screen');
         } catch (error) {
             console.error('Logout error:', error);
@@ -183,15 +191,7 @@ function Profile(props) {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.modal_buttons]}
-                                    onPress={async () => {
-                                        try {
-                                            await SecureStore.deleteItemAsync('access_token');
-                                            navigation.navigate('Landing_Screen');
-                                        } catch (error) {
-                                            console.error('Logout error:', error);
-                                        }
-                                        setLogoutModalVisible(!logoutmodalVisible);
-                                    }}
+                                    onPress={logout}
                                 >
                                     <Text style={styles.modal_text}>Yes, logout</Text>
                                 </TouchableOpacity>
@@ -208,6 +208,7 @@ function Profile(props) {
                 }}
                 >
                     <Screen>
+                        <Toast />
                         <Back_button onPress={()=> setFriendModalVisible(false)}/>
                         <View style={{flex: 1, marginHorizontal: '6%'}}>
                             <TouchableOpacity onPress={()=> userListSearchRef.current.focus()} activeOpacity={1} style={styles.friend_search_input_container}>

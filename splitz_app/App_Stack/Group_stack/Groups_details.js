@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator, TouchableOpacity, Modal, Share } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native'
@@ -44,6 +44,26 @@ const Groups_details = () => {
             autoHide: true,
             visibilityTime: 1000
         })
+    }
+
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                "Omada | An app that revolutionizes the way friends split bills"
+            });
+            if (result.action === Share.sharedAction) {
+                if(result.activityType) {
+
+                } else {
+
+                }
+            } else if (result.action ===Share.dismissedAction) {
+
+            }
+        } catch (error) {
+            Alert.alert(error.message);
+        }
     }
 
     useEffect(()=> {
@@ -199,6 +219,7 @@ const Groups_details = () => {
             setShareModal(false);
         }}
         >
+            <Toast />
             <View style={styles.modal_view}>
                 <TouchableWithoutFeedback onPress={()=> setShareModal(false)}>
                     <View style={{flex: .7}}/>
@@ -209,7 +230,7 @@ const Groups_details = () => {
                         <TouchableOpacity 
                         activeOpacity={.7} 
                         style={styles.modal_share_button} 
-                        onPress={()=> Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}>
+                        onPress={onShare}>
                             <Entypo name="share-alternative" size={scale(16)} color="white" />
                             <Text style={{color: Colors.white, marginLeft: scale(10), fontFamily: 'DMSans_700Bold', fontSize: RFValue(14)}}>Share link</Text>
                         </TouchableOpacity>
@@ -217,7 +238,9 @@ const Groups_details = () => {
                     <View style={{height: verticalScale(2), backgroundColor: Colors.primary, width: '88%'}}/>
                     <View style={{width: '100%', paddingHorizontal: '20%'}}>
                         <Text style={{fontFamily: 'DMSans_500Medium', color: Colors.primary, fontSize: RFValue(20), textAlign: 'left'}}>Join ID</Text>
-                        <Text style={{fontSize: RFValue(26), fontFamily: 'DMSans_700Bold', color: Colors.primary, textAlign: 'right'}}>{room_code}</Text>
+                        <TouchableWithoutFeedback onPress={copyToClipboard}>
+                            <Text style={{fontSize: RFValue(26), fontFamily: 'DMSans_700Bold', color: Colors.primary, textAlign: 'right'}}>{room_code}</Text>
+                        </TouchableWithoutFeedback>
                     </View>
                 </View>
             </View>

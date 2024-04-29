@@ -58,34 +58,8 @@ const Upload_take_photo = () => {
             setLoading(true);
             // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
-            console.log("From uploadPress, imageset", selectedImage);
-
-            if (room_code) {
-                const formData = new FormData();
-                formData.append("receipt_img", {
-                    uri: selectedImage,
-                    type: "image/jpeg",
-                    name: "receipt.jpg"
-                });
-                // const json_data = {
-                //     room_code: room_code,
-                //     receipt_name: receiptname,
-                //     user_list: []
-                // }
-                // formData.append("data", JSON.stringify(json_data));
-                formData.append("room_code", room_code)
-                //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
-                axiosInstanceMultipart
-                .post(`/receipts/upload-receipt`, formData)
-                .then((uploadresponse) => {
-                    console.log("From Scan press, Upload successful: ", uploadresponse.data);
-                    navigation.navigate('Receipt_items', { receipt_id: uploadresponse.data.receipt_id, room_code: uploadresponse.data.room_code})
-                }).catch((error) => {
-                    console.log("Error:", error.response ? error.response.data : error.message);
-                }).finally(()=> {
-                    setLoading(false);
-                })
-            }
+            console.log("From scanPress", selectedImage);
+            uploadImage(selectedImage);
         } else {
             setLoading(false);
         }
@@ -97,20 +71,18 @@ const Upload_take_photo = () => {
         
         if (mediaLibraryPermissions.granted === false) {
             Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
-            setLoading(false);
             return;
         }
         
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
+            allowsEditing: true,
             aspect: [16,9],
             quality: 1
         });
         
         if (pickerResult.canceled) {
             console.log("User canceled image pick");
-            setLoading(false);
             return;
         }
         
@@ -118,43 +90,40 @@ const Upload_take_photo = () => {
             setLoading(true);
             // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
-            // console.log("From uploadPress, imageset", selectedImage);
-
-            if (room_code) {
-                const formData = new FormData();
-                formData.append("receipt_img", {
-                    uri: selectedImage,
-                    type: "image/jpeg",
-                    name: "receipt.jpg"
-                });
-                // const json_data = {
-                //     room_code: room_code,
-                //     receipt_name: receiptname,
-                //     user_list: []
-                // }
-                // formData.append("data", JSON.stringify(json_data));
-                formData.append("room_code", room_code)
-                axiosInstanceMultipart
-                .post(`/receipts/upload-receipt`, formData)
-                .then((uploadresponse) => {
-                    console.log("From upload image press, Upload successful: ", uploadresponse.data);
-                    return axiosInstance.put(`/receipts/${room_code}/rename-receipt/${uploadresponse.data.id}`, {
-                        receipt_name: receiptname
-                    }).then(() => {
-                        navigation.navigate('Receipt_items', { 
-                            receipt_id: uploadresponse.data.id, 
-                            room_code: uploadresponse.data.room_code
-                        })
-                    })
-                }).catch((error) => {
-                    console.log("Error:", error.response ? error.response.data : error.message);
-                }).finally(()=> {
-                    setLoading(false);
-                })
-            }
+            console.log("From uploadPress", selectedImage);
+            uploadImage(selectedImage);
         } else {
             setLoading(false);
         }
+    }
+
+    const uploadImage = async (_image) => {
+        const formData = new FormData();
+        formData.append("receipt_img", {
+            uri: _image,
+            type: "image/jpeg",
+            name: "receipt.jpg"
+        });
+        const json_data = {
+            room_code: room_code,
+            receipt_name: receiptname,
+            user_list: []
+        }
+        formData.append("data", JSON.stringify(json_data));
+
+        axiosInstanceMultipart
+            .post(`/receipts/upload-receipt`, formData)
+            .then((uploadresponse) => {
+                console.log("Upload receipt successful: ", uploadresponse.data);
+                navigation.navigate('Receipt_items', { 
+                    receipt_id: uploadresponse.data.id, 
+                    room_code: uploadresponse.data.room_code
+                })
+            }).catch((error) => {
+                console.log("Error:", error);
+            }).finally(()=> {
+                setLoading(false);
+            })
     }
 
   return (

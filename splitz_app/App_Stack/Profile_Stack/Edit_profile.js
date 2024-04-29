@@ -1,14 +1,16 @@
-import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import ProfilePicture from 'react-native-profile-picture';
 import randomColor from 'randomcolor';
 import { scale } from 'react-native-size-matters';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import * as ImagePicker from 'expo-image-picker';
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import Screen from '../../../Components/Screen'
 import TopLogo from '../../../Components/TopLogo'
@@ -21,7 +23,7 @@ import Edit_profile_text_fields from './Components/Edit_profile_text_fields';
 
 const Edit_profile = () => {
 
-    const { userData, axiosInstance, setUpdateCount } = useAxios();
+    const { userData, axiosInstance, setUpdateCount, axiosInstanceMultipart } = useAxios();
     const { navigate } = useNavigation();
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef(null);
@@ -36,6 +38,7 @@ const Edit_profile = () => {
 
     const [name, setName] = useState(userData.name);
     const [email, setEmail] = useState(userData.email);
+    const [image, setImage] = useState(userData.profile_picture_url);
     // console.log(email, name);
 
     useEffect(()=> {
@@ -45,6 +48,12 @@ const Edit_profile = () => {
             }
         };
     }, []);
+
+    function getInitials(fullName) {
+        const parts = fullName.trim().split(' '); 
+        const initials = parts.slice(0,2).map(part => part.charAt(0).toUpperCase());  
+        return initials.join(''); 
+    }
 
     const handleSubmit = async () => {
         if(name !== initialname && name.trim() !== '' || email !== initialemail && email.trim() !== '') {
@@ -73,6 +82,43 @@ const Edit_profile = () => {
         } else {
             console.log("no Changes made");
             setEditingProfile(false)
+        }
+    }
+
+    const addImage = async () => {
+        console.log("Handle Upload Pressed")
+        const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // console.log(mediaLibraryPermissions);
+        
+        if (mediaLibraryPermissions.granted === false) {
+            Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
+            return;
+        }
+
+        let _image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4,3],
+            quality:.5
+        });
+
+        if (!_image.canceled) {
+            const selectedImage = _image.assets[0].uri;
+            console.log(selectedImage);
+            const formData = new FormData();
+            formData.append("profile_picture", {
+                uri: selectedImage,
+                type: "image/jpeg",
+                name: "profile_picture.jpg"
+            });
+            await axiosInstanceMultipart.post('/user/upload-profile-picture', formData)
+            .then((response) => {
+                console.log(response);
+                setUpdateCount(count => count + 1);
+            })
+            .catch((error) => {
+                console.log("Upload Error: ", error);
+            })
         }
     }
 
@@ -107,19 +153,22 @@ const Edit_profile = () => {
                     </TouchableOpacity>
                 )}
             </View>
-            <View style={styles.profile_picture}>
-                <ProfilePicture 
-                    isPicture={false}
-                    user={userData.name}
-                    width={RFPercentage(15)}
-                    height={RFPercentage(15)}
-                    pictureStyle={{
-                        borderWidth: 2,
-                        borderColor: 'white'
-                    }}
-                    backgroundColor={profile_color}
-                    userTextStyle={styles.profile_pic_text}
-                    />
+            <View style={[styles.image_outer_container]}>
+                <View style={styles.image_inner_container}>
+                    {image ? (
+                        <Image resizeMode='cover' source={{ uri: image }} style={styles.imageStyle} /> 
+                    ) : (
+                        <View style={[styles.imageStyle, {backgroundColor: profile_color}]}>
+                            <Text style={styles.no_image_text}>{getInitials(name)}</Text>
+                        </View>
+                    )}
+                    <View style={styles.btn_container}>
+                        <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+                            <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
+                            <AntDesign name="camera" size={scale(18)} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
             <View style={{marginTop: '5%'}}>
                 <Edit_profile_text_fields 
@@ -164,21 +213,19 @@ const styles = StyleSheet.create({
     top_title_icon: {
         flexDirection:'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: '8%'
     },
     title: {
         fontFamily: 'DMSans_700Bold',
         fontSize: RFValue(18),
     },
-    profile_picture: {
+    image_outer_container: {
         // justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 2,
         marginTop: '15%',
-        marginBottom: scale(30)
-    },
-    profile_pic_text: {
-        fontSize: RFValue(45)
+        marginBottom: scale(20)
     },
     edit_icon: {
         alignItems: 'center', 
@@ -186,6 +233,40 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: scale(5),
         // borderWidth: 1, 
+    },
+    image_inner_container: {
+        height: scale(150),
+        width: scale(150),
+        // borderWidth: 1,
+        // borderColor: 'blue',
+        borderRadius: 999,
+        overflow: 'hidden',
+        backgroundColor: Colors.white
+    },
+    btn_container: {
+        position: 'absolute',
+        opacity: .7,
+        bottom: 0,
+        width: '100%',
+        height: '25%',
+        // borderWidth: 1,
+        backgroundColor: 'lightgrey'
+    },
+    uploadBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    imageStyle: {
+        flex: 1,
+        // borderWidth: 2,
+        // borderColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    no_image_text: {
+        fontSize: RFValue(75),
+        color: Colors.white
     }
 })
 
