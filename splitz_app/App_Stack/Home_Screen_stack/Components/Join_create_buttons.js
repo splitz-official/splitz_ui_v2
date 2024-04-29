@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RFPercentage, RFValue} from "react-native-responsive-fontsize"
 import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -18,6 +19,7 @@ function Join_create_buttons(props) {
 
 const handlejoinbutton = () => {
     console.log('Join with ID Pressed')
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("Group_stack", {
         screen: 'Join_group',
     })
@@ -25,6 +27,7 @@ const handlejoinbutton = () => {
 
 const handlecreatebutton = () => {
     console.log('Create Group Pressed')
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("Group_stack", {
         screen: 'Create_group_screen',
     })

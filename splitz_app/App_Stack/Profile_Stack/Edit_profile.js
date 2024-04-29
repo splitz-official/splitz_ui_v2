@@ -6,6 +6,7 @@ import randomColor from 'randomcolor';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
@@ -56,6 +57,7 @@ const Edit_profile = () => {
     }
 
     const handleSubmit = async () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         if(name !== initialname && name.trim() !== '' || email !== initialemail && email.trim() !== '') {
             setLoading(true);
             const updatedData = {
@@ -149,7 +151,10 @@ const Edit_profile = () => {
                     <TouchableOpacity 
                     activeOpacity={.8}
                     style={styles.edit_icon}
-                    onPress={()=>setEditingProfile(true)}>
+                    onPress={()=>{
+                        setEditingProfile(true),
+                        Haptics.selectionAsync();
+                    }}>
                         <FontAwesome name="circle" size={scale(50)} color={Colors.primary} />
                         <View style={{position: 'absolute'}}>
                             <Entypo name="edit" size={scale(28)} color="white" />

@@ -22,7 +22,7 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
         {image ? 
             <Image source={{uri: image}}style={styles.image}></Image>
         :
-            <View style={styles.icon_no_image}>
+            <View style={styles.image}>
                 <MaterialCommunityIcons name="account-group" size={scale(32)} color={Colors.black} />
             </View>
         }
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         height: scale(60),
         width: scale(60),
         borderRadius: scale(30),
-        // borderWidth: 2,
+        borderWidth: 2,
         borderColor: Colors.primary,
         marginBottom: 8,
         justifyContent: 'center',
@@ -58,18 +58,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         width: "100%",
         paddingTop: scale(2),
-    },
-    icon_no_image: {
-        height: scale(60),
-        width: scale(60),
-        borderRadius: scale(30),
-        borderWidth: 2,
-        borderColor: Colors.primary,
-        marginBottom: 8,
-        justifyContent: 'center',
-        // backgroundColor: Colors.backgroundFillGray,
-        alignItems: 'center',
-        position: "relative",
     }
 })
 

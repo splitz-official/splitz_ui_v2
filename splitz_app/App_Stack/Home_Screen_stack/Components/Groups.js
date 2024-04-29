@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Groups_list_item from './Groups_list_item';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 
 import { useAxios } from '../../../../Axios/axiosContext'
 import LottieView from 'lottie-react-native';
@@ -87,10 +88,12 @@ const Groups = () => {
                     <Groups_list_item
                         title={item.room_name}
                         image={item.room_picture_url}
-                        onPress={() => navigation.navigate("Group_stack", {
+                        onPress={() => {navigation.navigate("Group_stack", {
                             screen: 'Groups_details',
                             params: { room_code: item.room_code }
-                        })}
+                        }),
+                        Haptics.selectionAsync()
+                        }}
                         // image={require("../../../../assets/dark_green_splitzLogo.png")} displaying room code for now
                         icon_text={item.room_code}
                     />
