@@ -137,7 +137,13 @@ function Profile(props) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.top_container}>
-                    <Profile_picture image={profile_pic} name={name} sizing_style={{height: scale(150), width: scale(150)}} text_sizing={{fontSize: RFValue(75)}}/>
+                    <View style={styles.picture_shadow}>
+                        <Profile_picture 
+                        image={profile_pic} 
+                        name={name} 
+                        sizing_style={styles.profile_pic} 
+                        text_sizing={{fontSize: RFValue(75)}}/>
+                    </View>
                     <Text style={styles.name}>{name}</Text>
                     <Text style={styles.username}>@{username}</Text>
                 </View>
@@ -356,6 +362,20 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: scale(20)
     },
+    profile_pic: {
+        height: scale(150), 
+        width: scale(150), 
+        borderWidth: 2,
+        borderColor: 'white',
+    },
+    picture_shadow: {
+        shadowColor: Colors.black,
+        shadowOpacity: .5,
+        shadowRadius:4,
+        shadowOffset: {
+            height: 5,
+        }
+    }
 })
 
 export default Profile;

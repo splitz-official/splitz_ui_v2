@@ -159,20 +159,22 @@ const Edit_profile = () => {
             </View>
             <ScrollView style={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
             <View style={[styles.image_outer_container]}>
-                <View style={styles.image_inner_container}>
-                    {image ? (
-                        <Image resizeMode='cover' source={{uri: image}} style={styles.imageStyle} /> 
-                    ) : (
-                        <View style={[styles.imageStyle, {backgroundColor: profile_color}]}>
-                            <Text style={styles.no_image_text}>{getInitials(name)}</Text>
+                <View style={styles.picture_shadow}>
+                    <View style={styles.image_inner_container}>
+                        {image ? (
+                            <Image resizeMode='cover' source={{uri: image}} style={styles.imageStyle} /> 
+                        ) : (
+                            <View style={[styles.imageStyle, {backgroundColor: profile_color}]}>
+                                <Text style={styles.no_image_text}>{getInitials(name)}</Text>
+                            </View>
+                        )}
+                        <View style={styles.btn_container}>
+                            <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+                                <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
+                                {/* <AntDesign name="camera" size={scale(18)} color="black" /> */}
+                                <Entypo name="edit" size={scale(18)} color="black" />
+                            </TouchableOpacity>
                         </View>
-                    )}
-                    <View style={styles.btn_container}>
-                        <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-                            <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
-                            {/* <AntDesign name="camera" size={scale(18)} color="black" /> */}
-                            <Entypo name="edit" size={scale(18)} color="black" />
-                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -244,11 +246,11 @@ const styles = StyleSheet.create({
     image_inner_container: {
         height: scale(150),
         width: scale(150),
-        // borderWidth: 1,
-        // borderColor: 'blue',
+        borderWidth: 3,
+        borderColor: 'white',
         borderRadius: 999,
         overflow: 'hidden',
-        backgroundColor: Colors.white
+        backgroundColor: Colors.white,
     },
     btn_container: {
         position: 'absolute',
@@ -275,6 +277,14 @@ const styles = StyleSheet.create({
     no_image_text: {
         fontSize: RFValue(75),
         color: Colors.white
+    },
+    picture_shadow: {
+        shadowColor: Colors.black,
+        shadowOpacity: .5,
+        shadowRadius:4,
+        shadowOffset: {
+            height: 5,
+        }
     }
 })
 
