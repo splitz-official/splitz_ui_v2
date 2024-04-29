@@ -6,6 +6,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 
 import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -17,6 +18,7 @@ import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors'
 import Large_green_button from '../../../Components/Large_green_button'
 import Groups_receipt_list_item from './Components/Groups_receipt_list_item'
+import Profile_picture from '../../../Components/Profile_picture'
 
 const Groups_details = () => {
 
@@ -27,12 +29,14 @@ const Groups_details = () => {
     const { room_code } = route.params;
     // console.log(room_code);
     const [room_details, setRoom_Details] = useState(null);
+    const [roomPicture, setRoomPicture] = useState(null);
 
     const [members, setMembers] = useState([]);
     const [receipts, setReceipts] = useState(null);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [shareModal, setShareModal] = useState(false);
+    const [loading, setLoading] = useState(false);
     // console.log(receipts)
 
     const copyToClipboard = async () => {
@@ -51,6 +55,7 @@ const Groups_details = () => {
             const result = await Share.share({
                 message:
                 "Omada | An app that revolutionizes the way friends split bills",
+                // url: "INSERT URL FOR WEBSITE FOR NOW"
             });
             if (result.action === Share.sharedAction) {
                 if(result.activityType) {
@@ -73,6 +78,7 @@ const Groups_details = () => {
                 const response = await axiosInstance.get(`/room/${room_code}`);
                 // console.log(response.data);
                 setRoom_Details(response.data);
+                setRoomPicture(response.data.room_picture_url);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -118,6 +124,46 @@ const Groups_details = () => {
         }, [room_code])
     );
 
+    const updateRoomPicture = async () => {
+        console.log("HandleRoomPressed")
+        const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // console.log(mediaLibraryPermissions);
+        
+        if (mediaLibraryPermissions.granted === false) {
+            Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
+            return;
+        }
+
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4,3],
+            quality:.5
+        });
+
+        if (!pickerResult.canceled) {
+            setLoading(true);
+            const selectedImage = pickerResult.assets[0].uri;
+            console.log(selectedImage);
+            const formData = new FormData();
+            formData.append("room_picture", {
+                uri: selectedImage,
+                type: "image/jpeg",
+                name: "room_picture.jpg"
+            });
+            await axiosInstance.post(`/room/${room_code}/upload-room-picture`, formData)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log("Upload Error: ", error);
+            })
+            .finally(()=>{
+                setLoading(false);
+            })
+        }
+    }
+
     //is this useful since create group only allows names to be 20 characters
     const truncate = (text, maxLength) => {
         return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
@@ -125,7 +171,7 @@ const Groups_details = () => {
 
     // members and receipts dropdown touchable too wide. Adjust this later
 
-    if (!room_details) {
+    if (!room_details || loading) {
         return (
             <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
                 <ActivityIndicator size={"large"} color={Colors.primary}/>
@@ -145,9 +191,9 @@ const Groups_details = () => {
         }
         />
         <View style={styles.top_container}>
-            <View style={styles.room_icon}>
-                <Text>{room_details.room_code}</Text>
-            </View>
+            <TouchableOpacity activeOpacity={.8} onPress={updateRoomPicture}>
+                <Profile_picture name={room_details.room_name} image={roomPicture} sizing_style={styles.room_icon} text_sizing={{fontSize: RFValue(24)}}/>
+            </TouchableOpacity>
             <View style={{justifyContent: 'space-between'}}>
                 <Text style={styles.title}>{truncate(room_details.room_name, 12)}</Text>
                 <TouchableWithoutFeedback onPressIn={copyToClipboard}>
@@ -275,11 +321,7 @@ const styles = StyleSheet.create({
     room_icon: {
         height: scale(60),
         width: scale(60),
-        borderRadius: scale(30),
-        borderWidth: 1,
         borderColor: Colors.primary,
-        justifyContent: 'center',
-        alignItems: 'center',
         // marginBottom: scale(8)
         marginRight: scale(10)
     },

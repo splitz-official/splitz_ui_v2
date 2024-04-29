@@ -86,6 +86,7 @@ const Groups = () => {
                 return (
                     <Groups_list_item
                         title={item.room_name}
+                        image={item.room_picture_url}
                         onPress={() => navigation.navigate("Group_stack", {
                             screen: 'Groups_details',
                             params: { room_code: item.room_code }
