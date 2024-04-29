@@ -216,7 +216,11 @@ const Receipt_items = () => {
             // )}
             />
             <View style={{alignItems: 'center', marginTop: '5%'}}>
-                <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={{height: scale(50), width: scale(50)}} text_sizing={{fontSize: RFValue(18)}}/>
+                <Profile_picture 
+                name={userData.name} 
+                image={userData.profile_picture_url} 
+                sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
+                text_sizing={{fontSize: RFValue(18)}}/>
                 <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginTop: scale(5)}}>You</Text>
             </View>
             <View style={[styles.items_container]}>

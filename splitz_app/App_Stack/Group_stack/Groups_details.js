@@ -323,7 +323,8 @@ const styles = StyleSheet.create({
         width: scale(60),
         borderColor: Colors.primary,
         // marginBottom: scale(8)
-        marginRight: scale(10)
+        marginRight: scale(10),
+        borderWidth: 1
     },
     title: {
         fontFamily: 'DMSans_700Bold',

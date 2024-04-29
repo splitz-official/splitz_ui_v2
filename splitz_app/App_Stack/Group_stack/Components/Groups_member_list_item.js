@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     picture: {
         width: scale(45),
         height: scale(45),
-        borderColor: Colors.primary
+        borderColor: Colors.primary,
+        borderWidth: 1
     },
     title: {
         fontFamily: 'DMSans_500Medium',
