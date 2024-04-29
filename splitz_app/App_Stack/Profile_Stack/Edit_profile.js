@@ -19,7 +19,6 @@ import { useAxios } from '../../../Axios/axiosContext';
 import Colors from '../../../Config/Colors';
 import Edit_profile_text_fields from './Components/Edit_profile_text_fields';
 
-//keyboard avoiding view not working fix later!
 
 const Edit_profile = () => {
 
@@ -151,9 +150,9 @@ const Edit_profile = () => {
                     activeOpacity={.8}
                     style={styles.edit_icon}
                     onPress={()=>setEditingProfile(true)}>
-                        <FontAwesome name="circle" size={RFValue(45)} color={Colors.primary} />
+                        <FontAwesome name="circle" size={scale(50)} color={Colors.primary} />
                         <View style={{position: 'absolute'}}>
-                            <Entypo name="edit" size={RFValue(24)} color="white" />
+                            <Entypo name="edit" size={scale(28)} color="white" />
                         </View>
                     </TouchableOpacity>
                 )}
@@ -171,7 +170,8 @@ const Edit_profile = () => {
                     <View style={styles.btn_container}>
                         <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
                             <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
-                            <AntDesign name="camera" size={scale(18)} color="black" />
+                            {/* <AntDesign name="camera" size={scale(18)} color="black" /> */}
+                            <Entypo name="edit" size={scale(18)} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -257,7 +257,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '25%',
         // borderWidth: 1,
-        backgroundColor: 'lightgrey'
+        backgroundColor: 'lightgrey',
+        paddingTop: verticalScale(3)
     },
     uploadBtn: {
         display: 'flex',
