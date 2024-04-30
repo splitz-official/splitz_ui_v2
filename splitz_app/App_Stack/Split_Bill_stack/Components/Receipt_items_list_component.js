@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { scale, verticalScale } from 'react-native-size-matters'
 import { RFValue } from 'react-native-responsive-fontsize'
@@ -7,6 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import Colors from '../../../../Config/Colors'
 import { Medium500Text, RegularText } from '../../../../Config/AppText';
+import Profile_picture from '../../../../Components/Profile_picture';
 
 const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing}) => {
 
@@ -24,7 +25,29 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
             <RegularText numberOfLines={1} style={styles.name}>{truncate(name, 18)} {quantity}</RegularText>
         </View>
         <Medium500Text style={styles.price}>{price.toFixed(2)}</Medium500Text>
-        <RegularText style={styles.participants}>selected by: {participants}</RegularText>
+        {/* <RegularText style={styles.participants}>selected by: {participants}</RegularText> */}
+        {participants && participants.length > 0 &&
+        <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%'}}>
+            <RegularText style={{color: Colors.textgray}}>Also selected by: </RegularText>
+            <FlatList 
+            data={participants}
+            keyExtractor={item => item.id.toString()}
+            horizontal={true}
+            style={{}}
+            renderItem={({ item }) => {
+                // console.log("Rendering participant:", item);
+                return (
+                    <Profile_picture 
+                        name={item.name}  
+                        sizing_style={{height: scale(12), width: scale(12), borderWidth: 1, marginHorozontal: 5}}
+                        text_sizing={{fontSize: RFValue(8)}}
+                        maxLength={1}
+                        image={item.profile_picture_url}
+                    />
+                );
+            }}
+            />
+        </View>}
     </TouchableOpacity>
   )
 }

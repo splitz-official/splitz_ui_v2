@@ -82,18 +82,28 @@ const Receipt_items = () => {
     fetchReceipt();
   }, []); 
 
+
   useEffect(() => {
     const calculateTotal = () => {
-        const total = selectedItems.reduce((acc, itemId) => {
-            const item = receipt.items.find(item => item.id === itemId);
-            const total = acc + (item ? ((item.item_cost * item.item_quantity) / (item.users.length || 1)) : 0)
-            return total;
+      if (receipt.items && Array.isArray(receipt.items)) {
+        const total = receipt.items.reduce((acc, item) => {
+          if (selectedItems.includes(item.id)) {
+            let numUsers = item.users.length;
+            if (!item.users.find(user => user.id === userID)) {
+              numUsers += 1;
+            }
+            const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
+            return acc + itemTotalCost;
+          }
+          return acc;
         }, 0);
         setUserCost(total);
+      }
     };
 
     calculateTotal();
-}, [selectedItems, receipt.items]);
+  }, [selectedItems, receipt.items]);
+
 
   if(loading) {
     return (
@@ -129,7 +139,7 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    // console.log(selectedItems)
+    console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
       navigation.navigate("Bill_totals", {
@@ -243,11 +253,11 @@ const Receipt_items = () => {
                 }
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
-                  item.users
-                    .filter(user => user.id !== userID) 
-                    .map(user => user.name.trim().split(' ')[0])  
-                    .join(", ")
-                  : ""}
+                    item.users.filter(user=>user.id !== userID)
+                    :
+                    []
+                }
+                // participants={item.users}
                 /> 
               }
               />
@@ -259,26 +269,20 @@ const Receipt_items = () => {
               <Receipt_add_item />
               }
             <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
-            {selectedItems.length > 0 ?
-            (
-            <>
-              <View style={styles.tax_tip_container}>
-                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
-                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
-              </View>
-              <View style={styles.total_container}>
-                <Text style={styles.total_text}>Your subtotal:</Text>
-                <Text style={styles.total_text}>{userCost.toFixed(2)}</Text>
-              </View>
-            </> 
-            )
-            :
-            (
-              <>
-              <View style={styles.tax_tip_container}>
+            <View style={styles.tax_tip_container}>
                 <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
                 <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
               </View>
+            {selectedItems.length > 0 ?
+            (
+            <>
+              <View style={styles.total_container}>
+                <Bold700Text style={styles.total_text}>Your subtotal:</Bold700Text>
+                <Bold700Text style={styles.total_text}>{userCost.toFixed(2)}</Bold700Text>
+              </View>
+            </> 
+            ) : (
+              <>
               <View style={styles.total_container}>
                 <Bold700Text style={styles.total_text}>Total:</Bold700Text>
                 <Bold700Text style={styles.total_text}>{total}</Bold700Text>
