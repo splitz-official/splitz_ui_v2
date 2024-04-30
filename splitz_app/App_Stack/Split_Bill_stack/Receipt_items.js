@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
 import * as Haptics from 'expo-haptics';
+import Toast from 'react-native-toast-message';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
@@ -44,7 +45,7 @@ const Receipt_items = () => {
   const [editingName, setEditingName] = useState(false);
 
   const [itemName, setItemName] = useState('');
-  const [itemQuantity, setItemQuantity] = useState('');
+  const [itemQuantity, setItemQuantity] = useState('1');
   const [itemPrice, setItemPrice] = useState('');
 
   useEffect(() => {
@@ -126,6 +127,36 @@ const Receipt_items = () => {
     }
   };
 
+  const addItems = async() => {
+    // console.log(itemName, itemQuantity, itemPrice)
+    if (itemName.trim() === '' || itemPrice.trim() === '' || itemQuantity.trim() === '') {
+      Alert.alert("Please fill in all fields");
+      return;
+    }
+    const newItem = {
+      item_name: itemName,
+      item_quantity: parseInt(itemQuantity),
+      item_price: parseFloat(itemPrice)
+    }
+    await axiosInstance.post(`/receipts/${room_code}/add-item/${receipt_id}`, [newItem])
+    .then((response) => {
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added Successfully',
+        position: 'top',
+        autoHide: true,
+        visibilityTime: 2000
+      })
+      setItemName("");
+      setItemQuantity("1");
+      setItemPrice("");
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log("Error: ", error);
+    })
+  }
+
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
@@ -173,6 +204,12 @@ const Receipt_items = () => {
         .catch((error) => {
           console.log("Error", error);
         });
+    }
+  };
+
+  const handlePriceChange = (text) => {
+    if (/^\d*\.?\d{0,2}$/.test(text)) {
+      setItemPrice(text);
     }
   };
 
@@ -333,30 +370,41 @@ const Receipt_items = () => {
               <TextInput 
               placeholder='Name'
               autoFocus={true}
-              placeholderTextColor={Colors.placeholderTextColor}
-              style={styles.modal_text_inputs}
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 3}]}
+              keyboardType='default'
+              value={itemName}
+              onChangeText={setItemName}
               />
               <TextInput 
-              placeholder='quantity'
-              placeholderTextColor={Colors.placeholderTextColor}
-              style={styles.modal_text_inputs}
+              placeholder='1'
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 1}]}
+              keyboardType='numeric'
+              value={itemQuantity}
+              onChangeText={setItemQuantity}
               />
               <TextInput 
               placeholder='price'
-              placeholderTextColor={Colors.placeholderTextColor}
-              style={styles.modal_text_inputs}
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 1.5}]}
+              keyboardType='numeric'
+              value={itemPrice}
+              onChangeText={handlePriceChange}
               />
             </View>
             <View style={styles.modal_confirm_cancel_buttons_container}>
-              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]} onPress={()=>setAddingItem(false)}>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]} 
+              onPress={()=>{setAddingItem(false), setItemName(""), setItemQuantity("1"), setItemPrice("")}}>
                 <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>Cancel</Medium500Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]}>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]} onPress={addItems}>
                 <Medium500Text style={{color: 'white', fontSize: RFValue(12)}}>Add</Medium500Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        <Toast/>
       </Modal>
     </Screen>
   )
@@ -413,7 +461,7 @@ const styles = StyleSheet.create({
   edit_done_text: {
     fontSize: RFValue(12),
     color: Colors.primary,
-    margin: 0
+    margin: 0,
   },
   add_item_button: {
     borderWidth: 1,
@@ -476,13 +524,28 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 4,
-    // overflow: 'hidden'
+    paddingHorizontal: scale(10)
   },
   modal_text_input_container: {
     flexDirection: 'row',
     flex: .7,
+    alignItems: 'center',
     // borderWidth: 1,
     // borderColor: 'blue',
+  },
+  modal_text_inputs: {
+    borderBottomWidth: 1,
+    borderColor: Colors.primary,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: RFValue(12),
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: scale(10),
+    paddingTop: scale(10),
+    paddingBottom: scale(5),
+    flexDirection: 'row',
+    marginHorizontal: scale(5)
+    // borderRadius: scale(10)
   },
   modal_confirm_cancel_buttons_container: {
     flexDirection: 'row',
@@ -490,15 +553,13 @@ const styles = StyleSheet.create({
     flex: .3,
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingBottom: verticalScale(5)
-  },
-  modal_text_inputs: {
-    flex: 1,
-    borderWidth: 1
+    paddingBottom: verticalScale(15),
+    paddingLeft: scale(20),
+    paddingRight: scale(20)
   },
   modal_buttons: {
-    borderWidth: 1,
     borderColor: Colors.primary,
+    borderWidth: 1,
     paddingVertical: scale(10),
     width: scale(80),
     justifyContent: 'center',
