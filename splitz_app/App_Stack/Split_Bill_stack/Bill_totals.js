@@ -46,7 +46,7 @@ const Bill_totals = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
         // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -83,7 +83,7 @@ const Bill_totals = () => {
         calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
         setLoading(false);
       } catch (error) {
-        console.log("Error: ", error);
+        console.log("Error fetching receipt details: ", error);
         setLoading(false);
       }
       // console.log("Selected Items: ", selectedItems) this doesn't update in time before the variable is set so ignore first initial result 

@@ -38,7 +38,7 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
                 return (
                     <Profile_picture 
                         name={item.name}  
-                        sizing_style={{height: scale(12), width: scale(12), borderWidth: 1, marginHorozontal: 5}}
+                        sizing_style={{height: scale(12), width: scale(12), borderWidth: 1, marginHorizontal: 1}}
                         text_sizing={{fontSize: RFValue(8)}}
                         maxLength={1}
                         image={item.profile_picture_url}

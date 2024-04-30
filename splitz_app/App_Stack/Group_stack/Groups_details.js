@@ -106,7 +106,7 @@ const Groups_details = () => {
     const fetchRoomReceipts = async () => {
         // console.log("Fetching Room Receipts");
         try {
-            const response = await axiosInstance.get(`/receipts/${room_code}`);
+            const response = await axiosInstance.get(`/receipts/room_code/${room_code}`);
             setReceipts(response.data);
             // console.log("Receipt data: ", response.data);
         } catch (error) {

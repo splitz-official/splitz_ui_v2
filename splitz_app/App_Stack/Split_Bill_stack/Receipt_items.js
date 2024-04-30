@@ -58,7 +58,7 @@ const Receipt_items = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
         // console.log(response.data.items);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))

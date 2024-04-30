@@ -12,7 +12,7 @@ const Large_green_button = ({ onPress, title, disabled, text_style }) => {
 
     const handlePress = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        console.log("haptic")
+        // console.log("haptic")
         // if (onPress) onPress();
         onPress();
       };

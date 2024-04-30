@@ -11,7 +11,7 @@ const Large_green_outline_button = ( { title, onPress, icon_component, disabled}
 
     const handlePress = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        console.log("haptic")
+        // console.log("haptic")
         // if (onPress) onPress();
         onPress();
       };
