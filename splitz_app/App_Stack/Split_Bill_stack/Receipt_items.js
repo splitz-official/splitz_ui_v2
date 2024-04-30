@@ -23,7 +23,7 @@ const Receipt_items = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-  const { receipt_id, room_code } = route.params;
+  const { receipt_id, room_code=""} = route.params;
   // console.log(room_code);
   // const receipt_id = '32'
   // const room_code = '0K23HE'
@@ -160,7 +160,7 @@ const Receipt_items = () => {
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
       })
       // console.log(response);

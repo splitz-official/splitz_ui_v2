@@ -2,8 +2,6 @@ import { ActivityIndicator, FlatList, Image, Keyboard, KeyboardAvoidingView, Sty
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
-
-
 import { useAxios } from '../../../Axios/axiosContext'
 import Screen from '../../../Components/Screen';
 import Back_button from '../../../Components/Back_button';
@@ -146,7 +144,7 @@ function First_last_initial(fullName) {
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
       })
       // console.log(response);
