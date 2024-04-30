@@ -38,6 +38,7 @@ const Groups_details = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [shareModal, setShareModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState(0);
     // console.log(receipts)
 
     const copyToClipboard = async () => {
@@ -87,7 +88,7 @@ const Groups_details = () => {
         if (room_code) {
             fetchRoomDetails();
         }
-    }, [room_code])
+    }, [room_code, count])
 
     const fetchRoomMembers = async () => {
         // console.log("Fetching Room Members");
@@ -191,6 +192,7 @@ const Groups_details = () => {
             await axiosInstance.post(`/room/${room_code}/upload-room-picture`, formData)
             .then((response) => {
                 console.log(response);
+                setCount(count + 1);
             })
             .catch((error) => {
                 console.log("Upload Error: ", error);

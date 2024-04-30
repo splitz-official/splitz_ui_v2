@@ -22,13 +22,12 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={[styles.checkbox, isSelected ? styles.selectedbox: {}]}/>
-            <RegularText numberOfLines={1} style={styles.name}>{truncate(name, 18)} {quantity}</RegularText>
+            <RegularText numberOfLines={1} style={styles.name}>{truncate(name, 15)} {quantity}</RegularText>
         </View>
         <Medium500Text style={styles.price}>{price.toFixed(2)}</Medium500Text>
-        {/* <RegularText style={styles.participants}>selected by: {participants}</RegularText> */}
         {participants && participants.length > 0 &&
-        <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%'}}>
-            <RegularText style={{color: Colors.textgray}}>Also selected by: </RegularText>
+        <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%', alignItems: 'center'}}>
+            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>Also selected by: </RegularText>
             <FlatList 
             data={participants}
             keyExtractor={item => item.id.toString()}

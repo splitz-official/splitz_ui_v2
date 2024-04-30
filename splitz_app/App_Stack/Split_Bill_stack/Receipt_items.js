@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert} from 'react-native'
+import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert, Modal} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
@@ -104,7 +104,7 @@ const Receipt_items = () => {
     calculateTotal();
   }, [selectedItems, receipt.items]);
 
-
+  //refresh on navigation ADD IN FUTURE
   if(loading) {
     return (
       <View style={styles.loading_container}>
@@ -199,7 +199,18 @@ const Receipt_items = () => {
           }
         }}
         children={
-          <TouchableOpacity activeOpacity={.8} style={styles.edit_done} onPress={()=> setEditing(!editing)}>
+          <TouchableOpacity activeOpacity={.8} style={styles.edit_done} 
+          onPress={() => {
+            if (editing) {
+              setEditing(false);
+              setAddingItem(false)
+              Haptics.selectionAsync();
+            } else {
+              setEditing(true);
+              Haptics.selectionAsync();
+            }
+          }}
+          >
             <Medium500Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Medium500Text>
           </TouchableOpacity>
         }
@@ -220,19 +231,20 @@ const Receipt_items = () => {
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
-            // returnKeyType='done'
-            // onSubmitEditing={()=> (
-            //   console.log("Name submitted, ", receiptname),
-            //   handleReceiptRename()
-            // )}
             />
-            <View style={{alignItems: 'center', marginTop: '5%'}}>
+            <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row', marginLeft: '5%'}}>
+              <View style={{alignItems: 'center'}}>
                 <Profile_picture 
                 name={userData.name} 
                 image={userData.profile_picture_url} 
                 sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
                 text_sizing={{fontSize: RFValue(18)}}/>
                 <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
+              </View>
+              <View style={{marginHorizontal: scale(15), marginRight: scale(50)}}>
+                <Bold700Text style={{fontSize: RFValue(14), marginBottom: verticalScale(5)}}>Pro Tip: </Bold700Text>
+                <Medium500Text style={{fontSize: RFValue(12)}}>Make sure to check your receipt against the items below</Medium500Text>
+              </View>
             </View>
             <View style={[styles.items_container]}>
               <FlatList 
@@ -265,9 +277,6 @@ const Receipt_items = () => {
               <TouchableOpacity activeOpacity={.5} style={styles.add_item_button} onPress={()=> setAddingItem(true)}>
                 <Text style={styles.add_item_text}>+ New item</Text>
               </TouchableOpacity>}
-              {editing && addingItem &&
-              <Receipt_add_item />
-              }
             <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
             <View style={styles.tax_tip_container}>
                 <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
@@ -293,23 +302,62 @@ const Receipt_items = () => {
           </View>
         </View>
       </TouchableWithoutFeedback>
-      {editingName ? (
+      {editingName && !addingItem ? (
         <Large_green_button 
-          title={"Confirm Name"} 
-          onPress={() => {
-              handleReceiptRename();
-              Keyboard.dismiss();
-              // setEditingName(false);
-          }}
-        />
-      ) : (
-        <Large_green_button 
+        title={"Confirm Name"} 
+        onPress={() => {
+            handleReceiptRename();
+            Keyboard.dismiss();
+              }}
+            />
+        ) : addingItem ? (
+            null
+        ) : (
+          <Large_green_button 
             title={"Confirm items"} 
             onPress={confirmSelectedItems}
-        />
-      )}
+          />
+        )}
       </KeyboardAvoidingView>
-          
+      <Modal
+      animationType='fade'
+      transparent={true}
+      visible={addingItem}
+      onRequestClose={() => {
+        setAddingItem(false);
+    }}
+      >
+        <View style={styles.modal_view}>
+          <View style={styles.modal_box}>
+            <View style={styles.modal_text_input_container}>
+              <TextInput 
+              placeholder='Name'
+              autoFocus={true}
+              placeholderTextColor={Colors.placeholderTextColor}
+              style={styles.modal_text_inputs}
+              />
+              <TextInput 
+              placeholder='quantity'
+              placeholderTextColor={Colors.placeholderTextColor}
+              style={styles.modal_text_inputs}
+              />
+              <TextInput 
+              placeholder='price'
+              placeholderTextColor={Colors.placeholderTextColor}
+              style={styles.modal_text_inputs}
+              />
+            </View>
+            <View style={styles.modal_confirm_cancel_buttons_container}>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]} onPress={()=>setAddingItem(false)}>
+                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>Cancel</Medium500Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]}>
+                <Medium500Text style={{color: 'white', fontSize: RFValue(12)}}>Add</Medium500Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   )
 }
@@ -406,6 +454,56 @@ const styles = StyleSheet.create({
       width: '80%',
       textAlign: 'center'
       // borderWidth: 1
+  },
+  modal_view: {
+    flex: 1,
+    // borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'backgroundColor: rgba(0,0,0,0.2)'
+  },
+  modal_box: {
+    height: '20%',
+    width: '90%',
+    backgroundColor: Colors.white,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderRadius: scale(20),
+    marginTop: '-60%',
+    shadowColor: Colors.darkgray,
+    shadowOffset: {
+        height: 5
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    // overflow: 'hidden'
+  },
+  modal_text_input_container: {
+    flexDirection: 'row',
+    flex: .7,
+    // borderWidth: 1,
+    // borderColor: 'blue',
+  },
+  modal_confirm_cancel_buttons_container: {
+    flexDirection: 'row',
+    // borderWidth: 1,
+    flex: .3,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingBottom: verticalScale(5)
+  },
+  modal_text_inputs: {
+    flex: 1,
+    borderWidth: 1
+  },
+  modal_buttons: {
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    paddingVertical: scale(10),
+    width: scale(80),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: scale(10)
   }
 })
 
