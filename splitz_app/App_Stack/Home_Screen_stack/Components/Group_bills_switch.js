@@ -5,6 +5,7 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { scale, verticalScale } from 'react-native-size-matters';
 
 import Colors from '../../../../Config/Colors'
+import { Medium500Text } from '../../../../Config/AppText';
 
 
 const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
@@ -35,10 +36,10 @@ const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
             <Animated.View style={[styles.inner, {left: switchTranslate} ]} />
             <View style={styles.textWrapper}>
                 <TouchableOpacity activeOpacity={1} onPress={onGroupsPress} style={styles.label}>
-                    <Text style={[styles.text, activeButton === 'Groups' ? {color: Colors.primary} : {color: 'black'}]}>My Groups</Text>
+                    <Medium500Text style={[styles.text, activeButton === 'Groups' ? {color: Colors.primary} : {color: 'black'}]}>My Groups</Medium500Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={1} onPress={onBillsPress} style={styles.label}>
-                    <Text style={[styles.text, activeButton === 'Bills' ? {color: Colors.primary} : {color: 'black'}]}>My Bills</Text>
+                    <Medium500Text style={[styles.text, activeButton === 'Bills' ? {color: Colors.primary} : {color: 'black'}]}>My Bills</Medium500Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -94,7 +95,6 @@ const styles = StyleSheet.create({
         left: 3
     },
     text: {
-        fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(12)
     }
 })

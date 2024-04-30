@@ -6,6 +6,7 @@ import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
 import randomColor from 'randomcolor';
 import Toast from 'react-native-toast-message';
+import * as Haptics from 'expo-haptics';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -154,10 +155,11 @@ function Profile(props) {
                     Iconcomponent={<MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Edit Profile'}/>
                     <Large_button
-                    onPress={()=>navigation.navigate('settings')}
+                    onPress={()=>Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}
                     Iconcomponent={<Ionicons name="settings-sharp" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Settings'}/>
                     <Large_button 
+                    onPress={()=>Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}
                     Iconcomponent={<Feather name="share" size={RFPercentage(4)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 

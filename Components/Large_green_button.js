@@ -4,6 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import Colors from '../Config/Colors'
 import { scale } from 'react-native-size-matters';
 import * as Haptics from 'expo-haptics';
+import { Bold700Text } from '../Config/AppText';
 
 const Large_green_button = ({ onPress, title, disabled, text_style }) => {
     // Optional: Modify the button style based on the disabled state
@@ -18,9 +19,8 @@ const Large_green_button = ({ onPress, title, disabled, text_style }) => {
   
     return (
       <View style={styles.container}>
-          {/* Disable the onPress function based on the disabled prop */}
           <TouchableOpacity style={buttonStyle} activeOpacity={.8} onPress={!disabled ? handlePress : null}>
-              <Text style={[styles.text, text_style]}>{title}</Text>
+              <Bold700Text style={[styles.text, text_style]}>{title}</Bold700Text>
           </TouchableOpacity>
       </View>
     );
@@ -47,13 +47,12 @@ const Large_green_button = ({ onPress, title, disabled, text_style }) => {
           flex: 1,
       },
       disabledButton: {
-          backgroundColor: Colors.grey, // Change this to whatever color indicates a disabled state
+          backgroundColor: Colors.grey,
       },
       text: {
           color: Colors.white,
           fontSize: RFValue(18),
           paddingVertical: 10,
-          fontFamily: 'DMSans_700Bold',
       }, 
   });
   

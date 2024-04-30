@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontFamily: 'DMSans_500Medium',
-        fontSize: RFValue(12)
+        fontSize: RFValue(14)
     },
     owner: {
         fontFamily: 'DMSans_400Regular',

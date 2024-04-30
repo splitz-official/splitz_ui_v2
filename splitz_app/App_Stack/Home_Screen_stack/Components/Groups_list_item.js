@@ -7,6 +7,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Colors from '../../../../Config/Colors'
+import { Bold700Text } from '../../../../Config/AppText';
 
 const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
     
@@ -26,7 +27,7 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
                 <MaterialCommunityIcons name="account-group" size={scale(32)} color={Colors.black} />
             </View>
         }
-        <Text style={styles.text} numberOfLines={2}>{title}</Text>
+        <Bold700Text style={styles.text} numberOfLines={2}>{title}</Bold700Text>
     </TouchableOpacity>
   )
 }
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     text: {
-        fontFamily: 'DMSans_700Bold',
         fontSize: RFValue(12),
         textAlign: 'center',
         width: "100%",

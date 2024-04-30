@@ -13,6 +13,7 @@ import Large_green_button from '../../../Components/Large_green_button';
 import { useAxios } from '../../../Axios/axiosContext';
 import Receipt_add_item from './Components/Receipt_add_item';
 import Profile_picture from '../../../Components/Profile_picture';
+import { Bold700Text, Medium500Text } from '../../../Config/AppText';
 
 //add item endpoint and rename receipt endpoint
 
@@ -98,7 +99,7 @@ const Receipt_items = () => {
     return (
       <View style={styles.loading_container}>
         <ActivityIndicator size={'large'} color={Colors.primary}/>
-        <Text style = {styles.loading_text}>Getting receipt data!</Text>
+        <Bold700Text style={styles.loading_text}>Getting receipt data!</Bold700Text>
       </View>
   )
   }
@@ -189,7 +190,7 @@ const Receipt_items = () => {
         }}
         children={
           <TouchableOpacity activeOpacity={.8} style={styles.edit_done} onPress={()=> setEditing(!editing)}>
-            <Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Text>
+            <Medium500Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Medium500Text>
           </TouchableOpacity>
         }
         />
@@ -221,7 +222,7 @@ const Receipt_items = () => {
                 image={userData.profile_picture_url} 
                 sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
                 text_sizing={{fontSize: RFValue(18)}}/>
-                <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginTop: scale(5)}}>You</Text>
+                <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
             </View>
             <View style={[styles.items_container]}>
               <FlatList 
@@ -275,12 +276,12 @@ const Receipt_items = () => {
             (
               <>
               <View style={styles.tax_tip_container}>
-                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
-                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
+                <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
+                <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
               </View>
               <View style={styles.total_container}>
-                <Text style={styles.total_text}>Total:</Text>
-                <Text style={styles.total_text}>{total}</Text>
+                <Bold700Text style={styles.total_text}>Total:</Bold700Text>
+                <Bold700Text style={styles.total_text}>{total}</Bold700Text>
               </View>
             </> 
             )
@@ -344,12 +345,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   tax_tip_text: {
-    fontFamily: 'DMSans_500Medium', 
     fontSize: RFValue(14),
     color: Colors.primary
   },
   total_text: {
-    fontFamily: 'DMSans_700Bold', 
     fontSize: RFValue(18)
   },
   edit_done: {
@@ -360,7 +359,6 @@ const styles = StyleSheet.create({
     bottom: verticalScale(2)
   },
   edit_done_text: {
-    fontFamily: 'DMSans_500Medium',
     fontSize: RFValue(12),
     color: Colors.primary,
     margin: 0
@@ -395,7 +393,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1
   },
   loading_text: {
-      fontFamily: 'DMSans_700Bold',
       marginTop: scale(10),
       color: Colors.primary,
       fontSize: RFValue(16),

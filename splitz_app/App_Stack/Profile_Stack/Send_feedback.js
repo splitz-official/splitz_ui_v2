@@ -30,7 +30,7 @@ const Send_feedback = () => {
   return (
     <Screen style={{backgroundColor: Colors.white}}>
         <TouchableWithoutFeedback onPress={()=> {
-            console.log("dismiss keyboard");
+            // console.log("dismiss keyboard");
             Keyboard.dismiss();
         }}>
             <KeyboardAvoidingView style={{flex: 1}} behavior='padding'>

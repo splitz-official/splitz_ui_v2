@@ -1,6 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import Colors from '../Config/Colors';
+import { Medium500Text } from '../Config/AppText';
 
 const Profile_picture = ({image, name, sizing_style, text_sizing, maxLength = 2}) => {
 
@@ -15,7 +16,7 @@ const Profile_picture = ({image, name, sizing_style, text_sizing, maxLength = 2}
         <Image resizeMode='cover' style={[styles.image, sizing_style]} source={{uri: image}}/>
     :
     <View style={[styles.no_image, sizing_style]}>
-        <Text style={[styles.text, text_sizing]}>{getInitials(name)}</Text>
+        <Medium500Text style={[styles.text, text_sizing]}>{getInitials(name)}</Medium500Text>
     </View>
   )
 }
@@ -31,7 +32,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.backgroundFillGray,
     },
     text: {
-        fontFamily: 'DMSans_500Medium',
         color: Colors.icon_text_gray
     }
 })

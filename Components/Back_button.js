@@ -11,7 +11,7 @@ const Back_button = ({onPress, title, children, disabled}) => {
 
   const handlePress = () => {
     Haptics.selectionAsync();
-    console.log("haptic")
+    // console.log("haptic")
     // if (onPress) onPress();
     onPress();
   };

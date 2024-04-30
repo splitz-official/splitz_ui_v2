@@ -32,7 +32,8 @@ const Groups_details = () => {
     const [roomPicture, setRoomPicture] = useState(null);
 
     const [members, setMembers] = useState([]);
-    const [receipts, setReceipts] = useState(null);
+    const [receipts, setReceipts] = useState([]);
+    const [mappedReceitps, setMappedReceipts] = useState([]);
     const [receiptsDropDown, setReceiptsDropDown] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [shareModal, setShareModal] = useState(false);
@@ -75,10 +76,10 @@ const Groups_details = () => {
         const fetchRoomDetails = async () => {
             // console.log("Fetching Room Details")
             try {
-                const response = await axiosInstance.get(`/room/${room_code}`);
-                // console.log(response.data);
-                setRoom_Details(response.data);
-                setRoomPicture(response.data.room_picture_url);
+                const response = await axiosInstance.get(`/room/${room_code}`)
+                    setRoom_Details(response.data);
+                    setRoomPicture(response.data.room_picture_url);
+                    // console.log(response.data);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -93,22 +94,52 @@ const Groups_details = () => {
         try {
             const response = await axiosInstance.get(`/room/members/${room_details.id}`);
             setMembers(response.data);
-            // console.log(response.data)
+            // const membersMap = {};
+            // response.data.forEach(member => membersMap[member.id] = member.name)
+            // console.log(membersMap)
+            // console.log("Member data: ", response.data)
         } catch (error) {
             console.error('Failed to fetch room members:', error);
         }
     };
-    
+
     const fetchRoomReceipts = async () => {
         // console.log("Fetching Room Receipts");
         try {
             const response = await axiosInstance.get(`/receipts/${room_code}`);
-            // console.log("Fetching room receipts reponse status:", response, response.status);
             setReceipts(response.data);
+            // console.log("Receipt data: ", response.data);
         } catch (error) {
             console.error('Failed to fetch room receipts', error);
         }
     };
+
+    const mapMembersByID = (members, receipts) => {
+        const membersMap = {};
+        members.forEach(member => {
+            membersMap[member.id] = member.name;
+        });
+
+        const id_mappedReceipts =  receipts.map(receipt => ({
+            ...receipt, 
+            ownerName: membersMap[receipt.owner_id]
+        }));
+        setMappedReceipts(id_mappedReceipts);
+    };
+
+    function First_last_initial(fullName) {
+        if (!fullName) {
+            return;
+        }
+        const parts = fullName.trim().split(' ');  
+        if (parts.length === 1) {
+            return parts[0];
+        } else {
+            const firstName = parts[0];
+            const lastNameInitial = parts[1].charAt(0);  
+            return `${firstName} ${lastNameInitial}.`; 
+        }
+    }
 
     useEffect(() => {
         if (room_details && room_details.id) {
@@ -124,8 +155,14 @@ const Groups_details = () => {
         }, [room_code])
     );
 
+    useEffect(() => {
+        if(members && receipts) {
+            mapMembersByID(members, receipts);
+        }
+    }, [members, receipts])
+
     const updateRoomPicture = async () => {
-        console.log("HandleRoomPressed")
+        console.log("Update Room Picture pressed")
         const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         // console.log(mediaLibraryPermissions);
         
@@ -163,6 +200,7 @@ const Groups_details = () => {
             })
         }
     }
+   
 
     //is this useful since create group only allows names to be 20 characters
     const truncate = (text, maxLength) => {
@@ -235,7 +273,7 @@ const Groups_details = () => {
                 </TouchableWithoutFeedback>
                 {receiptsDropDown && (
                     <FlatList 
-                    data={receipts}
+                    data={mappedReceitps}
                     keyExtractor={item => item.id.toString()}
                     onRefresh={()=> fetchRoomReceipts()}
                     refreshing={isRefreshing}
@@ -247,7 +285,7 @@ const Groups_details = () => {
                     renderItem={({ item }) => 
                         <Groups_receipt_list_item 
                         title={item.receipt_name}
-                        owner={item.owner_id}
+                        owner={First_last_initial(item.ownerName)}
                         onPress={()=> navigation.navigate('Split_bill_stack', {
                             screen: 'Bill_totals',
                             params: {room_code: item.room_code, receipt_id: item.id}

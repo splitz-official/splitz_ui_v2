@@ -6,6 +6,7 @@ import { RFValue } from 'react-native-responsive-fontsize'
 import { MaterialIcons } from '@expo/vector-icons';
 
 import Colors from '../../../../Config/Colors'
+import { Medium500Text, RegularText } from '../../../../Config/AppText';
 
 const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing}) => {
 
@@ -20,10 +21,10 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={[styles.checkbox, isSelected ? styles.selectedbox: {}]}/>
-            <Text numberOfLines={1} style={styles.name}>{truncate(name, 18)} {quantity}</Text>
+            <RegularText numberOfLines={1} style={styles.name}>{truncate(name, 18)} {quantity}</RegularText>
         </View>
-        <Text style={styles.price}>{price.toFixed(2)}</Text>
-        <Text style={styles.participants}>selected by: {participants}</Text>
+        <Medium500Text style={styles.price}>{price.toFixed(2)}</Medium500Text>
+        <RegularText style={styles.participants}>selected by: {participants}</RegularText>
     </TouchableOpacity>
   )
 }
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
         // borderWidth: 1
     },
     price: {
-        fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(22),
         // borderWidth: 1
     },
@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: '10%',
-        fontFamily: 'DMSans_400Regular',
         fontSize: RFValue(10),
         color: Colors.textgray
     }
