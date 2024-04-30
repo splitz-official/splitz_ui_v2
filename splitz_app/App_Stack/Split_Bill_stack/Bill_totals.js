@@ -93,12 +93,15 @@ const Bill_totals = () => {
 );
 
 function First_last_initial(fullName) {
+  if (!fullName) {
+    return;
+  }
   const parts = fullName.trim().split(' ');  
   if (parts.length === 1) {
       return parts[0];
   } else {
       const firstName = parts[0];
-      const lastNameInitial = parts[parts.length - 1].charAt(0);  
+      const lastNameInitial = parts[1].charAt(0);  
       return `${firstName} ${lastNameInitial}.`; 
   }
 }

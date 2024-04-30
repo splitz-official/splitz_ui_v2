@@ -6,11 +6,13 @@ import { RFValue } from 'react-native-responsive-fontsize'
 
 import Colors from '../../../../Config/Colors'
 import { DMSans_400Regular } from '@expo-google-fonts/dm-sans'
+import Profile_picture from '../../../../Components/Profile_picture'
 
-const Groups_member_list_item = ({ title, subtitle }) => {
+const Groups_member_list_item = ({ title, subtitle, image }) => {
   return (
     <View style={styles.container}>
-        <View style={styles.picture}/>
+        {/* <View style={styles.picture}/> */}
+        <Profile_picture name={title} image={image} sizing_style={styles.picture} text_sizing={{fontSize: RFValue(18)}}/>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
     </View>
@@ -27,9 +29,8 @@ const styles = StyleSheet.create({
     picture: {
         width: scale(45),
         height: scale(45),
-        borderWidth: 1,
-        borderRadius: scale(22.5),
-        borderColor: Colors.primary
+        borderColor: Colors.primary,
+        borderWidth: 1
     },
     title: {
         fontFamily: 'DMSans_500Medium',

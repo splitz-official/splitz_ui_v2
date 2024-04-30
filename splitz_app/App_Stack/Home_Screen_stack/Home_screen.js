@@ -9,8 +9,6 @@ import TopLogo from '../../../Components/TopLogo';
 import Owe_owed from './Components/Owe_owed';
 import Split_bill_button from './Components/Split_bill_button';
 import Join_create_buttons from './Components/Join_create_buttons';
-import Activity_list from './Components/Activity_list';
-import Placecholder_list from './Components/Placeholder_list';
 import { useAxios } from '../../../Axios/axiosContext';
 import Group_bills_switch from './Components/Group_bills_switch';
 import Groups from './Components/Groups';

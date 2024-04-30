@@ -1,14 +1,17 @@
-import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import ProfilePicture from 'react-native-profile-picture';
 import randomColor from 'randomcolor';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import Screen from '../../../Components/Screen'
 import TopLogo from '../../../Components/TopLogo'
@@ -17,17 +20,16 @@ import { useAxios } from '../../../Axios/axiosContext';
 import Colors from '../../../Config/Colors';
 import Edit_profile_text_fields from './Components/Edit_profile_text_fields';
 
-//keyboard avoiding view not working fix later!
 
 const Edit_profile = () => {
 
     const { userData, axiosInstance, setUpdateCount } = useAxios();
-    const { navigate } = useNavigation();
+    const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef(null);
 
     const [editingprofile, setEditingProfile] = useState(false);
-    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark'}));
+    const [profile_color, setProfile_color] = useState(randomColor({luminosity: 'dark', hue: 'green'}));
 
 
     const [initialname, setInitialName] = useState(userData.name);
@@ -36,7 +38,9 @@ const Edit_profile = () => {
 
     const [name, setName] = useState(userData.name);
     const [email, setEmail] = useState(userData.email);
-    // console.log(email, name);
+    const [image, setImage] = useState(userData.profile_picture_url);
+    // console.log(userData);
+    // console.log(name, email, image);
 
     useEffect(()=> {
         return ()=> {
@@ -46,7 +50,14 @@ const Edit_profile = () => {
         };
     }, []);
 
+    function getInitials(fullName) {
+        const parts = fullName.trim().split(' '); 
+        const initials = parts.slice(0,2).map(part => part.charAt(0).toUpperCase());  
+        return initials.join(''); 
+    }
+
     const handleSubmit = async () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         if(name !== initialname && name.trim() !== '' || email !== initialemail && email.trim() !== '') {
             setLoading(true);
             const updatedData = {
@@ -76,6 +87,47 @@ const Edit_profile = () => {
         }
     }
 
+    const addImage = async () => {
+        console.log("Handle Upload Pressed")
+        const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // console.log(mediaLibraryPermissions);
+        
+        if (mediaLibraryPermissions.granted === false) {
+            Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
+            return;
+        }
+
+        let _image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4,3],
+            quality:.5
+        });
+
+        if (!_image.canceled) {
+            setLoading(true);
+            const selectedImage = _image.assets[0].uri;
+            console.log(selectedImage);
+            const formData = new FormData();
+            formData.append("profile_picture", {
+                uri: selectedImage,
+                type: "image/jpeg",
+                name: "profile_picture.jpg"
+            });
+            await axiosInstance.post('/user/upload-profile-picture', formData)
+            .then((response) => {
+                console.log(response);
+                setUpdateCount(count => count + 1);
+            })
+            .catch((error) => {
+                console.log("Upload Error: ", error);
+            })
+            .finally(()=>{
+                setLoading(false);
+            })
+        }
+    }
+
     if (loading) {
         return (
         <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
@@ -87,8 +139,8 @@ const Edit_profile = () => {
   return (
     <Screen>
         {/* <TopLogo/> */}
-        <Back_button title={'Back'} onPress={()=>navigate('profile')} disabled={editingprofile}/>
-        <KeyboardAvoidingView behavior='height' style={styles.container}>
+        <Back_button title={'Back'} onPress={()=> navigation.navigate('profile')} disabled={editingprofile}/>
+        <KeyboardAvoidingView behavior='padding' style={styles.container} keyboardVerticalOffset={verticalScale(10)}>
             <View style={styles.top_title_icon}>
                 <Text style={styles.title}>Edit Profile</Text>
                 {editingprofile ? (
@@ -99,27 +151,37 @@ const Edit_profile = () => {
                     <TouchableOpacity 
                     activeOpacity={.8}
                     style={styles.edit_icon}
-                    onPress={()=>setEditingProfile(true)}>
-                        <FontAwesome name="circle" size={RFValue(45)} color={Colors.primary} />
+                    onPress={()=>{
+                        setEditingProfile(true),
+                        Haptics.selectionAsync();
+                    }}>
+                        <FontAwesome name="circle" size={scale(50)} color={Colors.primary} />
                         <View style={{position: 'absolute'}}>
-                            <Entypo name="edit" size={RFValue(24)} color="white" />
+                            <Entypo name="edit" size={scale(28)} color="white" />
                         </View>
                     </TouchableOpacity>
                 )}
             </View>
-            <View style={styles.profile_picture}>
-                <ProfilePicture 
-                    isPicture={false}
-                    user={userData.name}
-                    width={RFPercentage(15)}
-                    height={RFPercentage(15)}
-                    pictureStyle={{
-                        borderWidth: 2,
-                        borderColor: 'white'
-                    }}
-                    backgroundColor={profile_color}
-                    userTextStyle={styles.profile_pic_text}
-                    />
+            <ScrollView style={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
+            <View style={[styles.image_outer_container]}>
+                <View style={styles.picture_shadow}>
+                    <View style={styles.image_inner_container}>
+                        {image ? (
+                            <Image resizeMode='cover' source={{uri: image}} style={styles.imageStyle} /> 
+                        ) : (
+                            <View style={[styles.imageStyle, {backgroundColor: profile_color}]}>
+                                <Text style={styles.no_image_text}>{getInitials(name)}</Text>
+                            </View>
+                        )}
+                        <View style={styles.btn_container}>
+                            <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+                                <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
+                                {/* <AntDesign name="camera" size={scale(18)} color="black" /> */}
+                                <Entypo name="edit" size={scale(18)} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
             </View>
             <View style={{marginTop: '5%'}}>
                 <Edit_profile_text_fields 
@@ -151,6 +213,7 @@ const Edit_profile = () => {
                 placeholderColor={Colors.textgray}
                 />
             </View>
+        </ScrollView>
         </KeyboardAvoidingView>
     </Screen>
   )
@@ -164,21 +227,19 @@ const styles = StyleSheet.create({
     top_title_icon: {
         flexDirection:'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: '8%'
     },
     title: {
         fontFamily: 'DMSans_700Bold',
         fontSize: RFValue(18),
     },
-    profile_picture: {
+    image_outer_container: {
         // justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 2,
         marginTop: '15%',
-        marginBottom: scale(30)
-    },
-    profile_pic_text: {
-        fontSize: RFValue(45)
+        marginBottom: scale(20)
     },
     edit_icon: {
         alignItems: 'center', 
@@ -186,6 +247,49 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: scale(5),
         // borderWidth: 1, 
+    },
+    image_inner_container: {
+        height: scale(150),
+        width: scale(150),
+        borderWidth: 3,
+        borderColor: 'white',
+        borderRadius: 999,
+        overflow: 'hidden',
+        backgroundColor: Colors.white,
+    },
+    btn_container: {
+        position: 'absolute',
+        opacity: .7,
+        bottom: 0,
+        width: '100%',
+        height: '25%',
+        // borderWidth: 1,
+        backgroundColor: 'lightgrey',
+        paddingTop: verticalScale(3)
+    },
+    uploadBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    imageStyle: {
+        flex: 1,
+        // borderWidth: 2,
+        // borderColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    no_image_text: {
+        fontSize: RFValue(75),
+        color: Colors.white
+    },
+    picture_shadow: {
+        shadowColor: Colors.black,
+        shadowOpacity: .5,
+        shadowRadius:4,
+        shadowOffset: {
+            height: 5,
+        }
     }
 })
 

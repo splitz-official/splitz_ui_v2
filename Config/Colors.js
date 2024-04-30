@@ -11,5 +11,6 @@ export default {
     grey: '#DEDEDE',
     textInputPlaceholder: '#9F9F9F',
     button_fill_green: '#C1EBCD',
-    backgroundFillGray: '#D9D9D9'
+    backgroundFillGray: '#D9D9D9',
+    icon_text_gray: '#959595'
 }

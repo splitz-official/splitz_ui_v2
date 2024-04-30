@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 
 import Colors from '../Config/Colors'
 import { scale } from 'react-native-size-matters'
+import { Medium500Text } from '../Config/AppText';
 
 const Large_green_outline_button = ( { title, onPress, icon_component, disabled}) => {
 
@@ -19,7 +20,7 @@ const Large_green_outline_button = ( { title, onPress, icon_component, disabled}
     <View style={styles.container}>
         <TouchableOpacity style={disabled ? [styles.button, styles.disabled] : styles.button} onPress={!disabled ? handlePress : null} activeOpacity={.8}>
             {icon_component}
-            <Text style={disabled ? [styles.text, styles.disabled_text] : styles.text} >{title}</Text>
+            <Medium500Text style={disabled ? [styles.text, styles.disabled_text] : styles.text}>{title}</Medium500Text>
         </TouchableOpacity>
     </View>
   )

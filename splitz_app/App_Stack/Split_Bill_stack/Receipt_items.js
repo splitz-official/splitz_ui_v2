@@ -11,8 +11,9 @@ import Receipt_items_list_component from './Components/Receipt_items_list_compon
 import Back_button from '../../../Components/Back_button';
 import Large_green_button from '../../../Components/Large_green_button';
 import { useAxios } from '../../../Axios/axiosContext';
-import Picture_name_icon from '../../../Components/Picture_name_icon';
 import Receipt_add_item from './Components/Receipt_add_item';
+import Profile_picture from '../../../Components/Profile_picture';
+import { Bold700Text, Medium500Text } from '../../../Config/AppText';
 
 //add item endpoint and rename receipt endpoint
 
@@ -81,24 +82,34 @@ const Receipt_items = () => {
     fetchReceipt();
   }, []); 
 
+
   useEffect(() => {
     const calculateTotal = () => {
-        const total = selectedItems.reduce((acc, itemId) => {
-            const item = receipt.items.find(item => item.id === itemId);
-            const total = acc + (item ? ((item.item_cost * item.item_quantity) / (item.users.length || 1)) : 0)
-            return total;
+      if (receipt.items && Array.isArray(receipt.items)) {
+        const total = receipt.items.reduce((acc, item) => {
+          if (selectedItems.includes(item.id)) {
+            let numUsers = item.users.length;
+            if (!item.users.find(user => user.id === userID)) {
+              numUsers += 1;
+            }
+            const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
+            return acc + itemTotalCost;
+          }
+          return acc;
         }, 0);
         setUserCost(total);
+      }
     };
 
     calculateTotal();
-}, [selectedItems, receipt.items]);
+  }, [selectedItems, receipt.items]);
+
 
   if(loading) {
     return (
       <View style={styles.loading_container}>
         <ActivityIndicator size={'large'} color={Colors.primary}/>
-        <Text style = {styles.loading_text}>Getting receipt data!</Text>
+        <Bold700Text style={styles.loading_text}>Getting receipt data!</Bold700Text>
       </View>
   )
   }
@@ -128,7 +139,7 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    // console.log(selectedItems)
+    console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
       console.log("Equal and this shits working");
       navigation.navigate("Bill_totals", {
@@ -189,7 +200,7 @@ const Receipt_items = () => {
         }}
         children={
           <TouchableOpacity activeOpacity={.8} style={styles.edit_done} onPress={()=> setEditing(!editing)}>
-            <Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Text>
+            <Medium500Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Medium500Text>
           </TouchableOpacity>
         }
         />
@@ -215,7 +226,14 @@ const Receipt_items = () => {
             //   handleReceiptRename()
             // )}
             />
-            <Picture_name_icon name={userData.name.trim().split(' ')[0]} icon_name_styles={{marginTop: verticalScale(20)}}/>
+            <View style={{alignItems: 'center', marginTop: '5%'}}>
+                <Profile_picture 
+                name={userData.name} 
+                image={userData.profile_picture_url} 
+                sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
+                text_sizing={{fontSize: RFValue(18)}}/>
+                <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
+            </View>
             <View style={[styles.items_container]}>
               <FlatList 
               data={receipt.items}
@@ -235,11 +253,11 @@ const Receipt_items = () => {
                 }
                 isSelected={selectedItems.includes(item.id)}
                 participants={item.users && item.users.length > 0 ? 
-                  item.users
-                    .filter(user => user.id !== userID) 
-                    .map(user => user.name.trim().split(' ')[0])  
-                    .join(", ")
-                  : ""}
+                    item.users.filter(user=>user.id !== userID)
+                    :
+                    []
+                }
+                // participants={item.users}
                 /> 
               }
               />
@@ -251,29 +269,23 @@ const Receipt_items = () => {
               <Receipt_add_item />
               }
             <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
+            <View style={styles.tax_tip_container}>
+                <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
+                <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
+              </View>
             {selectedItems.length > 0 ?
             (
             <>
-              <View style={styles.tax_tip_container}>
-                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
-                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
-              </View>
               <View style={styles.total_container}>
-                <Text style={styles.total_text}>Your subtotal:</Text>
-                <Text style={styles.total_text}>{userCost.toFixed(2)}</Text>
+                <Bold700Text style={styles.total_text}>Your subtotal:</Bold700Text>
+                <Bold700Text style={styles.total_text}>{userCost.toFixed(2)}</Bold700Text>
               </View>
             </> 
-            )
-            :
-            (
+            ) : (
               <>
-              <View style={styles.tax_tip_container}>
-                <Text style={styles.tax_tip_text}>Tip: {tip}</Text>
-                <Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Text>
-              </View>
               <View style={styles.total_container}>
-                <Text style={styles.total_text}>Total:</Text>
-                <Text style={styles.total_text}>{total}</Text>
+                <Bold700Text style={styles.total_text}>Total:</Bold700Text>
+                <Bold700Text style={styles.total_text}>{total}</Bold700Text>
               </View>
             </> 
             )
@@ -337,12 +349,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   tax_tip_text: {
-    fontFamily: 'DMSans_500Medium', 
     fontSize: RFValue(14),
     color: Colors.primary
   },
   total_text: {
-    fontFamily: 'DMSans_700Bold', 
     fontSize: RFValue(18)
   },
   edit_done: {
@@ -353,7 +363,6 @@ const styles = StyleSheet.create({
     bottom: verticalScale(2)
   },
   edit_done_text: {
-    fontFamily: 'DMSans_500Medium',
     fontSize: RFValue(12),
     color: Colors.primary,
     margin: 0
@@ -388,7 +397,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1
   },
   loading_text: {
-      fontFamily: 'DMSans_700Bold',
       marginTop: scale(10),
       color: Colors.primary,
       fontSize: RFValue(16),

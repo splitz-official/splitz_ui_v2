@@ -11,7 +11,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
 //TODO LIST: 
-//SCAN BUTTON UPDATE
 //ADD CONDITION FOR WHEN THERE IS NO ROOM CODE
 
 import Screen from '../../../Components/Screen'
@@ -23,7 +22,7 @@ import { useAxios } from '../../../Axios/axiosContext';
 
 const Upload_take_photo = () => {
 
-    const {axiosInstance, axiosInstanceMultipart} = useAxios();
+    const {axiosInstance} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
     const { room_code = null, participants = null } = route.params || {};
@@ -49,46 +48,7 @@ const Upload_take_photo = () => {
             quality: 1
         });
 
-        if (pickerResult.canceled) {
-            console.log("User canceled image pick");
-            return;
-        }
-
-        if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
-            setLoading(true);
-            // console.log(pickerResult.assets[0].uri);
-            const selectedImage = pickerResult.assets[0].uri;
-            console.log("From uploadPress, imageset", selectedImage);
-
-            if (room_code) {
-                const formData = new FormData();
-                formData.append("receipt_img", {
-                    uri: selectedImage,
-                    type: "image/jpeg",
-                    name: "receipt.jpg"
-                });
-                // const json_data = {
-                //     room_code: room_code,
-                //     receipt_name: receiptname,
-                //     user_list: []
-                // }
-                // formData.append("data", JSON.stringify(json_data));
-                formData.append("room_code", room_code)
-                //users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
-                axiosInstanceMultipart
-                .post(`/receipts/upload-receipt`, formData)
-                .then((uploadresponse) => {
-                    console.log("From Scan press, Upload successful: ", uploadresponse.data);
-                    navigation.navigate('Receipt_items', { receipt_id: uploadresponse.data.receipt_id, room_code: uploadresponse.data.room_code})
-                }).catch((error) => {
-                    console.log("Error:", error.response ? error.response.data : error.message);
-                }).finally(()=> {
-                    setLoading(false);
-                })
-            }
-        } else {
-            setLoading(false);
-        }
+        uploadImage(pickerResult);
     }
 
     const handleUploadPress = async () => {
@@ -97,61 +57,56 @@ const Upload_take_photo = () => {
         
         if (mediaLibraryPermissions.granted === false) {
             Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
-            setLoading(false);
             return;
         }
         
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
+            allowsEditing: true,
             aspect: [16,9],
             quality: 1
         });
         
+        uploadImage(pickerResult);
+    }
+
+    const uploadImage = async (pickerResult) => {
         if (pickerResult.canceled) {
-            console.log("User canceled image pick");
-            setLoading(false);
+            console.log("user canceled image pick")
             return;
         }
-        
+
         if (!pickerResult.canceled && pickerResult.assets && pickerResult.assets.length > 0) {
             setLoading(true);
             // console.log(pickerResult.assets[0].uri);
             const selectedImage = pickerResult.assets[0].uri;
-            // console.log("From uploadPress, imageset", selectedImage);
+            console.log("From uploadPress", selectedImage);
+            const formData = new FormData();
+            formData.append("receipt_img", {
+                uri: selectedImage,
+                type: "image/jpeg",
+                name: "receipt.jpg"
+            });
+            const json_data = {
+                room_code: room_code,
+                receipt_name: receiptname,
+                user_list: []
+            }
+            formData.append("data", JSON.stringify(json_data));
 
-            if (room_code) {
-                const formData = new FormData();
-                formData.append("receipt_img", {
-                    uri: selectedImage,
-                    type: "image/jpeg",
-                    name: "receipt.jpg"
-                });
-                // const json_data = {
-                //     room_code: room_code,
-                //     receipt_name: receiptname,
-                //     user_list: []
-                // }
-                // formData.append("data", JSON.stringify(json_data));
-                formData.append("room_code", room_code)
-                axiosInstanceMultipart
+            axiosInstance
                 .post(`/receipts/upload-receipt`, formData)
                 .then((uploadresponse) => {
-                    console.log("From upload image press, Upload successful: ", uploadresponse.data);
-                    return axiosInstance.put(`/receipts/${room_code}/rename-receipt/${uploadresponse.data.id}`, {
-                        receipt_name: receiptname
-                    }).then(() => {
-                        navigation.navigate('Receipt_items', { 
-                            receipt_id: uploadresponse.data.id, 
-                            room_code: uploadresponse.data.room_code
-                        })
+                    console.log("Upload receipt successful: ", uploadresponse.data);
+                    navigation.navigate('Receipt_items', { 
+                        receipt_id: uploadresponse.data.id, 
+                        room_code: uploadresponse.data.room_code
                     })
                 }).catch((error) => {
-                    console.log("Error:", error.response ? error.response.data : error.message);
+                    console.log("Error:", error);
                 }).finally(()=> {
                     setLoading(false);
                 })
-            }
         } else {
             setLoading(false);
         }
