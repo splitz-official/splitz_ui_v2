@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal, TextInput, Button, Touchable, Image, ScrollView } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, FlatList, Modal, TextInput, Button, Touchable, Image, ScrollView, Alert, Share } from 'react-native';
 import * as SecureStore from "expo-secure-store";
 import ProfilePicture from 'react-native-profile-picture';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -67,6 +67,27 @@ function Profile(props) {
             console.log("Friend added");
         } catch (error) {
             console.log("Error: ", error);
+        }
+    }
+
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                "Omada | An app that revolutionizes the way friends split bills",
+                url: "https://splitzcompany.wixstudio.io/splitz"
+            });
+            if (result.action === Share.sharedAction) {
+                if(result.activityType) {
+
+                } else {
+
+                }
+            } else if (result.action ===Share.dismissedAction) {
+
+            }
+        } catch (error) {
+            Alert.alert(error.message);
         }
     }
 
@@ -172,7 +193,7 @@ function Profile(props) {
                     Iconcomponent={<Ionicons name="settings-sharp" size={scale(30)} color={Colors.primary} />} 
                     title={'Settings'}/>
                     <Large_button 
-                    onPress={()=>Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}
+                    onPress={onShare}
                     Iconcomponent={<Feather name="share" size={scale(30)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
