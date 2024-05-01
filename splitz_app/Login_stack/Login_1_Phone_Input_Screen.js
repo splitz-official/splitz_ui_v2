@@ -9,8 +9,6 @@ import Config from 'react-native-config';
 
 import GradientBackground from './Components/Gradient_background';
 import Colors from '../../Config/Colors';
-import Logo from './Components/Logo';
-import Screen from '../../Components/Screen';
 import Login_layout from './Components/Login_layout';
 import Green_button from './Components/Green_button';
 import { useAxios } from '../../Axios/axiosContext';

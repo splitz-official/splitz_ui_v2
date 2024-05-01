@@ -7,11 +7,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import randomColor from 'randomcolor';
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
+import { Linking } from 'react-native';
+
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -126,6 +127,18 @@ function Profile(props) {
         filterUsers();
     }, [friendSearch, usersList]);
 
+    const openURL = async (url) => {
+        // Check if the link is supported
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+          // Open the link
+          await Linking.openURL(url);
+        } else {
+          Alert.alert(`Don't know how to open this URL: ${url}`);
+        }
+      };
+      
+
     return (
         <LinearGradient_background>
                 <TopLogo/>
@@ -149,22 +162,26 @@ function Profile(props) {
                     <Text style={styles.username}>@{username}</Text>
                 </View>
                 {/* <ScrollView> */}
-                <View style={styles.bottom_container}>
+                <View style={[styles.bottom_container, {}]}>
                     <Large_button 
                     onPress={()=>navigation.navigate('edit_profile')}
-                    Iconcomponent={<MaterialIcons name="edit" size={RFPercentage(4)} color={Colors.primary} />} 
+                    Iconcomponent={<MaterialIcons name="edit" size={scale(30)} color={Colors.primary} />} 
                     title={'Edit Profile'}/>
                     <Large_button
                     onPress={()=>Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}
-                    Iconcomponent={<Ionicons name="settings-sharp" size={RFPercentage(4)} color={Colors.primary} />} 
+                    Iconcomponent={<Ionicons name="settings-sharp" size={scale(30)} color={Colors.primary} />} 
                     title={'Settings'}/>
                     <Large_button 
                     onPress={()=>Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)}
-                    Iconcomponent={<Feather name="share" size={RFPercentage(4)} color={Colors.primary} />} 
+                    Iconcomponent={<Feather name="share" size={scale(30)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
-                    onPress={()=>navigation.navigate('feedback')}
-                    Iconcomponent={<MaterialIcons name="feedback" size={RFPercentage(4)} color={Colors.primary} />} 
+                    onPress={()=>openURL('https://splitzcompany.wixstudio.io/splitz')}
+                    Iconcomponent={<Ionicons name="information-circle-outline" size={scale(30)} color={Colors.primary} />} 
+                    title={'Learn More'}/>
+                    <Large_button 
+                    onPress={()=> openURL('https://forms.gle/gFRnaPcdQqgBed6Z8')}
+                    Iconcomponent={<MaterialIcons name="feedback" size={scale(30)} color={Colors.primary} />} 
                     title={'Send feedback'}/>
                 </View>
                 {/* </ScrollView> */}
@@ -258,7 +275,7 @@ const styles = StyleSheet.create({
         paddingRight: '10%',
         paddingLeft: '8%',
         // marginTop: 35,
-        // borderWidth: 2
+        // borderWidth: 1
     },
     add_friend_icon:{
         backgroundColor: Colors.white,
@@ -269,7 +286,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     top_container: {
-        // borderWidth: 2,
+        // borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -296,7 +313,7 @@ const styles = StyleSheet.create({
         marginTop: '10%',
         borderTopRightRadius: scale(20),
         borderTopLeftRadius: scale(20),
-        paddingHorizontal: scale(20),
+        paddingHorizontal: '5%',
         paddingVertical: '2%'
     },
     modalView: {

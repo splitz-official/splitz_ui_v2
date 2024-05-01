@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 import Colors from '../../../../Config/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const Large_Button = ({ title, Iconcomponent, onPress }) => {
 
@@ -25,12 +26,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center', 
-    padding: 10,
+    flex: 1,
     justifyContent:'space-between',
     alignItems: 'center',
-    paddingLeft: RFPercentage(3),
-    marginVertical: RFValue(8),
-    // borderWidth: 2,
+    marginVertical: verticalScale(5),
+    paddingLeft: scale(15),
+    paddingRight: scale(10),
+    // borderWidth: 1,
   },
   text_iconContainer: {
     marginRight: 10,
@@ -40,9 +42,9 @@ const styles = StyleSheet.create({
   },
   icon:{
     backgroundColor: Colors.lightgray,
-    borderRadius: 10,
-    height: RFPercentage(5),
-    width: RFPercentage(5),
+    borderRadius: scale(5),
+    height: scale(35),
+    width: scale(35),
     justifyContent: 'center',
     alignItems: 'center'
   },
