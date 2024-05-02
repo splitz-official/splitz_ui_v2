@@ -2,8 +2,6 @@ import { ActivityIndicator, FlatList, Image, Keyboard, KeyboardAvoidingView, Sty
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
-
-
 import { useAxios } from '../../../Axios/axiosContext'
 import Screen from '../../../Components/Screen';
 import Back_button from '../../../Components/Back_button';
@@ -46,7 +44,7 @@ const Bill_totals = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
         // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -83,7 +81,7 @@ const Bill_totals = () => {
         calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
         setLoading(false);
       } catch (error) {
-        console.log("Error: ", error);
+        console.log("Error fetching receipt details: ", error);
         setLoading(false);
       }
       // console.log("Selected Items: ", selectedItems) this doesn't update in time before the variable is set so ignore first initial result 
@@ -146,7 +144,7 @@ function First_last_initial(fullName) {
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
       })
       // console.log(response);
@@ -190,7 +188,7 @@ function First_last_initial(fullName) {
           <Text style={[styles.top_total_text, {fontSize: RFValue(12)}]}>Bill Total</Text>
         </View>
       <View style={styles.list_container}>
-        {activeusers_and_costs ==[] ? null : <Text style={styles.list_message}>Totals below include proportional tax and tip</Text>}
+        {activeusers_and_costs ? null : <Text style={styles.list_message}>Totals below include proportional tax and tip</Text>}
         <FlatList 
         data={activeusers_and_costs}
         // style={{borderWidth: 1}}

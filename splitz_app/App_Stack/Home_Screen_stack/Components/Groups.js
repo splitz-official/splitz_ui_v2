@@ -94,7 +94,6 @@ const Groups = () => {
                         }),
                         Haptics.selectionAsync()
                         }}
-                        // image={require("../../../../assets/dark_green_splitzLogo.png")} displaying room code for now
                         icon_text={item.room_code}
                     />
                 );

@@ -4,7 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 
 function Logo(props) {
     return (
-        <Image style={styles.Logo} source={require('../../../assets/splitzlogo2.png')} resizeMode='contain'/>
+        <Image style={styles.Logo} source={require('../../../assets/White_logo&name.png')} resizeMode='cover'/>
     );
 }
 

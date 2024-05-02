@@ -1,9 +1,10 @@
-import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert} from 'react-native'
+import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert, Modal} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
 import * as Haptics from 'expo-haptics';
+import Toast from 'react-native-toast-message';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
@@ -22,7 +23,7 @@ const Receipt_items = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-  const { receipt_id, room_code } = route.params;
+  const { receipt_id, room_code=""} = route.params;
   // console.log(room_code);
   // const receipt_id = '32'
   // const room_code = '0K23HE'
@@ -44,7 +45,7 @@ const Receipt_items = () => {
   const [editingName, setEditingName] = useState(false);
 
   const [itemName, setItemName] = useState('');
-  const [itemQuantity, setItemQuantity] = useState('');
+  const [itemQuantity, setItemQuantity] = useState('1');
   const [itemPrice, setItemPrice] = useState('');
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const Receipt_items = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
         // console.log(response.data.items);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -104,7 +105,7 @@ const Receipt_items = () => {
     calculateTotal();
   }, [selectedItems, receipt.items]);
 
-
+  //refresh on navigation ADD IN FUTURE
   if(loading) {
     return (
       <View style={styles.loading_container}>
@@ -126,10 +127,40 @@ const Receipt_items = () => {
     }
   };
 
+  const addItems = async() => {
+    // console.log(itemName, itemQuantity, itemPrice)
+    if (itemName.trim() === '' || itemPrice.trim() === '' || itemQuantity.trim() === '') {
+      Alert.alert("Please fill in all fields");
+      return;
+    }
+    const newItem = {
+      item_name: itemName,
+      item_quantity: parseInt(itemQuantity),
+      item_price: parseFloat(itemPrice)
+    }
+    await axiosInstance.post(`/receipts/${room_code}/add-item/${receipt_id}`, [newItem])
+    .then((response) => {
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added Successfully',
+        position: 'top',
+        autoHide: true,
+        visibilityTime: 2000
+      })
+      setItemName("");
+      setItemQuantity("1");
+      setItemPrice("");
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log("Error: ", error);
+    })
+  }
+
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
       })
       // console.log(response);
@@ -176,6 +207,12 @@ const Receipt_items = () => {
     }
   };
 
+  const handlePriceChange = (text) => {
+    if (/^\d*\.?\d{0,2}$/.test(text)) {
+      setItemPrice(text);
+    }
+  };
+
   function sameArrays(arr1, arr2) {
     const set1 = new Set(arr1);
     const set2 = new Set(arr2);
@@ -199,7 +236,18 @@ const Receipt_items = () => {
           }
         }}
         children={
-          <TouchableOpacity activeOpacity={.8} style={styles.edit_done} onPress={()=> setEditing(!editing)}>
+          <TouchableOpacity activeOpacity={.8} style={styles.edit_done} 
+          onPress={() => {
+            if (editing) {
+              setEditing(false);
+              setAddingItem(false)
+              Haptics.selectionAsync();
+            } else {
+              setEditing(true);
+              Haptics.selectionAsync();
+            }
+          }}
+          >
             <Medium500Text style={styles.edit_done_text}>{editing ? "Done" : "Edit items"}</Medium500Text>
           </TouchableOpacity>
         }
@@ -220,19 +268,20 @@ const Receipt_items = () => {
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
-            // returnKeyType='done'
-            // onSubmitEditing={()=> (
-            //   console.log("Name submitted, ", receiptname),
-            //   handleReceiptRename()
-            // )}
             />
-            <View style={{alignItems: 'center', marginTop: '5%'}}>
+            <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row', marginLeft: '5%'}}>
+              <View style={{alignItems: 'center'}}>
                 <Profile_picture 
                 name={userData.name} 
                 image={userData.profile_picture_url} 
                 sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
                 text_sizing={{fontSize: RFValue(18)}}/>
                 <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
+              </View>
+              <View style={{marginHorizontal: scale(15), marginRight: scale(50)}}>
+                <Bold700Text style={{fontSize: RFValue(14), marginBottom: verticalScale(5)}}>Pro Tip: </Bold700Text>
+                <Medium500Text style={{fontSize: RFValue(12)}}>Make sure to check your receipt against the items below</Medium500Text>
+              </View>
             </View>
             <View style={[styles.items_container]}>
               <FlatList 
@@ -265,9 +314,6 @@ const Receipt_items = () => {
               <TouchableOpacity activeOpacity={.5} style={styles.add_item_button} onPress={()=> setAddingItem(true)}>
                 <Text style={styles.add_item_text}>+ New item</Text>
               </TouchableOpacity>}
-              {editing && addingItem &&
-              <Receipt_add_item />
-              }
             <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
             <View style={styles.tax_tip_container}>
                 <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
@@ -293,23 +339,73 @@ const Receipt_items = () => {
           </View>
         </View>
       </TouchableWithoutFeedback>
-      {editingName ? (
+      {editingName && !addingItem ? (
         <Large_green_button 
-          title={"Confirm Name"} 
-          onPress={() => {
-              handleReceiptRename();
-              Keyboard.dismiss();
-              // setEditingName(false);
-          }}
-        />
-      ) : (
-        <Large_green_button 
+        title={"Confirm Name"} 
+        onPress={() => {
+            handleReceiptRename();
+            Keyboard.dismiss();
+              }}
+            />
+        ) : addingItem ? (
+            null
+        ) : (
+          <Large_green_button 
             title={"Confirm items"} 
             onPress={confirmSelectedItems}
-        />
-      )}
+          />
+        )}
       </KeyboardAvoidingView>
-          
+      <Modal
+      animationType='fade'
+      transparent={true}
+      visible={addingItem}
+      onRequestClose={() => {
+        setAddingItem(false);
+    }}
+      >
+        <View style={styles.modal_view}>
+          <View style={styles.modal_box}>
+            <View style={styles.modal_text_input_container}>
+              <TextInput 
+              placeholder='Name'
+              autoFocus={true}
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 3}]}
+              keyboardType='default'
+              value={itemName}
+              onChangeText={setItemName}
+              />
+              <TextInput 
+              placeholder='1'
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 1}]}
+              keyboardType='numeric'
+              value={itemQuantity}
+              onChangeText={setItemQuantity}
+              />
+              <TextInput 
+              placeholder='price'
+              placeholderTextColor={Colors.mediumgray}
+              style={[styles.modal_text_inputs, {flex: 1.5}]}
+              keyboardType='numeric'
+              value={itemPrice}
+              onChangeText={handlePriceChange}
+              />
+            </View>
+            <View style={styles.modal_confirm_cancel_buttons_container}>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]} 
+              onPress={()=>{setAddingItem(false), setItemName(""), setItemQuantity("1"), setItemPrice("")}}>
+                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>Cancel</Medium500Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]} onPress={addItems}>
+                <Medium500Text style={{color: 'white', fontSize: RFValue(12)}}>Add</Medium500Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <Toast/>
+      </Modal>
     </Screen>
   )
 }
@@ -365,7 +461,7 @@ const styles = StyleSheet.create({
   edit_done_text: {
     fontSize: RFValue(12),
     color: Colors.primary,
-    margin: 0
+    margin: 0,
   },
   add_item_button: {
     borderWidth: 1,
@@ -406,6 +502,69 @@ const styles = StyleSheet.create({
       width: '80%',
       textAlign: 'center'
       // borderWidth: 1
+  },
+  modal_view: {
+    flex: 1,
+    // borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'backgroundColor: rgba(0,0,0,0.2)'
+  },
+  modal_box: {
+    height: '20%',
+    width: '90%',
+    backgroundColor: Colors.white,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderRadius: scale(20),
+    marginTop: '-60%',
+    shadowColor: Colors.darkgray,
+    shadowOffset: {
+        height: 5
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    paddingHorizontal: scale(10)
+  },
+  modal_text_input_container: {
+    flexDirection: 'row',
+    flex: .7,
+    alignItems: 'center',
+    // borderWidth: 1,
+    // borderColor: 'blue',
+  },
+  modal_text_inputs: {
+    borderBottomWidth: 1,
+    borderColor: Colors.primary,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: RFValue(12),
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: scale(10),
+    paddingTop: scale(10),
+    paddingBottom: scale(5),
+    flexDirection: 'row',
+    marginHorizontal: scale(5)
+    // borderRadius: scale(10)
+  },
+  modal_confirm_cancel_buttons_container: {
+    flexDirection: 'row',
+    // borderWidth: 1,
+    flex: .3,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingBottom: verticalScale(15),
+    paddingLeft: scale(20),
+    paddingRight: scale(20)
+  },
+  modal_buttons: {
+    borderColor: Colors.primary,
+    borderWidth: 1,
+    paddingVertical: scale(10),
+    width: scale(80),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: scale(10)
   }
 })
 
