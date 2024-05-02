@@ -13,6 +13,7 @@ import Colors from '../../../Config/Colors';
 import Large_green_button from '../../../Components/Large_green_button';
 import { useAxios } from '../../../Axios/axiosContext';
 import Participants_list_item from './Components/Participants_list_item';
+import Profile_picture from '../../../Components/Profile_picture';
 
 
 
@@ -33,8 +34,12 @@ const Bill_participants = () => {
     const [participants, setParticipants] = useState([]);
     const [filteredUserList, setFilteredUserList] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    const {axiosInstance, userData} = useAxios();
 
-    const {axiosInstance} = useAxios();
+    const name = userData.name;
+    const username = userData.username;
+    const profile_pic = userData.profile_picture_url;
 
     const getRandomColor = () => {
         // Generate random numbers for RGB
@@ -129,7 +134,12 @@ const Bill_participants = () => {
             onScrollBeginDrag={Keyboard.dismiss}
             renderItem={({ item }) => (
                 <View style={styles.participantItemContainer}>
-                    <View style={[styles.participantCircle,  { backgroundColor: item.color }]}>
+                    <View style={styles.participantCircle}>
+                    <Profile_picture 
+                    image={item.profile_picture_url} 
+                    name={item.name} 
+                    sizing_style={styles.profile_pic} 
+                    text_sizing={{fontSize: RFValue(20)}}/>
                         <TouchableOpacity
                             style={styles.removeParticipantBtn}
                             onPress={() => removeParticipant(item.id)}
@@ -179,6 +189,7 @@ const Bill_participants = () => {
                                     name={item.name}
                                     username={item.username}
                                     onPress={() => addParticipant(item)}
+                                    image={item.profile_picture_url} 
                                 />
                             );
                         }
@@ -295,7 +306,6 @@ const styles = StyleSheet.create({
         width: scale(45),
         height: scale(45),
         borderRadius: scale(25),
-        backgroundColor: "grey",
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
@@ -311,11 +321,15 @@ const styles = StyleSheet.create({
     },
     removeParticipantBtn: {
         position: 'absolute',
-        top: -5,
-        right: -5,
+        top: scale(-8),
+        right: scale(-8),
         backgroundColor: 'white',
         borderRadius: scale(100),
         padding: scale(3),
+    },
+    profile_pic: {
+        height: scale(55), 
+        width: scale(55), 
     },
 });
 
