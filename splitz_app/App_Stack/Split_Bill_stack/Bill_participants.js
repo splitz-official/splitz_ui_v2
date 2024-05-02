@@ -15,17 +15,6 @@ import { useAxios } from '../../../Axios/axiosContext';
 import Participants_list_item from './Components/Participants_list_item';
 import Profile_picture from '../../../Components/Profile_picture';
 
-
-
-//TODO:
-//ADD GRID LIST WHEN FRIENDS ARE ADDED
-//ADD FILTERING OF LIST WHEN FRIENDS ARE ADDED
-//Add user as default participant
-//ADD QR FUNCTIONALITY WHEN AVAILABLE
-//think about how to add friends. Need endpoint to add others to your room
-//users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
-
-
 const Bill_participants = () => {
 
     const navigation = useNavigation();
@@ -56,36 +45,41 @@ const Bill_participants = () => {
                 const response = await axiosInstance.get('/user/get-friends');
                 setUserList(response.data);
                 setFilteredUserList(response.data);
+                
+                // Set default participant (the user itself)
+                setParticipants([{
+                    id: userData.id, // Assuming userData contains an id
+                    name: userData.name,
+                    username: userData.username,
+                    profile_picture_url: userData.profile_picture_url,
+                    color: getRandomColor()
+                }]);
+                
                 setLoading(false);
             } catch (err) {
-                console.log("Error: ", err)
+                console.log("Error: ", err);
                 setLoading(false);
             }
         };
 
         fetchFriends();
-    }, []);
+    }, [axiosInstance, userData]);
 
     useEffect(() => {
         const filterUsers = () => {
             let combinedList = [];
     
             if (search.trim()) {
-                // Adding the "Add" option at the beginning of the list
                 combinedList.push({ id: 'temp', name: `Add "${search}" to your participant list` });
             }
     
-            const filtered = userList.filter(user => {
-                return user.name.toLowerCase().includes(search.toLowerCase()) ||
-                       user.username.toLowerCase().includes(search.toLowerCase());
-            });
-    
+            const filtered = userList.filter(user => user.name.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase()));
             combinedList = [...combinedList, ...filtered];
             setFilteredUserList(combinedList);
         };
     
         filterUsers();
-    }, [search, userList]); // No need to depend on 'participants' unless it affects the filtering logic
+    }, [search, userList]);
     
     const addParticipant = (user) => {
         const participantToAdd = typeof user === 'string' ? 
@@ -154,7 +148,7 @@ const Bill_participants = () => {
     </View>
 )}
 
-                    <Text style={styles.subtitle_text}>Add everyone's names below:</Text>
+                    <Text style={styles.subtitle_text}>Add everyone else's names below:</Text>
                     <View style={styles.inputContainer}>
                         <TextInput 
                         style={styles.textInput}
