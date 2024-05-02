@@ -56,7 +56,7 @@ const Groups_details = () => {
             const result = await Share.share({
                 message:
                 "Omada | An app that revolutionizes the way friends split bills",
-                // url: "INSERT URL FOR WEBSITE FOR NOW"
+                url: "https://splitzcompany.wixstudio.io/splitz"
             });
             if (result.action === Share.sharedAction) {
                 if(result.activityType) {
@@ -74,7 +74,7 @@ const Groups_details = () => {
 
     useEffect(()=> {
         const fetchRoomDetails = async () => {
-            console.log("Fetching Room Details RUNNING")
+            // console.log("Fetching Room Details RUNNING")
             try {
                 const response = await axiosInstance.get(`/room/${room_code}`)
                     setRoom_Details(response.data);

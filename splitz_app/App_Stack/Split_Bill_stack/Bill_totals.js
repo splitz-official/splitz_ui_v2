@@ -81,7 +81,7 @@ const Bill_totals = () => {
         calculateUserTotals(response.data.items, response.data.tax_amount, response.data.tip_amount, Receipt_subTotal);
         setLoading(false);
       } catch (error) {
-        console.log("Error fetching receipt details: ", error);
+        // console.log("Error fetching receipt details: ", error);
         setLoading(false);
       }
       // console.log("Selected Items: ", selectedItems) this doesn't update in time before the variable is set so ignore first initial result 

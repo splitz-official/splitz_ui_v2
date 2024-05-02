@@ -74,7 +74,7 @@ const Receipt_items = () => {
         setReceiptName(response.data.receipt_name);
         setLoading(false);
       } catch (error) {
-        console.log("Error: ", error);
+        console.log("fetchReceipt Error: ", error.response.data);
         setLoading(false);
       }
       // console.log("Selected Items: ", selectedItems)

@@ -35,15 +35,15 @@ const handlecreatebutton = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.join_group_button} activeOpacity={.7} onPress={handlejoinbutton}>
-                <Medium500Text style={styles.text}>Join with ID</Medium500Text>
-                <MaterialCommunityIcons name="arrow-right-bottom" size={iconsize} color={Colors.primary}/>
-                <FontAwesome name="group" size={iconsize} color={Colors.primary} />
-            </TouchableOpacity>
             <TouchableOpacity style={styles.join_group_button} activeOpacity={.7} onPress={handlecreatebutton}>
                 <Medium500Text style={styles.text}>Create Group</Medium500Text>
                 <AntDesign name="plus" size={iconsize} color={Colors.primary}/>
                 <FontAwesome name="group" size={iconsize} color={Colors.primary}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.join_group_button} activeOpacity={.7} onPress={handlejoinbutton}>
+                <Medium500Text style={styles.text}>Join Group</Medium500Text>
+                <MaterialCommunityIcons name="arrow-right-bottom" size={iconsize} color={Colors.primary}/>
+                <FontAwesome name="group" size={iconsize} color={Colors.primary} />
             </TouchableOpacity>
         </View>
     );

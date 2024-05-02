@@ -35,12 +35,12 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
 const styles = StyleSheet.create({
     container:{
         alignItems: 'center',
-        flex: 1,
         margin: 2,
         height: Dimensions.get('screen').width/3,
         justifyContent: "flex-start",
-        flexGrow: 1,
         paddingTop: '5%',
+        flex: 1,
+        // borderWidth: 1
     },
     image: {
         height: scale(60),
