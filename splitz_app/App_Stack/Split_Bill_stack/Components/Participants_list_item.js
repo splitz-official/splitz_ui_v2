@@ -3,10 +3,20 @@ import React from 'react'
 import { scale } from 'react-native-size-matters'
 import { RFValue } from 'react-native-responsive-fontsize'
 
-const Participants_list_item = ({ name, username, onPress}) => {
+import { useAxios } from '../../../../Axios/axiosContext'
+
+import Profile_picture from '../../../../Components/Profile_picture'
+
+const Participants_list_item = ({ image, name, username, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-        <View style={styles.profilePicture}/>
+        <View>
+        <Profile_picture 
+                    image={image} 
+                    name={name} 
+                    sizing_style={styles.profile_pic} 
+                    text_sizing={{fontSize: RFValue(20)}}/>
+        </View>
         <View style={styles.nameContainer}>
         <Text style={styles.fullName}>{name}</Text>
         <Text style={styles.usersName}>@{username}</Text>
@@ -14,6 +24,7 @@ const Participants_list_item = ({ name, username, onPress}) => {
     </TouchableOpacity>
   )
 }
+
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
@@ -22,14 +33,12 @@ const styles = StyleSheet.create({
     },
     nameContainer: {
       padding: scale(7),
+      marginLeft: scale(5),
     },
-    profilePicture: {
-      borderWidth: 1,
-      borderRadius: 100,
-      height: scale(45),
-      width: scale(45),
-      marginRight: scale(10)
-    },
+    profile_pic: {
+      height: scale(50), 
+      width: scale(50), 
+  },
     fullName: {
       fontSize: RFValue(13),
       marginBottom: scale(3)

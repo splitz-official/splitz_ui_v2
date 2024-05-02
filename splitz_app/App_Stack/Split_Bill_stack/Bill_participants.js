@@ -13,17 +13,7 @@ import Colors from '../../../Config/Colors';
 import Large_green_button from '../../../Components/Large_green_button';
 import { useAxios } from '../../../Axios/axiosContext';
 import Participants_list_item from './Components/Participants_list_item';
-
-
-
-//TODO:
-//ADD GRID LIST WHEN FRIENDS ARE ADDED
-//ADD FILTERING OF LIST WHEN FRIENDS ARE ADDED
-//Add user as default participant
-//ADD QR FUNCTIONALITY WHEN AVAILABLE
-//think about how to add friends. Need endpoint to add others to your room
-//users: [{id: 1, name: "charles"}, {id: 2, name: "Ray"}] [{name: "Charles"}, {name: "Ray"}]
-
+import Profile_picture from '../../../Components/Profile_picture';
 
 const Bill_participants = () => {
 
@@ -33,8 +23,12 @@ const Bill_participants = () => {
     const [participants, setParticipants] = useState([]);
     const [filteredUserList, setFilteredUserList] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    const {axiosInstance, userData} = useAxios();
 
-    const {axiosInstance} = useAxios();
+    const name = userData.name;
+    const username = userData.username;
+    const profile_pic = userData.profile_picture_url;
 
     const getRandomColor = () => {
         // Generate random numbers for RGB
@@ -51,36 +45,41 @@ const Bill_participants = () => {
                 const response = await axiosInstance.get('/user/get-friends');
                 setUserList(response.data);
                 setFilteredUserList(response.data);
+                
+                // Set default participant (the user itself)
+                setParticipants([{
+                    id: userData.id, // Assuming userData contains an id
+                    name: userData.name,
+                    username: userData.username,
+                    profile_picture_url: userData.profile_picture_url,
+                    color: getRandomColor()
+                }]);
+                
                 setLoading(false);
             } catch (err) {
-                console.log("Error: ", err)
+                console.log("Error: ", err);
                 setLoading(false);
             }
         };
 
         fetchFriends();
-    }, []);
+    }, [axiosInstance, userData]);
 
     useEffect(() => {
         const filterUsers = () => {
             let combinedList = [];
     
             if (search.trim()) {
-                // Adding the "Add" option at the beginning of the list
                 combinedList.push({ id: 'temp', name: `Add "${search}" to your participant list` });
             }
     
-            const filtered = userList.filter(user => {
-                return user.name.toLowerCase().includes(search.toLowerCase()) ||
-                       user.username.toLowerCase().includes(search.toLowerCase());
-            });
-    
+            const filtered = userList.filter(user => user.name.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase()));
             combinedList = [...combinedList, ...filtered];
             setFilteredUserList(combinedList);
         };
     
         filterUsers();
-    }, [search, userList]); // No need to depend on 'participants' unless it affects the filtering logic
+    }, [search, userList]);
     
     const addParticipant = (user) => {
         const participantToAdd = typeof user === 'string' ? 
@@ -129,7 +128,12 @@ const Bill_participants = () => {
             onScrollBeginDrag={Keyboard.dismiss}
             renderItem={({ item }) => (
                 <View style={styles.participantItemContainer}>
-                    <View style={[styles.participantCircle,  { backgroundColor: item.color }]}>
+                    <View style={styles.participantCircle}>
+                    <Profile_picture 
+                    image={item.profile_picture_url} 
+                    name={item.name} 
+                    sizing_style={styles.profile_pic} 
+                    text_sizing={{fontSize: RFValue(20)}}/>
                         <TouchableOpacity
                             style={styles.removeParticipantBtn}
                             onPress={() => removeParticipant(item.id)}
@@ -144,7 +148,7 @@ const Bill_participants = () => {
     </View>
 )}
 
-                    <Text style={styles.subtitle_text}>Add everyone's names below:</Text>
+                    <Text style={styles.subtitle_text}>Add everyone else's names below:</Text>
                     <View style={styles.inputContainer}>
                         <TextInput 
                         style={styles.textInput}
@@ -179,6 +183,7 @@ const Bill_participants = () => {
                                     name={item.name}
                                     username={item.username}
                                     onPress={() => addParticipant(item)}
+                                    image={item.profile_picture_url} 
                                 />
                             );
                         }
@@ -295,7 +300,6 @@ const styles = StyleSheet.create({
         width: scale(45),
         height: scale(45),
         borderRadius: scale(25),
-        backgroundColor: "grey",
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
@@ -311,11 +315,15 @@ const styles = StyleSheet.create({
     },
     removeParticipantBtn: {
         position: 'absolute',
-        top: -5,
-        right: -5,
+        top: scale(-8),
+        right: scale(-8),
         backgroundColor: 'white',
         borderRadius: scale(100),
         padding: scale(3),
+    },
+    profile_pic: {
+        height: scale(55), 
+        width: scale(55), 
     },
 });
 
