@@ -44,7 +44,7 @@ const Bill_totals = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
         // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -141,17 +141,18 @@ function First_last_initial(fullName) {
 }
 
 
-  const handleReceiptRename = async() => {
-    if (receiptname !== initialNameRef.current) {
-      console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
-        receipt_name: receiptname
-      })
-      // console.log(response);
-    }else {
-      console.log("names are same");
-    }
+const handleReceiptRename = async() => {
+  if (receiptname !== initialNameRef.current) {
+    console.log("names are different: ", receiptname);
+    await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
+      receipt_name: receiptname
+    }).catch((error) => {
+      console.error(error)
+    })
+  }else {
+    console.log("names are same")
   }
+}
 
   if (loading) {
     return (
@@ -182,13 +183,14 @@ function First_last_initial(fullName) {
           placeholder='Name this bill!'
           placeholderTextColor={Colors.textInputPlaceholder}
           autoFocus={false}
+          clearButtonMode='while-editing'
           />
         <View style={styles.top_total_container}>
           <Text style={styles.top_total_text}>{total}</Text>
           <Text style={[styles.top_total_text, {fontSize: RFValue(12)}]}>Bill Total</Text>
         </View>
       <View style={styles.list_container}>
-        {activeusers_and_costs ? null : <Text style={styles.list_message}>Totals below include proportional tax and tip</Text>}
+        {activeusers_and_costs ? <Text style={styles.list_message}>Totals below include proportional tax and tip</Text> : null}
         <FlatList 
         data={activeusers_and_costs}
         // style={{borderWidth: 1}}
@@ -202,7 +204,7 @@ function First_last_initial(fullName) {
           </>
         }
         renderItem={({ item })=> (
-          <User_total_list_item name={First_last_initial(item.name)} first_letter={item.name[0]} price={item.totalCost}/>
+          <User_total_list_item name={item.id === userID ? "You" : First_last_initial(item.name)} first_letter={item.name[0]} price={item.totalCost}/>
         )}
         />
       </View>

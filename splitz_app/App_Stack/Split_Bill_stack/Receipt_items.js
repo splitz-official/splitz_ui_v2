@@ -23,7 +23,7 @@ const Receipt_items = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-  const { receipt_id, room_code=""} = route.params;
+  const { receipt_id, room_code} = route.params;
   // console.log(room_code);
   // const receipt_id = '32'
   // const room_code = '0K23HE'
@@ -58,7 +58,7 @@ const Receipt_items = () => {
       setLoading(true);
       try {
         // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/id/${receipt_id}`);
+        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
         // console.log(response.data.items);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -160,10 +160,11 @@ const Receipt_items = () => {
   const handleReceiptRename = async() => {
     if (receiptname !== initialNameRef.current) {
       console.log("names are different: ", receiptname);
-      const response = await axiosInstance.put(`/receipts/rename-receipt/${receipt_id}`, {
+      await axiosInstance.put(`/receipts/${room_code}/rename-receipt/${receipt_id}`, {
         receipt_name: receiptname
+      }).catch((error) => {
+        console.error(error)
       })
-      // console.log(response);
     }else {
       console.log("names are same")
     }
@@ -172,7 +173,7 @@ const Receipt_items = () => {
   confirmSelectedItems = () => {
     console.log(selectedItems)
     if(sameArrays(selectedItems, initialselectedItems)){
-      console.log("Equal and this shits working");
+      console.log("Equal and this is working");
       navigation.navigate("Bill_totals", {
         room_code: room_code,
         receipt_id: receipt_id
@@ -268,6 +269,7 @@ const Receipt_items = () => {
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
+            clearButtonMode='while-editing'
             />
             <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row', marginLeft: '5%'}}>
               <View style={{alignItems: 'center'}}>

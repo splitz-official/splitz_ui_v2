@@ -61,7 +61,8 @@
     "react-native-screens": "~3.29.0",
     "react-native-size-matters": "^0.4.2",
     "react-native-tab-view": "^3.5.2",
-    "react-native-toast-message": "^2.2.0"
+    "react-native-toast-message": "^2.2.0",
+    "react-router-native": "^6.23.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

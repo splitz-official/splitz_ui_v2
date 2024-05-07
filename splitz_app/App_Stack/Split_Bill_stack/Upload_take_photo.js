@@ -26,9 +26,8 @@ const Upload_take_photo = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { room_code = null, participants = null } = route.params || {};
-    // console.log(route.params);
-    // console.log("Room Code from route.params:" , room_code);
-    // console.log(route.params);
+    console.log(route.params);
+    // console.log(room_code);
 
     const [receiptname, setReceiptName] = useState('');
     const [loading, setLoading] = useState(false);
@@ -90,7 +89,7 @@ const Upload_take_photo = () => {
             const json_data = {
                 room_code: room_code,
                 receipt_name: receiptname,
-                user_list: []
+                user_list: participants
             }
             formData.append("data", JSON.stringify(json_data));
 
@@ -98,10 +97,16 @@ const Upload_take_photo = () => {
                 .post(`/receipts/upload-receipt`, formData)
                 .then((uploadresponse) => {
                     console.log("Upload receipt successful: ", uploadresponse.data);
-                    navigation.navigate('Receipt_items', { 
-                        receipt_id: uploadresponse.data.id, 
-                        room_code: uploadresponse.data.room_code
-                    })
+                    if(room_code) {
+                        navigation.navigate('Receipt_items', { 
+                            receipt_id: uploadresponse.data.id, 
+                            room_code: uploadresponse.data.room_code
+                        })
+                    } else {
+                        navigation.navigate('Quick_split', {
+                            receipt_id: uploadresponse.data.id
+                        })
+                    }
                 }).catch((error) => {
                     console.log("Error:", error);
                 }).finally(()=> {
@@ -143,8 +148,8 @@ const Upload_take_photo = () => {
                     />
                 <View style={styles.bottom_line}/>
             </View>
-            <TouchableOpacity onPress={()=> navigation.navigate("Receipt_items")}>
-                {/* <Text>GO TO RECEIPT - IGNORE THIS BUTTON IT IS FOR DEVELOPMENT ONLY</Text> */}
+            <TouchableOpacity onPress={()=> navigation.navigate("Quick_split")}>
+                <Text>GO TO RECEIPT - FOR DEVELOPMENT ONLY</Text>
             </TouchableOpacity>
             <View style={{flexDirection: 'row', position: 'absolute', bottom: 0, backgroundColor: 'transparent'}}>
                 <Large_green_outline_button 
