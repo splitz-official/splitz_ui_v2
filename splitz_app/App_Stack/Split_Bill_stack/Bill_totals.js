@@ -16,9 +16,10 @@ const Bill_totals = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-  const { room_code, receipt_id} = route.params;
+  const { room_code = null, receipt_id} = route.params;
   const userID = userData.id;
-
+  // const userID = 2;
+  const [owner, setOwner] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [receiptname, setReceiptName] = useState('');
   const [receipt, setReceipt] = useState([]);
@@ -36,16 +37,18 @@ const Bill_totals = () => {
   useFocusEffect(
     useCallback(() => {
     const fetchReceipt = async () => {
-      if (!room_code || !receipt_id) {
+      if (!receipt_id) {
         console.log('Missing parameters: room_code or receipt_id');
         return;
       }
 
       setLoading(true);
       try {
-        // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`);
-        // console.log(response.data);
+        console.log("Fetching receipt data");
+        const response = await (room_code 
+          ? axiosInstance.get(`/receipts/${room_code}/receipt/${receipt_id}`)
+          : axiosInstance.get(`/receipts/receipt/${receipt_id}`));        
+        // console.log(response.data.owner_id);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
@@ -54,23 +57,7 @@ const Bill_totals = () => {
           return acc + (item.item_cost * item.item_quantity);
         }, 0);
         setReceiptSubTotal(Receipt_subTotal);
-        
-        // const usersMap = new Map();
-        // response.data.items.forEach(item => {
-        //   item.users.forEach(user => {
-        //     if(!usersMap.has(user.id)){
-        //       usersMap.set(user.id, {
-        //         id: user.id,
-        //         name: user.name.split(' ')[0],
-        //         username: user.username
-        //       });
-        //     }
-        //   });
-        // });
-        // const uniqueUsers = Array.from(usersMap.values())
-        // setActiveUsers(uniqueUsers);
-        // console.log(uniqueUsers)
-
+        setOwner(response.data.owner_id === userID);
         setReceipt(response.data); 
         setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
@@ -104,8 +91,6 @@ function First_last_initial(fullName) {
   }
 }
 
-
-  //when you first render the page the tax and tip amount are not set in time 
   const calculateUserTotals = (items, taxAmount, tipAmount, subTotal) => {
     const userCosts = new Map();
     const totalTaxAndTip = taxAmount + tipAmount;
@@ -165,9 +150,15 @@ const handleReceiptRename = async() => {
 
   return (
     <Screen>
-      <Back_button title={"Group"} onPress={()=> navigation.navigate('Groups_details', {
-        room_code: room_code
-      })}/>
+      <Back_button title={room_code ? 'Group' : 'Home'} onPress={() => {
+          if (room_code) {
+            navigation.navigate('Groups_details', {room_code: room_code});
+            // navigation.goBack();
+          } else {
+            navigation.navigate('home');
+          }
+        }}
+        />
       <KeyboardAvoidingView
       behavior='height'
       style={{flex: 1}}
@@ -184,6 +175,7 @@ const handleReceiptRename = async() => {
           placeholderTextColor={Colors.textInputPlaceholder}
           autoFocus={false}
           clearButtonMode='while-editing'
+          readOnly={!room_code}
           />
         <View style={styles.top_total_container}>
           <Text style={styles.top_total_text}>{total}</Text>
@@ -210,21 +202,34 @@ const handleReceiptRename = async() => {
       </View>
       </View>
       </TouchableWithoutFeedback>
-      {editingName ? (
-        <Large_green_button 
-          title={"Confirm Name"} 
-          onPress={() => {
-              handleReceiptRename();
-              Keyboard.dismiss();
-              // setEditingName(false);
-          }}
-        />
-      ) : (
-        <Large_green_button title={"Select your items"} onPress={()=> navigation.navigate('Receipt_items', {
-          room_code: room_code,
-          receipt_id: receipt_id
-        })}/>
-      )}
+      {
+        owner && (
+          editingName ? (
+            <Large_green_button 
+              title={"Confirm Name"} 
+              onPress={() => {
+                handleReceiptRename();
+                Keyboard.dismiss();
+              }}
+            />
+          ) : room_code ? (
+            <Large_green_button 
+              title={"Select your items"} 
+              onPress={() => navigation.navigate('Receipt_items', {
+                room_code: room_code,
+                receipt_id: receipt_id
+              })}
+            />
+          ) : (
+            <Large_green_button 
+              title={"Assign items"} 
+              onPress={() => navigation.navigate('Quick_split', {
+                receipt_id: receipt_id
+              })}
+            />
+          )
+        )
+      }
       </KeyboardAvoidingView>
     </Screen>
   )

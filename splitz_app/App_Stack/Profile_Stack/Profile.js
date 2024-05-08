@@ -25,7 +25,7 @@ import TopLogo from '../../../Components/TopLogo';
 import { useAxios } from '../../../Axios/axiosContext';
 import LinearGradient_background from '../../../Components/LinearGradient_background';
 import Back_button from '../../../Components/Back_button';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import User_list_item from './Components/User_list_item';
 import Profile_picture from '../../../Components/Profile_picture';
 
@@ -61,6 +61,7 @@ function Profile(props) {
                 type: 'success',
                 text1: 'Friend added!',
                 position: 'top',
+                topOffset: verticalScale(45),
                 autoHide: true,
                 visibilityTime: 1000
             })

@@ -46,6 +46,7 @@ const Groups_details = () => {
             type: 'success',
             text1: 'Copied to clipboard',
             position: 'top',
+            topOffset: verticalScale(45),
             autoHide: true,
             visibilityTime: 1000
         })

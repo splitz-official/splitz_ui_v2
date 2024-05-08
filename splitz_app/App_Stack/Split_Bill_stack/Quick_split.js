@@ -23,19 +23,15 @@ const Receipt_items = () => {
   const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
-//   const { receipt_id } = route.params;
-  // console.log(room_code);
-  const receipt_id = '43'
-  // const room_code = '0K23HE'
-  // console.log(receipt_id, room_code);
+  const { receipt_id } = route.params;
   const userID = userData.id;
   const [receipt, setReceipt] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [addingItem, setAddingItem] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [initialselectedItems, setInitialSelectedItems] = useState([]);
-
+  const [owner, setOwner] = useState(false);
+  
   const [tax, setTax] = useState('');
   const [tip, setTip] = useState('');
   const [total, setTotal] = useState('');
@@ -43,6 +39,10 @@ const Receipt_items = () => {
   const [userCost, setUserCost] = useState(0);
   const initialNameRef = useRef();
   const [editingName, setEditingName] = useState(false);
+  
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [itemsWithSelections, setItemsWithSelections] = useState(new Map());
 
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState('1');
@@ -59,13 +59,20 @@ const Receipt_items = () => {
       try {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/receipt/${receipt_id}`);
-        // console.log(response.data.items);
+        // console.log(response.data);
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
 
+        
+        const newItemsWithSelections = new Map();
+        response.data.items.forEach(item => {
+          newItemsWithSelections.set(item.id, { ...item, selectedBy: [] });
+        });
+        setItemsWithSelections(newItemsWithSelections);
+        setUsers(response.data.users);
         setReceipt(response.data); 
-        setInitialSelectedItems(userSelectedItems);
+        
         setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
@@ -83,49 +90,64 @@ const Receipt_items = () => {
     fetchReceipt();
   }, []); 
 
+  const calculateTotal = () => {
+    let totalCost = 0;
 
-  useEffect(() => {
-    const calculateTotal = () => {
-      if (receipt.items && Array.isArray(receipt.items)) {
-        const total = receipt.items.reduce((acc, item) => {
-          if (selectedItems.includes(item.id)) {
-            let numUsers = item.users.length;
-            if (!item.users.find(user => user.id === userID)) {
-              numUsers += 1;
+    if (selectedUser && itemsWithSelections.size > 0) {
+        itemsWithSelections.forEach((item, itemId) => {
+            if (item.selectedBy.includes(selectedUser)) {
+                let numUsers = item.selectedBy.length;
+                console.log(numUsers);
+                const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
+                totalCost += itemTotalCost;
             }
-            const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
-            return acc + itemTotalCost;
-          }
-          return acc;
-        }, 0);
-        setUserCost(total);
-      }
+        });
+    }
+
+    setUserCost(totalCost.toFixed(2));
     };
 
-    calculateTotal();
-  }, [selectedItems, receipt.items]);
 
-  //refresh on navigation ADD IN FUTURE
-  if(loading) {
-    return (
-      <View style={styles.loading_container}>
-        <ActivityIndicator size={'large'} color={Colors.primary}/>
-        <Bold700Text style={styles.loading_text}>Getting receipt data!</Bold700Text>
-      </View>
-  )
-  }
+    useEffect(() => {
+      calculateTotal();
+    }, [selectedUser, itemsWithSelections]);
 
-  const handleItemPress = (item) => {
-    if (selectedItems.includes(item.id)) {
-      setSelectedItems((prevSelectedItems) => {
-        return prevSelectedItems.filter((itemId) => itemId !== item.id);
-      });
-    } else {
-      setSelectedItems((prevSelectedItems) => {
-        return [...prevSelectedItems, item.id];
-      });
+  const handleSelectItem = (itemId) => {
+    if (!selectedUser) return; //is this needed since user cant click on items unless a user is selected think about taking out a;ljdklfj
+
+    setItemsWithSelections(prevItems => {
+        const newItems = new Map(prevItems); 
+        const item = newItems.get(itemId);
+
+        if (item) {
+            const isSelected = item.selectedBy.includes(selectedUser);
+            const newSelectedBy = isSelected
+                ? item.selectedBy.filter(id => id !== selectedUser)
+                : [...item.selectedBy, selectedUser];
+
+            newItems.set(itemId, {
+                ...item,
+                selectedBy: newSelectedBy
+            });
+        }
+        
+        return newItems;
+    });
+};
+
+  function First_last_initial(fullName) {
+    if (!fullName) {
+      return;
     }
-  };
+    const parts = fullName.trim().split(' ');  
+    if (parts.length === 1) {
+        return parts[0];
+    } else {
+        const firstName = parts[0];
+        const lastNameInitial = parts[1].charAt(0);  
+        return `${firstName} ${lastNameInitial}.`; 
+    }
+  }
 
   const addItems = async() => {
     // console.log(itemName, itemQuantity, itemPrice)
@@ -144,6 +166,7 @@ const Receipt_items = () => {
         type: 'success',
         text1: 'Item Added Successfully',
         position: 'top',
+        topOffset: verticalScale(45),
         autoHide: true,
         visibilityTime: 2000
       })
@@ -170,42 +193,43 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    console.log(selectedItems)
-    if(sameArrays(selectedItems, initialselectedItems)){
-      console.log("Equal and this shits working");
-      navigation.navigate("Bill_totals", {
-        room_code: room_code,
-        receipt_id: receipt_id
-      })
-      // navigation.navigate("totals")
-    }else {
-      const user_selected_items = {
-        item_id_list: selectedItems,
-        user_total_cost: 1,
-      };
-      axiosInstance
-        .post(
-          "/receipts/" + receipt.room_code + "/select-items/" + receipt.id,
-          user_selected_items
-        )
-        .then((response) => {
-          // Update the displayed values with the updated data
-          if (response.data == true) {
-            // Alert.alert("Items Selected Successfully!");
-            console.log("Items added successfullyalfjad;lskfja!: ")
-            navigation.navigate("Bill_totals", {
-              room_code: room_code,
-              receipt_id: receipt_id
-            })
-          } else {
-            Alert.alert("Error", "Item could not be added.");
-          }
-        })
-        .catch((error) => {
-          console.log("Error", error);
-        });
-    }
+    console.log(itemsWithSelections);
+    navigation.navigate('Bill_totals', {
+      receipt_id: receipt_id
+    })
+    // console.log(selectedItems)
+    // if(sameArrays(selectedItems, initialselectedItems)){
+    //   console.log("Equal and this shits working");
+    //   navigation.navigate("Bill_totals", {
+    //     receipt_id: receipt_id
+    //   })
+    // }else {
+    //   const user_selected_items = {
+    //     item_id_list: selectedItems,
+    //     user_total_cost: 1,
+    //   };
+    //   axiosInstance
+    //     .post(
+    //       "/receipts/" + receipt.room_code + "/select-items/" + receipt.id,
+    //       user_selected_items
+    //     )
+    //     .then((response) => {
+    //       if (response.data === true) {
+    //         // Alert.alert("Items Selected Successfully!");
+    //         console.log("Items added successfullyalfjad;lskfja!: ")
+    //         navigation.navigate("Bill_totals", {
+    //           receipt_id: receipt_id
+    //         })
+    //       } else {
+    //         Alert.alert("Error", "Item could not be added.");
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log("Error", error);
+    //     });
+    // }
   };
+
 
   const handlePriceChange = (text) => {
     if (/^\d*\.?\d{0,2}$/.test(text)) {
@@ -221,6 +245,16 @@ const Receipt_items = () => {
       if (!set2.has(item)) return false;
     }
     return true;
+  }
+
+  //refresh on navigation ADD IN FUTURE
+  if(loading) {
+    return (
+      <View style={styles.loading_container}>
+        <ActivityIndicator size={'large'} color={Colors.primary}/>
+        <Bold700Text style={styles.loading_text}>Getting receipt data!</Bold700Text>
+      </View>
+  )
   }
 
   return (
@@ -260,24 +294,35 @@ const Receipt_items = () => {
             placeholder='Name this bill!'
             placeholderTextColor={Colors.textInputPlaceholder}
             autoFocus={false}
+            readOnly={true}
             />
-            <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row', marginLeft: '5%'}}>
-              <View style={{alignItems: 'center'}}>
-                <Profile_picture 
-                name={userData.name} 
-                image={userData.profile_picture_url} 
-                sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
-                text_sizing={{fontSize: RFValue(18)}}/>
-                <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
-              </View>
-              <View style={{marginHorizontal: scale(15), marginRight: scale(50)}}>
-                <Bold700Text style={{fontSize: RFValue(14), marginBottom: verticalScale(5)}}>Pro Tip: </Bold700Text>
-                <Medium500Text style={{fontSize: RFValue(12)}}>Make sure to check your receipt against the items below</Medium500Text>
-              </View>
+            <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row'}}>
+              <FlatList 
+              data={users}
+              keyExtractor={item => item.id.toString()}
+              horizontal={true}
+              style={{}}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({item}) => 
+                <>
+                <TouchableOpacity 
+                style={[styles.user, selectedUser===item ? styles.selected : {}]} activeOpacity={.7}
+                onPress={()=> setSelectedUser(prev => prev === item ? null : item)}
+                >
+                  <Profile_picture 
+                  name={item.name} 
+                  image={item.profile_picture_url} 
+                  sizing_style={{height: scale(60), width: scale(60), borderWidth: 1, borderColor: Colors.primary}}
+                  text_sizing={{fontSize: RFValue(18)}}/>
+                  <Medium500Text style={{fontSize: RFValue(12), marginTop: verticalScale(2)}}>{First_last_initial(item.name)}</Medium500Text>
+                </TouchableOpacity>
+                </>
+              }
+              />
             </View>
             <View style={[styles.items_container]}>
               <FlatList 
-              data={receipt.items}
+              data={Array.from(itemsWithSelections.values())}
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
               horizontal={false}
@@ -287,12 +332,22 @@ const Receipt_items = () => {
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
                 price={item.item_cost * item.item_quantity}
-                onPress={()=> {
-                  handleItemPress(item)
-                  Haptics.selectionAsync()
-                }
-                }
-                isSelected={selectedItems.includes(item.id)}
+                onPress={() => {
+                  if (!selectedUser) {
+                    Toast.show({
+                      type: 'error',
+                      text1: 'Please select a user first',
+                      position: 'top',
+                      topOffset: verticalScale(45),
+                      autoHide: true,
+                      visibilityTime: 1500
+                    })
+                  } else {
+                    handleSelectItem(item.id);
+                    Haptics.selectionAsync();
+                  }
+                }}                
+                isSelected={item.selectedBy.includes(selectedUser)}
                 participants={item.users && item.users.length > 0 ? 
                     item.users.filter(user=>user.id !== userID)
                     :
@@ -311,12 +366,12 @@ const Receipt_items = () => {
                 <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
                 <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
               </View>
-            {selectedItems.length > 0 ?
+            {selectedUser ?
             (
             <>
               <View style={styles.total_container}>
-                <Bold700Text style={styles.total_text}>Your subtotal:</Bold700Text>
-                <Bold700Text style={styles.total_text}>{userCost.toFixed(2)}</Bold700Text>
+                <Bold700Text style={styles.total_text}>{selectedUser?.name.split(' ')[0]}'s Subtotal</Bold700Text>
+                <Bold700Text style={styles.total_text}>{userCost}</Bold700Text>
               </View>
             </> 
             ) : (
@@ -406,6 +461,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: '6%'
+  },
+  user: {
+    alignItems: 'center', 
+    borderWidth: 1,  
+    marginHorizontal: scale(5),
+    padding: scale(5),
+    borderRadius: scale(5),
+    opacity: .5,
+  },
+  selected: {
+    borderWidth: 3,
+    borderColor: Colors.primary,
+    opacity: 1
   },
   receipt_name: {
     borderBottomWidth: 3,

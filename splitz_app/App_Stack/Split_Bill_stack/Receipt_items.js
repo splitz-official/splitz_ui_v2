@@ -144,6 +144,7 @@ const Receipt_items = () => {
         type: 'success',
         text1: 'Item Added Successfully',
         position: 'top',
+        topOffset: verticalScale(45),
         autoHide: true,
         visibilityTime: 2000
       })
@@ -178,7 +179,6 @@ const Receipt_items = () => {
         room_code: room_code,
         receipt_id: receipt_id
       })
-      // navigation.navigate("totals")
     }else {
       const user_selected_items = {
         item_id_list: selectedItems,
@@ -190,8 +190,7 @@ const Receipt_items = () => {
           user_selected_items
         )
         .then((response) => {
-          // Update the displayed values with the updated data
-          if (response.data == true) {
+          if (response.data === true) {
             // Alert.alert("Items Selected Successfully!");
             console.log("Items added successfullyalfjad;lskfja!: ")
             navigation.navigate("Bill_totals", {
