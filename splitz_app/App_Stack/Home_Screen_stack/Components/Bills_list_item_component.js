@@ -7,15 +7,15 @@ import Colors from '../../../../Config/Colors'
 
 const Bills_list_item_component = ({ title, subtitle, onPress }) => {
   return (
-    <TouchableOpacity style={styles.container} activeOpacity={.8} onPress={onPress}>
+    <View style={styles.container} activeOpacity={.8}>
         <View>
             <Bold700Text style={styles.title}>{title}</Bold700Text>
             <RegularText style={styles.title}>Created by: {subtitle}</RegularText>
         </View>
-        <View style={styles.circle}>
+        <TouchableOpacity onPress={onPress} style={styles.circle}>
             <Medium500Text style={styles.circle_text}>View</Medium500Text>
-        </View>
-    </TouchableOpacity>
+        </TouchableOpacity>
+    </View>
   )
 }
 const styles = StyleSheet.create({

@@ -18,6 +18,7 @@ import Back_button from '../../../Components/Back_button'
 import Colors from '../../../Config/Colors';
 import Large_green_outline_button from '../../../Components/Large_green_outline_button';
 import { useAxios } from '../../../Axios/axiosContext';
+import { Medium500Text } from '../../../Config/AppText';
 
 
 const Upload_take_photo = () => {
@@ -147,10 +148,13 @@ const Upload_take_photo = () => {
                     autoCorrect={false}
                     />
                 <View style={styles.bottom_line}/>
-            </View>
-            <TouchableOpacity onPress={()=> navigation.navigate("Quick_split")}>
-                <Text>GO TO RECEIPT - FOR DEVELOPMENT ONLY</Text>
+            <TouchableOpacity style={{}} activeOpacity={.5}>
+                <Medium500Text style={styles.manual_entry}>Enter items manually</Medium500Text>
             </TouchableOpacity>
+            </View>
+            {/* <TouchableOpacity onPress={()=> navigation.navigate("Quick_split")}>
+                <Text>GO TO RECEIPT - FOR DEVELOPMENT ONLY</Text>
+            </TouchableOpacity> */}
             <View style={{flexDirection: 'row', position: 'absolute', bottom: 0, backgroundColor: 'transparent'}}>
                 <Large_green_outline_button 
                 title={'Upload a Receipt'} 
@@ -190,7 +194,13 @@ const styles = StyleSheet.create({
     bottom_line: {
         height: scale(2),
         backgroundColor: Colors.primary,
-        marginBottom: scale(10)
+        marginBottom: scale(5)
+    },
+    manual_entry: {
+        textAlign: 'right',
+        fontSize: RFValue(12),
+        color: Colors.primary,
+        // borderWidth: 1
     },
     loading_container: {
         justifyContent: 'center',

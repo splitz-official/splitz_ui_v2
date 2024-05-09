@@ -301,7 +301,7 @@ const Receipt_items = () => {
               data={users}
               keyExtractor={item => item.id.toString()}
               horizontal={true}
-              style={{}}
+              style={{height: verticalScale(110)}}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => 
                 <>
@@ -355,7 +355,7 @@ const Receipt_items = () => {
                 }
                 // participants={item.users}
                 /> 
-              }
+                }
               />
               {editing && !addingItem &&
               <TouchableOpacity activeOpacity={.5} style={styles.add_item_button} onPress={()=> setAddingItem(true)}>
@@ -365,7 +365,7 @@ const Receipt_items = () => {
             <View style={styles.tax_tip_container}>
                 <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
                 <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
-              </View>
+            </View>
             {selectedUser ?
             (
             <>
@@ -375,7 +375,7 @@ const Receipt_items = () => {
               </View>
             </> 
             ) : (
-              <>
+            <>
               <View style={styles.total_container}>
                 <Bold700Text style={styles.total_text}>Total:</Bold700Text>
                 <Bold700Text style={styles.total_text}>{total}</Bold700Text>
@@ -464,16 +464,24 @@ const styles = StyleSheet.create({
   },
   user: {
     alignItems: 'center', 
-    borderWidth: 1,  
-    marginHorizontal: scale(5),
-    padding: scale(5),
-    borderRadius: scale(5),
+    justifyContent: 'center',
+    // borderWidth: 1,
+    paddingHorizontal: scale(5),
+    height: verticalScale(100),
     opacity: .5,
   },
   selected: {
     borderWidth: 3,
+    borderRadius: scale(5),
     borderColor: Colors.primary,
-    opacity: 1
+    opacity: 1,
+    backgroundColor: Colors.white,
+    shadowColor: Colors.black,
+    shadowOpacity: .25,
+    shadowRadius:4,
+    shadowOffset: {
+        height: 4
+    }
   },
   receipt_name: {
     borderBottomWidth: 3,
@@ -485,8 +493,8 @@ const styles = StyleSheet.create({
   },
   items_container: {
     alignItems: 'center',
-    marginTop: verticalScale(10),
-    height: verticalScale(350),
+    marginTop: verticalScale(5),
+    height: verticalScale(310),
     // borderWidth: 1
   },
   tax_tip_container: {

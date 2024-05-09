@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { StyleSheet } from 'react-native';
 
 import { 
     Ionicons,
@@ -15,6 +16,9 @@ import {
 import Colors from '../../Config/Colors';
 import HomeStackNavigation from './Home_Screen_stack/Navigation_home_stack';
 import ProfileStackNavigation from './Profile_Stack/Navigation_profile_stack';
+import Profile_picture from '../../Components/Profile_picture';
+import { scale } from 'react-native-size-matters';
+import { useAxios } from '../../Axios/axiosContext';
 
 
 //change icon and icon size when navigating
@@ -22,13 +26,14 @@ import ProfileStackNavigation from './Profile_Stack/Navigation_profile_stack';
 const Tab = createBottomTabNavigator();
 
 function TabGroup() {
+    const { userData } = useAxios();
     return(
         <Tab.Navigator
         initialRouteName='Home'
         screenOptions={({ route, navigation}) => ({
             tabBarIcon: ({color, focused}) => {
                 let iconName;
-                let iconsize = RFValue(24);
+                let iconsize = scale(28);
                 let IconComponent;
 
                 if(route.name === 'Home'){
@@ -36,7 +41,8 @@ function TabGroup() {
                     return <Ionicons name={iconName} size={iconsize} color={color}/>
                 } else if (route.name === "Profile"){
                     iconName = focused ? 'user-alt' : 'user'
-                    return <FontAwesome5 name={iconName} size={iconsize} color={color}/>
+                    // return <FontAwesome5 name={iconName} size={iconsize} color={color}/>
+                    return <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={[{height: scale(30), width: scale(30)}, focused ? styles.focused : styles.unfocused]}/>
                 }
             },
             tabBarActiveTintColor: Colors.primary,
@@ -45,7 +51,9 @@ function TabGroup() {
             tabBarStyle: {
                 maxHeight: '8%',
                 flex:1,
-                paddingTop: '2%'
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingTop: '2%',
                 // borderTopWidth: 0,
                 // borderWidth: 2,
                 // borderColor: 'blue'
@@ -63,6 +71,16 @@ function TabGroup() {
         </Tab.Navigator>
     )
 }
+
+const styles = StyleSheet.create({
+    focused:{
+        borderWidth: 2,
+        borderColor: Colors.primary
+    },
+    unfocused: {
+
+    }
+})
 
 export default function Bottom_Tab_Navigation() {
     return(

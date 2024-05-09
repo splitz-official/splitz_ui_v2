@@ -182,7 +182,7 @@ const handleReceiptRename = async() => {
           <Text style={[styles.top_total_text, {fontSize: RFValue(12)}]}>Bill Total</Text>
         </View>
       <View style={styles.list_container}>
-        {activeusers_and_costs ? <Text style={styles.list_message}>Totals below include proportional tax and tip</Text> : null}
+        {activeusers_and_costs.length > 0 ? <Text style={styles.list_message}>Totals below include proportional tax and tip</Text> : null}
         <FlatList 
         data={activeusers_and_costs}
         // style={{borderWidth: 1}}
