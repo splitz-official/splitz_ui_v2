@@ -33,7 +33,7 @@ function TabGroup() {
         screenOptions={({ route, navigation}) => ({
             tabBarIcon: ({color, focused}) => {
                 let iconName;
-                let iconsize = scale(28);
+                let iconsize = scale(30);
                 let IconComponent;
 
                 if(route.name === 'Home'){
@@ -42,7 +42,7 @@ function TabGroup() {
                 } else if (route.name === "Profile"){
                     iconName = focused ? 'user-alt' : 'user'
                     // return <FontAwesome5 name={iconName} size={iconsize} color={color}/>
-                    return <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={[{height: scale(30), width: scale(30)}, focused ? styles.focused : styles.unfocused]}/>
+                    return <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={[{height: scale(32), width: scale(32)}, focused ? styles.focused : styles.unfocused]}/>
                 }
             },
             tabBarActiveTintColor: Colors.primary,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary
     },
     unfocused: {
-
+        
     }
 })
 
