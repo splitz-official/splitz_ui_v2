@@ -9,7 +9,7 @@ import Colors from '../../../../Config/Colors'
 import { Medium500Text, RegularText } from '../../../../Config/AppText';
 import Profile_picture from '../../../../Components/Profile_picture';
 
-const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing}) => {
+const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelected, participants, editing, quick = false}) => {
 
     const truncate = (text, maxLength) => {
         return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
@@ -27,7 +27,7 @@ const Receipt_items_list_component = ({ name, price, quantity, onPress, isSelect
         <Medium500Text style={styles.price}>{price.toFixed(2)}</Medium500Text>
         {participants && participants.length > 0 &&
         <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%', alignItems: 'center'}}>
-            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>Also selected by: </RegularText>
+            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>Also selected {quick ? "for" : "by"}: </RegularText>
             <FlatList 
             data={participants}
             keyExtractor={item => item.id.toString()}

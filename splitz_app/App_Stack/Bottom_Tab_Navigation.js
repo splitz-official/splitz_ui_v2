@@ -42,7 +42,11 @@ function TabGroup() {
                 } else if (route.name === "Profile"){
                     iconName = focused ? 'user-alt' : 'user'
                     // return <FontAwesome5 name={iconName} size={iconsize} color={color}/>
-                    return <Profile_picture name={userData.name} image={userData.profile_picture_url} sizing_style={[{height: scale(32), width: scale(32)}, focused ? styles.focused : styles.unfocused]}/>
+                    return <Profile_picture 
+                            name={userData.name} 
+                            image={userData.profile_picture_url} 
+                            sizing_style={[{height: scale(32), width: scale(32)}, focused ? styles.focused : styles.unfocused]} 
+                            text_sizing={styles.icon_text}/>
                 }
             },
             tabBarActiveTintColor: Colors.primary,
@@ -78,7 +82,10 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary
     },
     unfocused: {
-        
+        backgroundColor: 'white'
+    },
+    icon_text: {
+        fontSize: RFValue(16),
     }
 })
 

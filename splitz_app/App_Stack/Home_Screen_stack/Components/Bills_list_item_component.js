@@ -7,12 +7,12 @@ import Colors from '../../../../Config/Colors'
 
 const Bills_list_item_component = ({ title, subtitle, onPress }) => {
   return (
-    <View style={styles.container} activeOpacity={.8}>
+    <View style={styles.container} >
         <View>
             <Bold700Text style={styles.title}>{title}</Bold700Text>
             <RegularText style={styles.title}>Created by: {subtitle}</RegularText>
         </View>
-        <TouchableOpacity onPress={onPress} style={styles.circle}>
+        <TouchableOpacity activeOpacity={.8} onPress={onPress} style={styles.circle}>
             <Medium500Text style={styles.circle_text}>View</Medium500Text>
         </TouchableOpacity>
     </View>

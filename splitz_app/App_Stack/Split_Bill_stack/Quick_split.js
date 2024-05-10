@@ -59,17 +59,27 @@ const Receipt_items = () => {
       try {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/receipt/${receipt_id}`);
-        // console.log(response.data);
+        // console.log(response.data.items[0].users);
+        // console.log(response.data.items);
+
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
 
         
         const newItemsWithSelections = new Map();
+
+        // response.data.items.forEach(item => {
+        //   newItemsWithSelections.set(item.id, { ...item, selectedBy: [] });
+        // });
+
         response.data.items.forEach(item => {
-          newItemsWithSelections.set(item.id, { ...item, selectedBy: [] });
+          const selectedBy = item.users.map(user => user.id);  
+          newItemsWithSelections.set(item.id, { ...item, selectedBy });
         });
+        console.log(newItemsWithSelections);
         setItemsWithSelections(newItemsWithSelections);
+
         setUsers(response.data.users);
         setReceipt(response.data); 
         
@@ -95,9 +105,9 @@ const Receipt_items = () => {
 
     if (selectedUser && itemsWithSelections.size > 0) {
         itemsWithSelections.forEach((item, itemId) => {
-            if (item.selectedBy.includes(selectedUser)) {
+            if (item.selectedBy.includes(selectedUser.id)) {
                 let numUsers = item.selectedBy.length;
-                console.log(numUsers);
+                // console.log(numUsers);
                 const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
                 totalCost += itemTotalCost;
             }
@@ -114,26 +124,78 @@ const Receipt_items = () => {
 
   const handleSelectItem = (itemId) => {
     if (!selectedUser) return; //is this needed since user cant click on items unless a user is selected think about taking out a;ljdklfj
+    // console.log(itemsWithSelections);
 
     setItemsWithSelections(prevItems => {
         const newItems = new Map(prevItems); 
         const item = newItems.get(itemId);
 
         if (item) {
-            const isSelected = item.selectedBy.includes(selectedUser);
+            const isSelected = item.selectedBy.includes(selectedUser.id);
             const newSelectedBy = isSelected
-                ? item.selectedBy.filter(id => id !== selectedUser)
-                : [...item.selectedBy, selectedUser];
+                ? item.selectedBy.filter(id => id !== selectedUser.id)
+                : [...item.selectedBy, selectedUser.id];
 
             newItems.set(itemId, {
                 ...item,
                 selectedBy: newSelectedBy
             });
         }
-        
+        // console.log(newItems);
         return newItems;
     });
 };
+
+const assignItemsToUsers = async () => {
+  console.log("assign is working")
+  let promises = [];
+  console.log("Users Array:", users);
+  console.log("Items With Selections Map:", itemsWithSelections);
+
+  users.forEach(user => {
+    console.log("Checking user:", user.id);
+    const itemsSelectedByUser = Array.from(itemsWithSelections.entries())
+      .filter(([id, item]) => {
+        console.log("Item ID:", id, "Selected By:", item.selectedBy);
+        return item.selectedBy.some(selectedUser => selectedUser.id === user.id);
+      })
+      .map(([id, item]) => id);
+  
+    console.log("Items selected by user", user.id, ":", itemsSelectedByUser);
+  
+    if (itemsSelectedByUser.length > 0) {
+      promises.push(
+        axiosInstance.post(`/receipts/assign-items/${receipt_id}`, {
+          user_id: user.id,
+          item_id_list: itemsSelectedByUser,
+          user_total_cost: 1 
+        })
+      );
+    }
+  });
+  
+
+// console.log("Promises to execute:", promises);
+try {
+    await Promise.all(promises)
+    .then(results => {
+      // console.log("Promise results: ", results)
+      Toast.show({
+        topOffset: verticalScale(45),
+        type: 'success',
+        text1: 'Item Assigned successfully',
+      });
+    })
+  } catch (error) {
+    Toast.show({
+      topOffset: verticalScale(45),
+      type: 'error',
+      text1: 'Failed to update item assignments',
+      text2: error.message
+    });
+  }
+};
+
 
   function First_last_initial(fullName) {
     if (!fullName) {
@@ -193,41 +255,12 @@ const Receipt_items = () => {
   }
 
   confirmSelectedItems = () => {
-    console.log(itemsWithSelections);
+    // console.log(itemsWithSelections);
+    assignItemsToUsers();
+    setSelectedUser(null);
     navigation.navigate('Bill_totals', {
       receipt_id: receipt_id
     })
-    // console.log(selectedItems)
-    // if(sameArrays(selectedItems, initialselectedItems)){
-    //   console.log("Equal and this shits working");
-    //   navigation.navigate("Bill_totals", {
-    //     receipt_id: receipt_id
-    //   })
-    // }else {
-    //   const user_selected_items = {
-    //     item_id_list: selectedItems,
-    //     user_total_cost: 1,
-    //   };
-    //   axiosInstance
-    //     .post(
-    //       "/receipts/" + receipt.room_code + "/select-items/" + receipt.id,
-    //       user_selected_items
-    //     )
-    //     .then((response) => {
-    //       if (response.data === true) {
-    //         // Alert.alert("Items Selected Successfully!");
-    //         console.log("Items added successfullyalfjad;lskfja!: ")
-    //         navigation.navigate("Bill_totals", {
-    //           receipt_id: receipt_id
-    //         })
-    //       } else {
-    //         Alert.alert("Error", "Item could not be added.");
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log("Error", error);
-    //     });
-    // }
   };
 
 
@@ -310,11 +343,11 @@ const Receipt_items = () => {
                 onPress={()=> setSelectedUser(prev => prev === item ? null : item)}
                 >
                   <Profile_picture 
-                  name={item.name} 
+                  name={userData.id === item.id ? "You" : item.name} 
                   image={item.profile_picture_url} 
                   sizing_style={{height: scale(60), width: scale(60), borderWidth: 1, borderColor: Colors.primary}}
-                  text_sizing={{fontSize: RFValue(18)}}/>
-                  <Medium500Text style={{fontSize: RFValue(12), marginTop: verticalScale(2)}}>{First_last_initial(item.name)}</Medium500Text>
+                  text_sizing={{fontSize: RFValue(24)}}/>
+                  <Medium500Text style={{fontSize: RFValue(12), marginTop: verticalScale(2)}}>{First_last_initial(userData.id === item.id ? "You" : item.name)}</Medium500Text>
                 </TouchableOpacity>
                 </>
               }
@@ -330,6 +363,7 @@ const Receipt_items = () => {
               renderItem={({ item }) => 
                 <Receipt_items_list_component 
                 name={item.item_name}
+                quick={true}
                 quantity={`(${item.item_quantity})`}
                 price={item.item_cost * item.item_quantity}
                 onPress={() => {
@@ -347,9 +381,10 @@ const Receipt_items = () => {
                     Haptics.selectionAsync();
                   }
                 }}                
-                isSelected={item.selectedBy.includes(selectedUser)}
+                isSelected={selectedUser ? item.selectedBy.includes(selectedUser.id) : null}
+                // item.selectedBy.some(selectedUser => selectedUser.id === user.id);
                 participants={item.users && item.users.length > 0 ? 
-                    item.users.filter(user=>user.id !== userID)
+                    item.users
                     :
                     []
                 }

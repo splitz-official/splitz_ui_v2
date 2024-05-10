@@ -22,7 +22,7 @@ const Bills = () => {
     // SetLoading(true);
     setRefreshing(true);
     try {
-      const response = await axiosInstance.get(`/receipts/receipts-list`);
+      const response = await axiosInstance.get(`/receipts/one-off_receipt_list`);
       console.log(response.data);
       setReceipts(response.data);
     } catch (error) {
