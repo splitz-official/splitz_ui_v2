@@ -159,14 +159,14 @@ const Upload_take_photo = () => {
             </TouchableOpacity> */}
             <View style={{flexDirection: 'row', position: 'absolute', bottom: 0, backgroundColor: 'transparent'}}>
                 <Large_green_outline_button 
-                title={'Upload a Receipt'} 
-                icon_component={<MaterialIcons name="perm-media" size={scale(18)} color={Colors.primary} />}
+                title={'Upload Receipt'} 
+                icon_component={<MaterialIcons name="perm-media" size={scale(16)} color={Colors.mediumgray} />}
                 disabled={receiptname.trim()===''}
                 onPress={handleUploadPress}
                 />
                 <Large_green_outline_button 
-                title={'Scan a Receipt'} 
-                icon_component={<Feather name="camera" size={scale(18)} color={Colors.primary} />}
+                title={'Scan Receipt'} 
+                icon_component={<Feather name="camera" size={scale(16)} color={Colors.mediumgray} />}
                 disabled={receiptname.trim()===''}
                 onPress={handleScanPress}
                 />

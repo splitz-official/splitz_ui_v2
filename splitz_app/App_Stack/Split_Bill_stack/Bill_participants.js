@@ -16,7 +16,6 @@ import Participants_list_item from './Components/Participants_list_item';
 import Profile_picture from '../../../Components/Profile_picture';
 
 const Bill_participants = () => {
-
     const navigation = useNavigation();
     const [search, setSearch] = useState('');
     const [userList, setUserList] = useState([]);
@@ -26,18 +25,6 @@ const Bill_participants = () => {
     
     const {axiosInstance, userData} = useAxios();
 
-    const name = userData.name;
-    const username = userData.username;
-    const profile_pic = userData.profile_picture_url;
-
-    // const getRandomColor = () => {
-    //     // Generate random numbers for RGB
-    //     const r = Math.floor(Math.random() * 256);
-    //     const g = Math.floor(Math.random() * 256);
-    //     const b = Math.floor(Math.random() * 256);
-    //     return `rgb(${r}, ${g}, ${b})`; // Return RGB color string
-    // };
-
     useEffect(() => {
         const fetchFriends = async () => {
             setLoading(true);
@@ -46,9 +33,8 @@ const Bill_participants = () => {
                 setUserList(response.data);
                 setFilteredUserList(response.data);
                 
-                // Set default participant (the user itself)
                 setParticipants([{
-                    id: userData.id, // Assuming userData contains an id
+                    id: userData.id,
                     name: userData.name,
                     username: userData.username,
                     profile_picture_url: userData.profile_picture_url,
@@ -67,11 +53,9 @@ const Bill_participants = () => {
     useEffect(() => {
         const filterUsers = () => {
             let combinedList = [];
-    
             if (search.trim()) {
                 combinedList.push({ id: 'temp', name: `Add "${search}" to your participant list` });
             }
-    
             const filtered = userList.filter(user => user.name.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase()));
             combinedList = [...combinedList, ...filtered];
             setFilteredUserList(combinedList);
@@ -85,13 +69,11 @@ const Bill_participants = () => {
         if (typeof user === 'string') {
             participantToAdd = {
                 name: user,
-                id: `temp-${Date.now()}` //unique id by timestamp 
+                id: `temp-${Date.now()}`
             };
         } else {
             participantToAdd = { ...user };
         }
-    
-        //comparing based on IDs instead of name now
         if (!participants.some(participant => participant.id === participantToAdd.id)) {
             setParticipants([...participants, participantToAdd]);
             setSearch('');
@@ -100,22 +82,14 @@ const Bill_participants = () => {
 
     const navigateToNextScreen = () => {
         const participantsForNextScreen = participants.map(participant => {
-            // id is a string and starts with temp
             if (typeof participant.id === 'string' && participant.id.startsWith('temp-')) {
-                return { name: participant.name, id: null}; // Return only the name for temporary users
+                return { name: participant.name, id: null };
             }
-            return participant; // Return the full participant data for registered users
+            return participant;
         });
-    
         navigation.navigate('Upload_take_photo', { participants: participantsForNextScreen });
     };
     
-    
-    // Use this function to handle navigation
-    <Large_green_button title={'Next'} onPress={navigateToNextScreen} disabled={participants.length === 0}/>
-    
-    
-
     const removeParticipant = (participantId) => {
         const updatedParticipants = participants.filter(participant => participant.id !== participantId);
         setParticipants(updatedParticipants);
@@ -124,134 +98,103 @@ const Bill_participants = () => {
     if (loading) {
         return <ActivityIndicator size="large" color={Colors.primary} />;
     }
-    
 
-  return (
-    <Screen>
-        <Back_button 
-        onPress={()=> navigation.goBack()}
-        title={'Back'}
-        />
-        <KeyboardAvoidingView
-        behavior='height'
-        style={{flex: 1}}
-        >
-            {/*<TouchableWithoutFeedback onPress={ () => {Keyboard.dismiss(); return true;}}>*/}
-                <View style={{flex: 1}}>
-                <View style={styles.bottom_container}>
-                    <Text style={styles.title_text}>Bill Participants</Text>
-                    {participants.length > 0 && (
-    <View style={styles.participantsContainer}>
-        <FlatList
-            data={participants}
-            horizontal
-            showsHorizontalScrollIndicator={true}
-            snapToAlignment="center"
-            decelerationRate="fast"
-            keyExtractor={item => item.id.toString()}
-            onScrollBeginDrag={Keyboard.dismiss}
-            renderItem={({ item }) => (
-                <View style={styles.participantItemContainer}>
-                    <View style={styles.participantCircle}>
-                    <Profile_picture 
-                    image={item.profile_picture_url} 
-                    name={item.name} 
-                    sizing_style={styles.profile_pic} 
-                    text_sizing={{fontSize: RFValue(20)}}/>
-                        <TouchableOpacity
-                            style={styles.removeParticipantBtn}
-                            onPress={() => removeParticipant(item.id)}
-                        >
-                            <AntDesign name="closecircle" size={RFValue(14)} color="red" />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.participantName} numberOfLines={2} ellipsizeMode='tail'>{item.name}</Text>
-                </View>
-            )}
-        />
-    </View>
-)}
-
-                    <Text style={styles.subtitle_text}>Add everyone else's names below:</Text>
-                    <View style={styles.inputContainer}>
-                        <TextInput 
-                        style={styles.textInput}
-                        placeholder='Enter a full name or username...'
-                        placeholderTextColor={Colors.textgray}
-                        value={search}
-                        onChangeText={setSearch}
-                        autoFocus={true}
-                        keyboardType='default'
-                        autoCorrect={false}
-                        clearButtonMode='always'
-                        />
+    return (
+        <Screen>
+            <Back_button 
+                onPress={() => navigation.goBack()}
+                title={'Back'}
+            />
+            <KeyboardAvoidingView
+                behavior='height'
+                style={{ flex: 1 }}
+            >
+                <View style={{ flex: 1 }}>
+                    <View style={styles.bottom_container}>
+                        <Text style={styles.title_text}>Bill Participants</Text>
+                        {participants.length > 0 && (
+                            <View style={styles.participantsContainer}>
+                                <FlatList
+                                    data={participants}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={true}
+                                    snapToAlignment="center"
+                                    decelerationRate="fast"
+                                    keyExtractor={item => item.id.toString()}
+                                    onScrollBeginDrag={Keyboard.dismiss}
+                                    renderItem={({ item }) => (
+                                        <View style={styles.participantItemContainer}>
+                                            <View style={styles.participantCircle}>
+                                                <Profile_picture 
+                                                    image={item.profile_picture_url} 
+                                                    name={item.name} 
+                                                    sizing_style={styles.profile_pic} 
+                                                    text_sizing={{ fontSize: RFValue(20) }}
+                                                />
+                                                <TouchableOpacity
+                                                    style={styles.removeParticipantBtn}
+                                                    onPress={() => removeParticipant(item.id)}
+                                                >
+                                                    <AntDesign name="closecircle" size={RFValue(14)} color="red" />
+                                                </TouchableOpacity>
+                                            </View>
+                                            <Text style={styles.participantName} numberOfLines={2} ellipsizeMode='tail'>{item.name}</Text>
+                                        </View>
+                                    )}
+                                    style={styles.horizontalFlatList}
+                                />
+                            </View>
+                        )}
+                        <Text style={styles.subtitle_text}>Add everyone else's names below:</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput 
+                                style={styles.textInput}
+                                placeholder='Enter a full name or username...'
+                                placeholderTextColor={Colors.textgray}
+                                value={search}
+                                onChangeText={setSearch}
+                                autoFocus={true}
+                                keyboardType='default'
+                                autoCorrect={false}
+                                clearButtonMode='always'
+                            />
                         </View>
                         {search.trim().length > 0 && filteredUserList.length > 0 && 
-                    <FlatList
-                    data={filteredUserList}
-                    keyExtractor={item => item.id.toString()}
-                    onScrollBeginDrag={Keyboard.dismiss}
-                    renderItem={({ item }) => {
-                        if (item.id === 'temp') {
-                            return (
-                                <TouchableOpacity
-                                    activeOpacity={.8}
-                                    style={styles.addTemporaryUser}
-                                    onPress={() => addParticipant(search.trim())}
-                                >
-                                    <Text style={styles.addTemporaryUserText}>{item.name}</Text>
-                                </TouchableOpacity>
-                            );
-                        } else {
-                            return (
-                                <Participants_list_item
-                                    name={item.name}
-                                    username={item.username}
-                                    onPress={() => addParticipant(item)}
-                                    image={item.profile_picture_url} 
-                                />
-                            );
+                            <FlatList
+                                data={filteredUserList}
+                                keyExtractor={item => item.id.toString()}
+                                onScrollBeginDrag={Keyboard.dismiss}
+                                renderItem={({ item }) => {
+                                    if (item.id === 'temp') {
+                                        return (
+                                            <TouchableOpacity
+                                                activeOpacity={.8}
+                                                style={styles.addTemporaryUser}
+                                                onPress={() => addParticipant(search.trim())}
+                                            >
+                                                <Text style={styles.addTemporaryUserText}>{item.name}</Text>
+                                            </TouchableOpacity>
+                                        );
+                                    } else {
+                                        return (
+                                            <Participants_list_item
+                                                name={item.name}
+                                                username={item.username}
+                                                onPress={() => addParticipant(item)}
+                                                image={item.profile_picture_url} 
+                                            />
+                                        );
+                                    }
+                                }}
+                            />
                         }
-                    }}
-                    />
-                    }
-
-                    {/*<TouchableOpacity style={styles.QR_Code} activeOpacity={.5} onPress={()=> console.log("QR PRESSED BUT NO FUNCTION :)")}>
-                        <MaterialCommunityIcons name="qrcode-scan" size={RFValue(16)} color={Colors.primary} />
-                        <Text style={styles.QR_text}> Scan QR Code</Text>
-                    </TouchableOpacity>
-                    }
-
-                    <Text style={[styles.subtitle_text, {marginTop: 40}]}>Quick Add Participants</Text>
-                    {/* {participants.length > 0 ? (
-                        <FlatList 
-                        data={participants}
-                        keyExtractor={(index) => index.toString()}
-                        renderItem={({item, index}) => 
-                            <View style={{flexDirection: 'row', marginVertical: scale(5), alignItems: 'center'}}>
-                                <Text style={{fontFamily: 'DMSans_500Medium', fontSize: RFValue(14), marginRight: scale(5)}}>{item}</Text>
-                                <TouchableOpacity activeOpacity={.5} onPress={() => removeParticipant(index)}>
-                                    <AntDesign name="closecircle" size={scale(16)} color="gray" />
-                                </TouchableOpacity>
-                            </View>
-                        }
-                        style={styles.participants_list}
-                        />
-                    ): (
-                        <Text style={{marginTop: 40, fontSize: RFValue(18)}}>You have no friends!</Text>
-                    )} */}
+                    </View>
+                    <Large_green_button title={'Next'} onPress={navigateToNextScreen} disabled={participants.length === 0} />
                 </View>
-                {/* <Large_green_button 
-                title={'Next'}
-                onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
-                /> */}
-                <Large_green_button title={'Next'} onPress={navigateToNextScreen} disabled={participants.length === 0}/>
-                </View>
-            {/*</TouchableWithoutFeedback>*/}
-        </KeyboardAvoidingView>
-    </Screen>
-  )
-}
+            </KeyboardAvoidingView>
+        </Screen>
+    );
+};
 
 const styles = StyleSheet.create({
     bottom_container: {
@@ -280,44 +223,28 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center'
-    },  
-    participants_list: {
-        marginTop: scale(15),
-        // borderWidth: 1,
-    },
-    QR_Code: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-        marginTop: scale(10),
-        marginLeft: scale(5),
-        // borderWidth: 2
-    },
-    QR_text: {
-        fontSize: RFValue(12), 
-        color: Colors.textgray
     },
     addTemporaryUser: {
         padding: scale(10),
         borderBottomWidth: 1,
         borderBottomColor: '#e8e8e8',
-      },
-      addTemporaryUserText: {
+    },
+    addTemporaryUserText: {
         fontSize: RFValue(12),
-        color: Colors.primary, // Use your app's theme color here
-      },
-      participantsContainer: {
+        color: Colors.primary,
+    },
+    participantsContainer: {
         marginTop: scale(10),
         paddingHorizontal: scale(5),
-        height: scale(90), // Adjust the height to accommodate both the circle and the name
+        height: scale(90),
     },
     participantItemContainer: {
         flexDirection: "column",
-        alignItems: 'center', // Center align the items vertically
+        alignItems: 'center',
         marginRight: scale(10),
         width: scale(65),
         minHeight: scale(70),
-        justifyContent: "flex-start", // Align items starting from the top
+        justifyContent: "flex-start",
         display: 'flex',
         flexGrow: 1,
     },
@@ -328,7 +255,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
-        marginBottom: scale(5), // Maintain a small gap between the circle and the name
+        marginBottom: scale(5),
         marginTop: scale(5),
     },
     participantName: {
@@ -336,7 +263,7 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: 'center',
         width: "100%",
-        paddingTop: scale(2), // Minimal padding to ensure text is close to the circle
+        paddingTop: scale(2),
     },
     removeParticipantBtn: {
         position: 'absolute',
@@ -347,9 +274,12 @@ const styles = StyleSheet.create({
         padding: scale(3),
     },
     profile_pic: {
-        height: scale(55), 
-        width: scale(55), 
+        height: scale(55),
+        width: scale(55),
+    },
+    horizontalFlatList: {
+        overflow: 'hidden', // Ensure the container doesn't overflow and hide the scrollbar
     },
 });
 
-export default Bill_participants
+export default Bill_participants;

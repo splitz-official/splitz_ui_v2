@@ -50,7 +50,7 @@ const Group_bills_switch = ({activeButton, onBillsPress, onGroupsPress}) => {
 const styles = StyleSheet.create({
     container: {
         // flex: 1,
-        marginTop: verticalScale(25),
+        marginTop: verticalScale(15),
         marginBottom: verticalScale(10),
         justifyContent: 'center',
         alignItems: 'center'

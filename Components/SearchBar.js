@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard } from 
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../Config/Colors';
+import { scale } from 'react-native-size-matters';
 
 const SearchBar = ({ placeholder, search_styles, onSearchChange }) => {
 
@@ -10,7 +11,7 @@ const SearchBar = ({ placeholder, search_styles, onSearchChange }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={[styles.container, search_styles]}>
-                <FontAwesome name="search" size={18} color="black" />
+                <FontAwesome name="search" size={18} color={Colors.primary} />
                 <TextInput
                     style={styles.input}
                     placeholder={placeholder}
@@ -43,7 +44,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         marginLeft: 10,
-        fontSize: 14
+        fontSize: 14,
+        fontFamily: "DMSans_500Medium",
+        color: Colors.grey
     },
 });
 
