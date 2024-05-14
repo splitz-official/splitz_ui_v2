@@ -15,7 +15,7 @@ const SearchBar = ({ placeholder, search_styles, onSearchChange }) => {
                 <TextInput
                     style={styles.input}
                     placeholder={placeholder}
-                    placeholderTextColor={'black'}
+                    placeholderTextColor={Colors.textInputPlaceholder}
                     onChangeText={onSearchChange}
                 />
             </View>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize: 14,
         fontFamily: "DMSans_500Medium",
-        color: Colors.grey
+        color: Colors.black
     },
 });
 
