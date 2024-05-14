@@ -58,7 +58,7 @@ const Groups_details = () => {
             const result = await Share.share({
                 message:
                 "Omada | An app that revolutionizes the way friends split bills",
-                url: "https://splitzcompany.wixstudio.io/splitz"
+                url: "https://app-omada.com"
             });
             if (result.action === Share.sharedAction) {
                 if(result.activityType) {

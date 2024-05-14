@@ -76,7 +76,7 @@ function Profile(props) {
             const result = await Share.share({
                 message:
                 "Omada | An app that revolutionizes the way friends split bills",
-                url: "https://splitzcompany.wixstudio.io/splitz"
+                url: "https://app-omada.com"
             });
             if (result.action === Share.sharedAction) {
                 if(result.activityType) {
@@ -198,7 +198,7 @@ function Profile(props) {
                     Iconcomponent={<Feather name="share" size={scale(30)} color={Colors.primary} />} 
                     title={'Invite Someone'}/>
                     <Large_button 
-                    onPress={()=>openURL('https://splitzcompany.wixstudio.io/splitz')}
+                    onPress={()=>openURL('https://app-omada.com')}
                     Iconcomponent={<Ionicons name="information-circle-outline" size={scale(30)} color={Colors.primary} />} 
                     title={'Learn More'}/>
                     <Large_button 
