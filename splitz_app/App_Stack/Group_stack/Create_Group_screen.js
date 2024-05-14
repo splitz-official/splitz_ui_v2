@@ -57,7 +57,7 @@ const Create_Group_screen = () => {
                     autoCorrect={false}
                     />
                 <View style={styles.bottom_line}/>
-                <Image source={require('../../../assets/create_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/>
+                {/* <Image source={require('../../../assets/create_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/> */}
             </View>
 
             {/* <View style={styles.bottom_container}>

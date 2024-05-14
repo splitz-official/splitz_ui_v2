@@ -30,13 +30,13 @@ const Bill_participants = () => {
     const username = userData.username;
     const profile_pic = userData.profile_picture_url;
 
-    const getRandomColor = () => {
-        // Generate random numbers for RGB
-        const r = Math.floor(Math.random() * 256);
-        const g = Math.floor(Math.random() * 256);
-        const b = Math.floor(Math.random() * 256);
-        return `rgb(${r}, ${g}, ${b})`; // Return RGB color string
-    };
+    // const getRandomColor = () => {
+    //     // Generate random numbers for RGB
+    //     const r = Math.floor(Math.random() * 256);
+    //     const g = Math.floor(Math.random() * 256);
+    //     const b = Math.floor(Math.random() * 256);
+    //     return `rgb(${r}, ${g}, ${b})`; // Return RGB color string
+    // };
 
     useEffect(() => {
         const fetchFriends = async () => {
@@ -52,7 +52,6 @@ const Bill_participants = () => {
                     name: userData.name,
                     username: userData.username,
                     profile_picture_url: userData.profile_picture_url,
-                    color: getRandomColor()
                 }]);
                 
                 setLoading(false);
@@ -82,15 +81,40 @@ const Bill_participants = () => {
     }, [search, userList]);
     
     const addParticipant = (user) => {
-        const participantToAdd = typeof user === 'string' ? 
-            { name: user, id: `temp-${Math.random()}`, color: getRandomColor() } : 
-            { ...user, color: getRandomColor() }; // Assign a random color here
+        let participantToAdd;
+        if (typeof user === 'string') {
+            participantToAdd = {
+                name: user,
+                id: `temp-${Date.now()}` //unique id by timestamp 
+            };
+        } else {
+            participantToAdd = { ...user };
+        }
     
-        if (!participants.some(participant => participant.name === participantToAdd.name)) {
+        //comparing based on IDs instead of name now
+        if (!participants.some(participant => participant.id === participantToAdd.id)) {
             setParticipants([...participants, participantToAdd]);
-            setSearch(''); // Optionally clear the search input after adding
+            setSearch('');
         }
     };
+
+    const navigateToNextScreen = () => {
+        const participantsForNextScreen = participants.map(participant => {
+            // id is a string and starts with temp
+            if (typeof participant.id === 'string' && participant.id.startsWith('temp-')) {
+                return { name: participant.name, id: null}; // Return only the name for temporary users
+            }
+            return participant; // Return the full participant data for registered users
+        });
+    
+        navigation.navigate('Upload_take_photo', { participants: participantsForNextScreen });
+    };
+    
+    
+    // Use this function to handle navigation
+    <Large_green_button title={'Next'} onPress={navigateToNextScreen} disabled={participants.length === 0}/>
+    
+    
 
     const removeParticipant = (participantId) => {
         const updatedParticipants = participants.filter(participant => participant.id !== participantId);
@@ -121,7 +145,7 @@ const Bill_participants = () => {
         <FlatList
             data={participants}
             horizontal
-            showsHorizontalScrollIndicator={false}
+            showsHorizontalScrollIndicator={true}
             snapToAlignment="center"
             decelerationRate="fast"
             keyExtractor={item => item.id.toString()}
@@ -171,6 +195,7 @@ const Bill_participants = () => {
                         if (item.id === 'temp') {
                             return (
                                 <TouchableOpacity
+                                    activeOpacity={.8}
                                     style={styles.addTemporaryUser}
                                     onPress={() => addParticipant(search.trim())}
                                 >
@@ -220,7 +245,7 @@ const Bill_participants = () => {
                 title={'Next'}
                 onPress={()=> navigation.navigate('upload_or_take_photo', route.params)}
                 /> */}
-                <Large_green_button title={'Next'} onPress={()=>navigation.navigate('Upload_take_photo', {participants})} disabled={participants.length === 0}/>
+                <Large_green_button title={'Next'} onPress={navigateToNextScreen} disabled={participants.length === 0}/>
                 </View>
             {/*</TouchableWithoutFeedback>*/}
         </KeyboardAvoidingView>

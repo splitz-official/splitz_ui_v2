@@ -68,7 +68,7 @@ const Join_Group_screen = () => {
                         secureTextEntry
                         />
                     <View style={styles.bottom_line}/> */}
-                    <Image source={require('../../../assets/join_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/>
+                    {/* <Image source={require('../../../assets/join_img.png')} resizeMode='contain' style={{height: '80%', width: '100%'}}/> */}
                 </View>
             </TouchableWithoutFeedback>
             <Large_green_button 

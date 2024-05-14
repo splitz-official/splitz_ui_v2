@@ -24,7 +24,7 @@ const Groups_list_item = ({title, image, icon_text, room_code, onPress}) => {
             <Image source={{uri: image}}style={styles.image}></Image>
         :
             <View style={styles.image}>
-                <MaterialCommunityIcons name="account-group" size={scale(32)} color={Colors.black} />
+                <MaterialCommunityIcons name="account-group" size={scale(32)} color={Colors.primary} />
             </View>
         }
         <Bold700Text style={styles.text} numberOfLines={2}>{title}</Bold700Text>

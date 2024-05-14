@@ -39,6 +39,7 @@ const Edit_profile = () => {
     const [name, setName] = useState(userData.name);
     const [email, setEmail] = useState(userData.email);
     const [image, setImage] = useState(userData.profile_picture_url);
+    // const image = null;
     // console.log(userData);
     // console.log(name, email, image);
 
@@ -176,8 +177,7 @@ const Edit_profile = () => {
                         <View style={styles.btn_container}>
                             <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
                                 <Text style={{ fontSize: RFValue(10) }}>{image ? 'Edit' : 'Upload'} Image</Text>
-                                {/* <AntDesign name="camera" size={scale(18)} color="black" /> */}
-                                <Entypo name="edit" size={scale(18)} color="black" />
+                                {image ? <Entypo name="edit" size={scale(18)} color="black" /> : <AntDesign name="camera" size={scale(18)} color="black" />}
                             </TouchableOpacity>
                         </View>
                     </View>

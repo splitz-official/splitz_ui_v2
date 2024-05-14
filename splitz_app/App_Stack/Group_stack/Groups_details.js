@@ -30,6 +30,7 @@ const Groups_details = () => {
     // console.log(room_code);
     const [room_details, setRoom_Details] = useState(null);
     const [roomPicture, setRoomPicture] = useState(null);
+    const testpicture = null;
 
     const [members, setMembers] = useState([]);
     const [receipts, setReceipts] = useState([]);
@@ -203,6 +204,12 @@ const Groups_details = () => {
             })
         }
     }
+
+    function getInitials(fullName) {
+        const parts = fullName.trim().split(' '); 
+        const initials = parts.slice(0,2).map(part => part.charAt(0).toUpperCase());  
+        return initials.join(''); 
+    }
    
 
     //is this useful since create group only allows names to be 20 characters
@@ -232,9 +239,17 @@ const Groups_details = () => {
         }
         />
         <View style={styles.top_container}>
-            <TouchableOpacity activeOpacity={.8} onPress={updateRoomPicture}>
-                <Profile_picture name={room_details.room_name} image={roomPicture} sizing_style={styles.room_icon} text_sizing={{fontSize: RFValue(24)}}/>
-            </TouchableOpacity>
+            <View style={styles.image_inner_container}>
+                {roomPicture ? (
+                    <TouchableOpacity activeOpacity={.8} style={{flex: 1}} onPress={updateRoomPicture}>
+                        <Image resizeMode='cover' source={{uri: roomPicture}} style={styles.imageStyle} /> 
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity activeOpacity={.8} onPress={updateRoomPicture} style={[styles.imageStyle, {backgroundColor: Colors.backgroundFillGray}]}>
+                        <AntDesign name="camera" size={scale(40)} color="gray" />
+                    </TouchableOpacity>
+                )}
+            </View>
             <View style={{justifyContent: 'space-between'}}>
                 <Text style={styles.title}>{truncate(room_details.room_name, 12)}</Text>
                 <TouchableWithoutFeedback onPressIn={copyToClipboard}>
@@ -326,7 +341,7 @@ const Groups_details = () => {
                     <View style={{height: verticalScale(2), backgroundColor: Colors.primary, width: '88%'}}/>
                     <View style={{width: '100%', paddingHorizontal: '20%'}}>
                         <Text style={{fontFamily: 'DMSans_500Medium', color: Colors.primary, fontSize: RFValue(20), textAlign: 'left'}}>Join ID</Text>
-                        <TouchableWithoutFeedback onPress={copyToClipboard}>
+                        <TouchableWithoutFeedback onPressIn={copyToClipboard}>
                             <Text style={{fontSize: RFValue(26), fontFamily: 'DMSans_700Bold', color: Colors.primary, textAlign: 'right'}}>{room_code}</Text>
                         </TouchableWithoutFeedback>
                     </View>
@@ -355,8 +370,9 @@ const styles = StyleSheet.create({
     top_container: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         marginTop: '6%',
+        paddingLeft: '6%',
         // borderWidth: 1,
     },
     room_icon: {
@@ -366,6 +382,42 @@ const styles = StyleSheet.create({
         // marginBottom: scale(8)
         marginRight: scale(10),
         borderWidth: 1
+    },
+    image_inner_container: {
+        height: scale(80),
+        width: scale(80),
+        borderWidth: 3,
+        borderColor: Colors.primary,
+        borderRadius: 999,
+        overflow: 'hidden',
+        marginRight: scale(10),
+        // backgroundColor: Colors.white,
+    },
+    btn_container: {
+        position: 'absolute',
+        opacity: .7,
+        bottom: 0,
+        width: '100%',
+        height: '40%',
+        // borderWidth: 1,
+        backgroundColor: 'lightgrey',
+        paddingTop: verticalScale(3)
+    },
+    uploadBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    imageStyle: {
+        flex: 1,
+        // borderWidth: 2,
+        // borderColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    no_image_text: {
+        fontSize: RFValue(75),
+        color: Colors.white
     },
     title: {
         fontFamily: 'DMSans_700Bold',

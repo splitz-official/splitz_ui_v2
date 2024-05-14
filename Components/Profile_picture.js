@@ -13,7 +13,7 @@ const Profile_picture = ({image, name, sizing_style, text_sizing, maxLength = 2}
 
   return (
     image ?
-        <Image resizeMode='cover' style={[styles.image, sizing_style]} source={{uri: image}}/>
+        <Image resizeMode='cover' style={[styles.image, sizing_style]} source={{uri: image}} />
     :
     <View style={[styles.no_image, sizing_style]}>
         <Medium500Text style={[styles.text, text_sizing]}>{getInitials(name)}</Medium500Text>

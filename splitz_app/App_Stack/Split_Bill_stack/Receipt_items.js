@@ -295,10 +295,16 @@ const Receipt_items = () => {
                 <Receipt_items_list_component 
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
-                price={item.item_cost * item.item_quantity}
+                price={((item.item_cost * item.item_quantity).toFixed(2)).toString()}
+                readOnly={!editing}
+                //onpress should be null when editing items
                 onPress={()=> {
-                  handleItemPress(item)
-                  Haptics.selectionAsync()
+                  if(editing){
+                    null
+                  } else {
+                    handleItemPress(item)
+                    Haptics.selectionAsync()
+                  }
                 }
                 }
                 isSelected={selectedItems.includes(item.id)}
@@ -348,7 +354,7 @@ const Receipt_items = () => {
             Keyboard.dismiss();
               }}
             />
-        ) : addingItem ? (
+        ) : editing ? (
             null
         ) : (
           <Large_green_button 

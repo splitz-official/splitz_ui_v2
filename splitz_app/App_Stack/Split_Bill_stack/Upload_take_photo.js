@@ -97,19 +97,21 @@ const Upload_take_photo = () => {
             axiosInstance
                 .post(`/receipts/upload-receipt`, formData)
                 .then((uploadresponse) => {
-                    console.log("Upload receipt successful: ", uploadresponse.data);
+                    console.log(uploadresponse.data);
                     if(room_code) {
+                        console.log("Upload receipt successful: ", uploadresponse.data);
                         navigation.navigate('Receipt_items', { 
                             receipt_id: uploadresponse.data.id, 
                             room_code: uploadresponse.data.room_code
                         })
                     } else {
+                        console.log("Upload receipt successful no room_code: ", uploadresponse.data);
                         navigation.navigate('Quick_split', {
                             receipt_id: uploadresponse.data.id
                         })
                     }
                 }).catch((error) => {
-                    console.log("Error:", error);
+                    console.log("Error from upload Image function:", error);
                 }).finally(()=> {
                     setLoading(false);
                 })

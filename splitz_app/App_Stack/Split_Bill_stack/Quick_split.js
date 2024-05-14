@@ -60,7 +60,7 @@ const Receipt_items = () => {
         // console.log("Fetching receipt data")
         const response = await axiosInstance.get(`/receipts/receipt/${receipt_id}`);
         // console.log(response.data.items[0].users);
-        // console.log(response.data.items);
+        console.log(response.data);
 
         const userSelectedItems = response.data.items
         .filter(item => item.users.find(user => user.id === userID))
@@ -77,7 +77,7 @@ const Receipt_items = () => {
           const selectedBy = item.users.map(user => user.id);  
           newItemsWithSelections.set(item.id, { ...item, selectedBy });
         });
-        console.log(newItemsWithSelections);
+        // console.log(newItemsWithSelections);
         setItemsWithSelections(newItemsWithSelections);
 
         setUsers(response.data.users);
@@ -365,9 +365,11 @@ try {
                 name={item.item_name}
                 quick={true}
                 quantity={`(${item.item_quantity})`}
-                price={item.item_cost * item.item_quantity}
+                // price={item.item_cost * item.item_quantity}
+                price={((item.item_cost * item.item_quantity).toFixed(2)).toString()}
+                readOnly={!editing}
                 onPress={() => {
-                  if (!selectedUser) {
+                  if (!selectedUser && !editing) {
                     Toast.show({
                       type: 'error',
                       text1: 'Please select a user first',
@@ -376,6 +378,8 @@ try {
                       autoHide: true,
                       visibilityTime: 1500
                     })
+                  } else if(editing) {
+                    null
                   } else {
                     handleSelectItem(item.id);
                     Haptics.selectionAsync();
@@ -405,7 +409,7 @@ try {
             (
             <>
               <View style={styles.total_container}>
-                <Bold700Text style={styles.total_text}>{selectedUser?.name.split(' ')[0]}'s Subtotal</Bold700Text>
+                <Bold700Text style={styles.total_text}>{userData.id === selectedUser.id ? "Your" : `${selectedUser?.name.split(' ')[0]}'s`} Subtotal</Bold700Text>
                 <Bold700Text style={styles.total_text}>{userCost}</Bold700Text>
               </View>
             </> 
