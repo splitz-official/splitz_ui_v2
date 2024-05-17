@@ -157,7 +157,7 @@ const assignItemsToUsers = async () => {
     const itemsSelectedByUser = Array.from(itemsWithSelections.entries())
       .filter(([id, item]) => {
         console.log("Item ID:", id, "Selected By:", item.selectedBy);
-        return item.selectedBy.some(selectedUser => selectedUser.id === user.id);
+        return item.selectedBy.includes(user.id);
       })
       .map(([id, item]) => id);
   

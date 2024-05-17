@@ -349,7 +349,7 @@ const Groups_details = () => {
             </View>
         </Modal>
         <Large_green_button 
-        text_style={{fontSize: RFValue(14)}}
+        // text_style={{fontSize: RFValue(14)}}
         title={"Split Bill"} 
         onPress={()=> navigation.navigate('Split_bill_stack', {
             screen: 'Upload_take_photo',
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     bottom_container: {
         marginHorizontal: '6%',
         marginTop: scale(25),
-        height: verticalScale(390),
+        height: verticalScale(385),
         // borderWidth: 1,
         // borderColor: 'blue'
     },

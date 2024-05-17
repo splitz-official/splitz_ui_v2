@@ -1,5 +1,5 @@
-import { ActivityIndicator, Alert, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale } from 'react-native-size-matters';
@@ -27,6 +27,7 @@ const Upload_take_photo = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { room_code = null, participants = null } = route.params || {};
+    const textInputRef = useRef();
     console.log(route.params);
     // console.log(room_code);
 
@@ -41,7 +42,7 @@ const Upload_take_photo = () => {
             Alert.alert("Access Denied, Please allow camera access to use this feature!");
             return;
         }
-
+        Keyboard.dismiss();
         const pickerResult = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             aspect: [16,9],
@@ -59,7 +60,7 @@ const Upload_take_photo = () => {
             Alert.alert("Access Denied, Please allow access to your photos to use this feature!");
             return;
         }
-        
+        Keyboard.dismiss();
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -146,6 +147,7 @@ const Upload_take_photo = () => {
                     value={receiptname}
                     onChangeText={setReceiptName}
                     autoFocus={true}
+                    ref={textInputRef}
                     keyboardType='default'
                     autoCorrect={false}
                     />
@@ -160,13 +162,13 @@ const Upload_take_photo = () => {
             <View style={{flexDirection: 'row', position: 'absolute', bottom: 0, backgroundColor: 'transparent'}}>
                 <Large_green_outline_button 
                 title={'Upload Receipt'} 
-                icon_component={<MaterialIcons name="perm-media" size={scale(16)} color={Colors.mediumgray} />}
+                icon_component={<MaterialIcons name="perm-media" size={scale(16)} color={receiptname.trim()==='' ? Colors.mediumgray : Colors.primary} />}
                 disabled={receiptname.trim()===''}
                 onPress={handleUploadPress}
                 />
                 <Large_green_outline_button 
                 title={'Scan Receipt'} 
-                icon_component={<Feather name="camera" size={scale(16)} color={Colors.mediumgray} />}
+                icon_component={<Feather name="camera" size={scale(16)} color={receiptname.trim()==='' ? Colors.mediumgray : Colors.primary} />}
                 disabled={receiptname.trim()===''}
                 onPress={handleScanPress}
                 />

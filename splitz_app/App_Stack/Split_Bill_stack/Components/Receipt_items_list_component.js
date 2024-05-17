@@ -75,7 +75,7 @@ const Receipt_items_list_component = ({
         
         {readOnly && participants && participants.length > 0 &&
         <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%', alignItems: 'center'}}>
-            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>Also selected {quick ? "for" : "by"}: </RegularText>
+            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>Selected {quick ? "for" : "by"}: </RegularText>
             <FlatList 
             data={participants}
             keyExtractor={item => item.id.toString()}
