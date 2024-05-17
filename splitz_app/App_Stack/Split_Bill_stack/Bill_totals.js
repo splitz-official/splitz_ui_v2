@@ -105,11 +105,17 @@ function First_last_initial(fullName) {
             username: user.username,
             id: user.id,
             subtotal: 0,
-            totalCost: 0
+            totalCost: 0,
+            items: [],
+            tax_tip: 0
           });
         }
         let currentUser = userCosts.get(user.id);
         currentUser.subtotal += pricePerUser;
+        currentUser.items.push({
+          ...item,
+          pricePerUser: pricePerUser.toFixed(2)
+        })
       });
     });
 
@@ -117,11 +123,15 @@ function First_last_initial(fullName) {
       // const userSubtotal = user.subtotal;
       const taxTipProportion = totalTaxAndTip === 0 ? 0 : ((user.subtotal / subTotal) * (totalTaxAndTip));
       // console.log(typeof userSubtotal, typeof subTotal, typeof taxTipProportion)
+      user.tax_tip = taxTipProportion.toFixed(2);
       user.totalCost = (user.subtotal + taxTipProportion).toFixed(2);
     });
 
     const userCost_array =  Array.from(userCosts.values());
     setActiveUsers_and_Costs(userCost_array);
+    // userCost_array.forEach(
+    //   user => console.log(user.items)
+    // )
     // console.log(userCost_array);
 }
 
@@ -196,7 +206,13 @@ const handleReceiptRename = async() => {
           </>
         }
         renderItem={({ item })=> (
-          <User_total_list_item name={item.id === userID ? "You" : First_last_initial(item.name)} first_letter={item.name[0]} price={item.totalCost}/>
+          <User_total_list_item 
+          name={item.id === userID ? "You" : First_last_initial(item.name)} 
+          first_letter={item.name.trim()[0]} 
+          price={item.totalCost}
+          items={item.items}
+          tax_tip={item.tax_tip}
+          />
         )}
         />
       </View>

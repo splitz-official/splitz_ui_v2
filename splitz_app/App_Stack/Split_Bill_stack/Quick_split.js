@@ -29,7 +29,7 @@ const Receipt_items = () => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [addingItem, setAddingItem] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  // const [selectedItems, setSelectedItems] = useState([]);
   const [owner, setOwner] = useState(false);
   
   const [tax, setTax] = useState('');
@@ -62,9 +62,9 @@ const Receipt_items = () => {
         // console.log(response.data.items[0].users);
         console.log(response.data);
 
-        const userSelectedItems = response.data.items
-        .filter(item => item.users.find(user => user.id === userID))
-        .map(item => item.id);
+        // const userSelectedItems = response.data.items
+        // .filter(item => item.users.find(user => user.id === userID))
+        // .map(item => item.id);
 
         
         const newItemsWithSelections = new Map();
@@ -74,7 +74,7 @@ const Receipt_items = () => {
         // });
 
         response.data.items.forEach(item => {
-          const selectedBy = item.users.map(user => user.id);  
+          const selectedBy = item.users.map(user => user);  
           newItemsWithSelections.set(item.id, { ...item, selectedBy });
         });
         // console.log(newItemsWithSelections);
@@ -83,7 +83,7 @@ const Receipt_items = () => {
         setUsers(response.data.users);
         setReceipt(response.data); 
         
-        setSelectedItems(userSelectedItems);
+        // setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
         setTotal(response.data.total_amount);
@@ -104,8 +104,8 @@ const Receipt_items = () => {
     let totalCost = 0;
 
     if (selectedUser && itemsWithSelections.size > 0) {
-        itemsWithSelections.forEach((item, itemId) => {
-            if (item.selectedBy.includes(selectedUser.id)) {
+        itemsWithSelections.forEach((item) => {
+            if (item.selectedBy.find(user => user.id === selectedUser.id)) {
                 let numUsers = item.selectedBy.length;
                 // console.log(numUsers);
                 const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
@@ -131,10 +131,10 @@ const Receipt_items = () => {
         const item = newItems.get(itemId);
 
         if (item) {
-            const isSelected = item.selectedBy.includes(selectedUser.id);
+            const isSelected = item.selectedBy.some(user => user.id === selectedUser.id);
             const newSelectedBy = isSelected
-                ? item.selectedBy.filter(id => id !== selectedUser.id)
-                : [...item.selectedBy, selectedUser.id];
+                ? item.selectedBy.filter(user => user.id !== selectedUser.id)
+                : [...item.selectedBy, selectedUser];
 
             newItems.set(itemId, {
                 ...item,
@@ -157,7 +157,7 @@ const assignItemsToUsers = async () => {
     const itemsSelectedByUser = Array.from(itemsWithSelections.entries())
       .filter(([id, item]) => {
         console.log("Item ID:", id, "Selected By:", item.selectedBy);
-        return item.selectedBy.includes(user.id);
+        return item.selectedBy.some(selectedUser => selectedUser.id === user.id);
       })
       .map(([id, item]) => id);
   
@@ -385,10 +385,10 @@ try {
                     Haptics.selectionAsync();
                   }
                 }}                
-                isSelected={selectedUser ? item.selectedBy.includes(selectedUser.id) : null}
+                isSelected={selectedUser ? item.selectedBy.some(user => user.id === selectedUser.id) : null}
                 // item.selectedBy.some(selectedUser => selectedUser.id === user.id);
-                participants={item.users && item.users.length > 0 ? 
-                    item.users
+                participants={item.selectedBy && item.selectedBy.length > 0 ? 
+                    item.selectedBy
                     :
                     []
                 }
