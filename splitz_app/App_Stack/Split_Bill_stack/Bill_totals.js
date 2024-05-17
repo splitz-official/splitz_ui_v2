@@ -57,6 +57,7 @@ const Bill_totals = () => {
         const Receipt_subTotal = response.data.items.reduce((acc, item) => {
           return acc + (item.item_cost * item.item_quantity);
         }, 0);
+        console.log(response.data);
         setReceiptSubTotal(Receipt_subTotal);
         setOwner(response.data.owner_id === userID);
         setReceipt(response.data); 
@@ -95,7 +96,7 @@ function First_last_initial(fullName) {
   const calculateUserTotals = (items, taxAmount, tipAmount, subTotal) => {
     const userCosts = new Map();
     const totalTaxAndTip = taxAmount + tipAmount;
-    // console.log(taxAmount, tipAmount, subTotal)
+    console.log(taxAmount, tipAmount, subTotal, totalTaxAndTip);
 
     items.forEach(item => {
       const pricePerUser = (item.item_cost * item.item_quantity) / (item.users.length || 1);
@@ -219,8 +220,8 @@ const handleReceiptRename = async() => {
       </View>
       </View>
       </TouchableWithoutFeedback>
-      {
-        owner && (
+      { owner &&
+         (
           editingName ? (
             <Large_green_button 
               title={"Confirm Name"} 
