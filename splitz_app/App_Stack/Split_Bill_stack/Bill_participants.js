@@ -72,7 +72,7 @@ const Bill_participants = () => {
                 id: `temp-${Date.now()}`
             };
         } else {
-            participantToAdd = { ...user };
+            participantToAdd = {...user};
         }
         if (!participants.some(participant => participant.id === participantToAdd.id)) {
             setParticipants([...participants, participantToAdd]);

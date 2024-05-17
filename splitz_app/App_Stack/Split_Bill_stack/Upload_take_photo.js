@@ -1,10 +1,12 @@
-import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Animated} from 'react-native'
 import React, { useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
 import * as ImagePicker from 'expo-image-picker';
 import LottieView from 'lottie-react-native';
+import * as Haptics from 'expo-haptics';
+import Toast from 'react-native-toast-message';
 
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -26,15 +28,48 @@ const Upload_take_photo = () => {
     const {axiosInstance} = useAxios();
     const navigation = useNavigation();
     const route = useRoute();
-    const { room_code = null, participants = null } = route.params || {};
+    const { room_code = null, participants = [] } = route.params || {};
     const textInputRef = useRef();
+    const borderColorAnim = useRef(new Animated.Value(0)).current;
     console.log(route.params);
     // console.log(room_code);
 
     const [receiptname, setReceiptName] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const needDescription = ()=> {
+        // flashBorderColor();
+        Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Error)
+    }
+
+    const flashBorderColor = () => {
+        Animated.sequence([
+            Animated.timing(borderColorAnim, {
+                toValue: 1,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            Animated.timing(borderColorAnim, {
+                toValue: 0,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+        ]).start();
+    };
+
+    const interpolatedBorderColor = borderColorAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [Colors.primary, 'red']
+    });
+
+    const interpolatedPlaceholderColor = borderColorAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [Colors.textInputPlaceholder, 'red']
+    });
+
     const handleScanPress = async () => {
+        Haptics.selectionAsync();
         console.log("Handle Scan Pressed")
         const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
 
@@ -53,6 +88,7 @@ const Upload_take_photo = () => {
     }
 
     const handleUploadPress = async () => {
+        Haptics.selectionAsync();
         console.log("Handle Upload Pressed")
         const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
@@ -94,11 +130,11 @@ const Upload_take_photo = () => {
                 user_list: participants
             }
             formData.append("data", JSON.stringify(json_data));
-
+            console.log("FORMDATA:", formData);
             axiosInstance
                 .post(`/receipts/upload-receipt`, formData)
                 .then((uploadresponse) => {
-                    console.log(uploadresponse.data);
+                    // console.log(uploadresponse);
                     if(room_code) {
                         console.log("Upload receipt successful: ", uploadresponse.data);
                         navigation.navigate('Receipt_items', { 
@@ -121,6 +157,38 @@ const Upload_take_photo = () => {
         }
     }
 
+    const emptyReceipt = async() => {
+        Haptics.selectionAsync();
+        setLoading(true);
+        const json_data = {
+            room_code: room_code,
+            receipt_name: receiptname,
+            user_list: participants
+        };
+        console.log(json_data);
+        axiosInstance
+            .post(`/receipts/create-empty-receipt`, json_data)
+            .then((uploadresponse) => {
+                console.log(uploadresponse.data);
+                if(room_code) {
+                    console.log("Upload receipt successful: ", uploadresponse.data);
+                    navigation.navigate('Receipt_items', { 
+                        receipt_id: uploadresponse.data.id, 
+                        room_code: uploadresponse.data.room_code
+                    })
+                } else {
+                    console.log("Upload receipt successful no room_code: ", uploadresponse.data);
+                    navigation.navigate('Quick_split', {
+                        receipt_id: uploadresponse.data.id
+                    })
+                }
+            }).catch((error) => {
+                console.log("Error from upload Image function:", error);
+            }).finally(()=> {
+                setLoading(false);
+            })
+    }
+
   return (
     <Screen>
         {loading ? (
@@ -139,21 +207,23 @@ const Upload_take_photo = () => {
         <KeyboardAvoidingView style={{flex: 1}} behavior='height'>
         <View style={{flex:1}}>
             <View style={styles.container}>
-                <TextInput 
-                    style={styles.text_input}
-                    placeholder={`What's this for?`}
-                    placeholderTextColor={Colors.textInputPlaceholder}
-                    maxLength={20}
-                    value={receiptname}
-                    onChangeText={setReceiptName}
-                    autoFocus={true}
-                    ref={textInputRef}
-                    keyboardType='default'
-                    autoCorrect={false}
+                <Animated.View style={{borderBottomWidth: 3, borderColor: Colors.primary}}>
+                    <TextInput 
+                        style={[styles.text_input, {color: interpolatedPlaceholderColor}]}
+                        placeholder={`What's this for?`}
+                        placeholderTextColor={Colors.textInputPlaceholder}
+                        maxLength={20}
+                        value={receiptname}
+                        onChangeText={setReceiptName}
+                        autoFocus={true}
+                        ref={textInputRef}
+                        keyboardType='default'
+                        autoCorrect={false}
                     />
-                <View style={styles.bottom_line}/>
-            <TouchableOpacity style={{}} activeOpacity={.5}>
-                <Medium500Text style={styles.manual_entry}>Enter items manually</Medium500Text>
+                </Animated.View>
+                {/* <View style={styles.bottom_line}/> */}
+            <TouchableOpacity style={{}} activeOpacity={.5} onPress={receiptname.trim()==='' ? null : emptyReceipt}>
+                <Medium500Text style={receiptname.trim()==='' ? [styles.manual_entry, {color: Colors.textgray}]: styles.manual_entry}>Enter items manually</Medium500Text>
             </TouchableOpacity>
             </View>
             {/* <TouchableOpacity onPress={()=> navigation.navigate("Quick_split")}>

@@ -46,7 +46,7 @@ const Receipt_items_list_component = ({
                 placeholder={name}
                 // readOnly={readOnly}
                 keyboardType='default'
-                style={[styles.name, !readOnly ? [styles.textinput, {}] : {}]}
+                style={[styles.name, !readOnly ? [[styles.textinput], {}] : {}]}
                 />
                 <TextInput
                 value={quantity}
@@ -67,35 +67,36 @@ const Receipt_items_list_component = ({
                 </>
             :
             <>
+                <View>
                 <RegularText numberOfLines={1} style={styles.name}>{truncate(name, 15)} {quantity}</RegularText>
+                {readOnly && participants && participants.length > 0 &&
+                <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                    <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>{quick ? "Selected for" : "Also selected by"}: </RegularText>
+                    <FlatList 
+                    data={participants}
+                    keyExtractor={item => item.id.toString()}
+                    horizontal={true}
+                    style={{}}
+                    renderItem={({ item }) => {
+                        // console.log("Rendering participant:", item);
+                        return (
+                            <Profile_picture 
+                                name={item.name}  
+                                sizing_style={{height: scale(12), width: scale(12), borderWidth: 1, marginHorizontal: 1}}
+                                text_sizing={{fontSize: RFValue(8)}}
+                                maxLength={1}
+                                image={item.profile_picture_url}
+                            />
+                        );
+                    }}
+                    />
+                </View>}
+                </View>
                 <Medium500Text style={styles.price}>{price}</Medium500Text>
             </>
             }
             
         </View>
-        
-        {readOnly && participants && participants.length > 0 &&
-        <View style={{position: 'absolute', flexDirection: 'row', bottom: 0, left: '10%', alignItems: 'center'}}>
-            <RegularText style={{color: Colors.textgray, fontSize: RFValue(10)}}>{quick ? "Selected for" : "Also selected by"}: </RegularText>
-            <FlatList 
-            data={participants}
-            keyExtractor={item => item.id.toString()}
-            horizontal={true}
-            style={{}}
-            renderItem={({ item }) => {
-                // console.log("Rendering participant:", item);
-                return (
-                    <Profile_picture 
-                        name={item.name}  
-                        sizing_style={{height: scale(12), width: scale(12), borderWidth: 1, marginHorizontal: 1}}
-                        text_sizing={{fontSize: RFValue(8)}}
-                        maxLength={1}
-                        image={item.profile_picture_url}
-                    />
-                );
-            }}
-            />
-        </View>}
     </TouchableOpacity>
   )
 }
@@ -109,14 +110,14 @@ const styles = StyleSheet.create({
         height: verticalScale(48),
         maxWidth: '100%',
         minWidth: '100%',
-        marginVertical: verticalScale(3),
+        marginVertical: verticalScale(5),
         alignItems: 'center',
         justifyContent: 'space-between',
     },
     name: {
         fontFamily: 'DMSans_500Medium',
         fontSize: RFValue(14),
-        flex: 1.5
+        // flex: 1.5
         // borderWidth: 1
     },
     quantity: {

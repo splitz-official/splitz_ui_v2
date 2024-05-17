@@ -1,14 +1,15 @@
 import { ActivityIndicator, FlatList, Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { RFValue } from 'react-native-responsive-fontsize';
+
 
 import { useAxios } from '../../../Axios/axiosContext'
 import Screen from '../../../Components/Screen';
 import Back_button from '../../../Components/Back_button';
 import Colors from '../../../Config/Colors';
-import { RFValue } from 'react-native-responsive-fontsize';
 import Large_green_button from '../../../Components/Large_green_button';
-import { scale, verticalScale } from 'react-native-size-matters';
 import User_total_list_item from './Components/User_total_list_item';
 
 const Bill_totals = () => {
