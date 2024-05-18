@@ -5,10 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { scale, verticalScale } from 'react-native-size-matters';
 
+
 import { useAxios } from '../../../../Axios/axiosContext';
 import Colors from '../../../../Config/Colors';
 import Bills_list_item_component from './Bills_list_item_component';
 import { Bold700Text, Medium500Text } from '../../../../Config/AppText';
+import DeleteModal from '../../../../Components/Delete_modal';
 
 const Bills = ({ searchQuery }) => {
   const { axiosInstance } = useAxios();
@@ -89,26 +91,15 @@ const Bills = ({ searchQuery }) => {
           />
         }
       />
-      <Modal
+      <DeleteModal
         visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Bold700Text style={styles.modalText}>Are you sure you want to delete this receipt?</Bold700Text>
-            <View style={styles.modal_confirm_cancel_buttons_container}>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={[styles.modal_buttons, {borderColor: Colors.primary}]}>
-                <Medium500Text style={[styles.modalButtonText, {color: Colors.primary}]}>Cancel</Medium500Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDelete} style={[styles.modal_buttons, { backgroundColor: Colors.delete_red, borderColor: Colors.delete_red }]}>
-                <Medium500Text style={[styles.modalButtonText, { color: Colors.white }]}>Delete</Medium500Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleDelete}
+        title="Delete Receipt"
+        message="Are you sure you want to delete this receipt?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </View>
   );
 };
@@ -120,48 +111,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: '18%',
         paddingHorizontal: scale(15)
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        width: '80%',
-        // borderWidth: 1,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 20,
-        alignItems: 'center',
-    },
-    modalText: {
-        fontSize: RFValue(16),
-        marginBottom: 20,
-        textAlign: 'center'
-    },
-    modalButtonText: {
-      fontSize: RFValue(12)
-    },
-    modal_buttons: {
-      // borderColor: Colors.primary,
-      borderWidth: 1,
-      paddingVertical: scale(10),
-      width: scale(80),
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: scale(10)
-    },
-    modal_confirm_cancel_buttons_container: {
-      flexDirection: 'row',
-      // borderWidth: 1,
-      // flex: 1,
-      width: '100%',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      // paddingBottom: verticalScale(15),
-      paddingHorizontal: scale(20),
-      marginTop: verticalScale(10)
     },
 });
 

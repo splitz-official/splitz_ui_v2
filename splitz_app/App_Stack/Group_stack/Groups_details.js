@@ -9,6 +9,7 @@ import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 
 import { Entypo } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 
 import { useAxios } from '../../../Axios/axiosContext'
@@ -256,6 +257,9 @@ const Groups_details = () => {
                     <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
                 </TouchableWithoutFeedback>
             </View>
+            <TouchableOpacity activeOpacity={.7} style={{position: 'absolute', right: '6%'}}>
+                <SimpleLineIcons name="options-vertical" size={24} color="black" />
+            </TouchableOpacity>
         </View>
         <View style={styles.bottom_container}>
             <View style={{flex: .35}}>
