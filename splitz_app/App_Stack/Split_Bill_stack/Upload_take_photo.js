@@ -37,7 +37,7 @@ const Upload_take_photo = () => {
     const [receiptname, setReceiptName] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const needDescription = ()=> {
+    const Notworking = ()=> {
         // flashBorderColor();
         Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Error)
@@ -222,8 +222,13 @@ const Upload_take_photo = () => {
                     />
                 </Animated.View>
                 {/* <View style={styles.bottom_line}/> */}
-            <TouchableOpacity style={{}} activeOpacity={.5} onPress={receiptname.trim()==='' ? null : emptyReceipt}>
-                <Medium500Text style={receiptname.trim()==='' ? [styles.manual_entry, {color: Colors.textgray}]: styles.manual_entry}>Enter items manually</Medium500Text>
+            <TouchableOpacity style={{}} activeOpacity={.5} onPress={Notworking}>
+                <Medium500Text 
+                // style={receiptname.trim()==='' ? [styles.manual_entry, {color: Colors.textgray}]: styles.manual_entry}
+                style={[styles.manual_entry, {color: Colors.textgray}]}
+                >
+                    Enter items manually
+                </Medium500Text>
             </TouchableOpacity>
             </View>
             {/* <TouchableOpacity onPress={()=> navigation.navigate("Quick_split")}>
