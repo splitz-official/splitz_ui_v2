@@ -20,13 +20,14 @@ import { Bold700Text, Medium500Text } from "../../../../Config/AppText";
 import DeleteModal from "../../../../Components/Delete_modal";
 
 const Bills = ({ searchQuery }) => {
-  const { axiosInstance } = useAxios();
+  const { axiosInstance, userData } = useAxios();
   const [receipts, setReceipts] = useState([]);
   const [selectedReceiptId, setSelectedReceiptId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const userID = userData.id;
 
   const fetchReceipts = async () => {
     setRefreshing(true);
@@ -103,6 +104,7 @@ const Bills = ({ searchQuery }) => {
               setSelectedReceiptId(item.id);
               setModalVisible(true);
             }}
+            owner={item.owner_id === userID}
           />
         )}
       />
