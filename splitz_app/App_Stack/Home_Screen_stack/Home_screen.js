@@ -29,7 +29,7 @@ import SearchBar from "../../../Components/SearchBar";
 import { scale } from "react-native-size-matters";
 
 function Home_screen(props) {
-  console.log("Home Stack: Home_Screen");
+  // console.log("Home Stack: Home_Screen");
   const { navigate } = useNavigation();
   const { userData } = useAxios();
   const userName = userData?.name;
