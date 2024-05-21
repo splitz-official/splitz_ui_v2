@@ -42,7 +42,7 @@ import Profile_picture from "../../../Components/Profile_picture";
 import DeleteModal from "../../../Components/Delete_modal";
 
 const Groups_details = () => {
-  const { axiosInstance } = useAxios();
+  const { axiosInstance, userData } = useAxios();
   const navigation = useNavigation();
   const route = useRoute();
   // console.log(route.params)
@@ -60,6 +60,8 @@ const Groups_details = () => {
   const [shareModal, setShareModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const isOwner = userData.id === room_details?.room_owner_id;
+  // console.log(isOwner);
 
   const [menuVisible, setMenuVisible] = useState(false);
   const openMenu = () => setMenuVisible(true);
@@ -76,49 +78,6 @@ const Groups_details = () => {
   const toggleReceiptsDropDown = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setReceiptsDropDown(!receiptsDropDown);
-  };
-
-  const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(room_code);
-    Toast.show({
-      type: "success",
-      text1: "Copied to clipboard",
-      position: "top",
-      topOffset: verticalScale(45),
-      autoHide: true,
-      visibilityTime: 1000,
-    });
-  };
-
-  const handleDelete = async () => {
-    console.log("delete button working");
-      try {
-        await axiosInstance.post(`/room/delete/${room_code}`)
-        .then(()=> {
-          setDeleteModalVisible(false);
-          navigation.navigate('home')
-        })
-      } catch (error) {
-        console.error("Delete Error", error);
-      }
-    }
-
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message:
-          "Omada | An app that revolutionizes the way friends split bills",
-        url: "https://app-omada.com",
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-        } else {
-        }
-      } else if (result.action === Share.dismissedAction) {
-      }
-    } catch (error) {
-      Alert.alert(error.message);
-    }
   };
 
   useEffect(() => {
@@ -176,6 +135,49 @@ const Groups_details = () => {
       ownerName: membersMap[receipt.owner_id],
     }));
     setMappedReceipts(id_mappedReceipts);
+  };
+
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(room_code);
+    Toast.show({
+      type: "success",
+      text1: "Copied to clipboard",
+      position: "top",
+      topOffset: verticalScale(45),
+      autoHide: true,
+      visibilityTime: 1000,
+    });
+  };
+
+  const handleDelete = async () => {
+    console.log("delete button working");
+      try {
+        await axiosInstance.post(`/room/delete/${room_code}`)
+        .then(()=> {
+          setDeleteModalVisible(false);
+          navigation.navigate('home')
+        })
+      } catch (error) {
+        console.error("Delete Error", error);
+      }
+    }
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          "Omada | An app that revolutionizes the way friends split bills",
+        url: "https://app-omada.com",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+        }
+      } else if (result.action === Share.dismissedAction) {
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
   };
 
   function First_last_initial(fullName) {
@@ -333,7 +335,7 @@ const Groups_details = () => {
               <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
             </TouchableWithoutFeedback>
           </View>
-          <View style={{ position: "absolute", right: "6%" }}>
+          {isOwner && <View style={{ position: "absolute", right: "6%" }}>
             <Menu
               visible={menuVisible}
               onDismiss={closeMenu}
@@ -373,7 +375,7 @@ const Groups_details = () => {
                 }}
               />
             </Menu>
-          </View>
+          </View>}
         </View>
         <View style={styles.bottom_container}>
           <View style={{ flex: 0.35 }}>
