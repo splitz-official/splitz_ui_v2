@@ -130,6 +130,7 @@ const Upload_take_photo = () => {
                 user_list: participants
             }
             formData.append("data", JSON.stringify(json_data));
+            console.log("JSON DATA:", json_data);
             console.log("FORMDATA:", formData);
             axiosInstance
                 .post(`/receipts/upload-receipt`, formData)

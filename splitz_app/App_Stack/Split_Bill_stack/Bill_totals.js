@@ -220,7 +220,7 @@ const handleReceiptRename = async() => {
       </View>
       </View>
       </TouchableWithoutFeedback>
-      { owner &&
+      { !room_code && owner &&
          (
           editingName ? (
             <Large_green_button 
