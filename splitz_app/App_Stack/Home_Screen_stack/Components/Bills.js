@@ -56,7 +56,7 @@ const Bills = ({ searchQuery }) => {
   const handleDelete = async () => {
     if (selectedReceiptId) {
       try {
-        await axiosInstance.post(`/delete/${selectedReceiptId}`);
+        await axiosInstance.post(`receipts/delete/${selectedReceiptId}`);
         console.log("delete button working");
         fetchReceipts();
         setModalVisible(false);
@@ -77,6 +77,7 @@ const Bills = ({ searchQuery }) => {
         keyExtractor={(item) => item.id.toString()}
         onRefresh={fetchReceipts}
         style={{ width: "100%", height: "100%", paddingHorizontal: scale(10) }}
+        contentContainerStyle={{flexGrow: 1}}
         refreshing={refreshing}
         ItemSeparatorComponent={
           <View
@@ -125,6 +126,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: "18%",
     paddingHorizontal: scale(15),
+    // borderWidth: 1
   },
 });
 
