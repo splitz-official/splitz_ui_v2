@@ -13,6 +13,7 @@ import {
   UIManager,
   Platform,
 } from "react-native";
+import { Provider, Menu, Button, Divider } from "react-native-paper";
 import React, { useCallback, useEffect, useState } from "react";
 import { scale, verticalScale } from "react-native-size-matters";
 import {
@@ -38,6 +39,7 @@ import Colors from "../../../Config/Colors";
 import Large_green_button from "../../../Components/Large_green_button";
 import Groups_receipt_list_item from "./Components/Groups_receipt_list_item";
 import Profile_picture from "../../../Components/Profile_picture";
+import DeleteModal from "../../../Components/Delete_modal";
 
 const Groups_details = () => {
   const { axiosInstance } = useAxios();
@@ -57,6 +59,11 @@ const Groups_details = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [shareModal, setShareModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+  const [menuVisible, setMenuVisible] = useState(false);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
   // console.log(receipts)
 
   if (
@@ -82,6 +89,19 @@ const Groups_details = () => {
       visibilityTime: 1000,
     });
   };
+
+  const handleDelete = async () => {
+    console.log("delete button working");
+      try {
+        await axiosInstance.post(`/room/delete/${room_code}`)
+        .then(()=> {
+          setDeleteModalVisible(false);
+          navigation.navigate('home')
+        })
+      } catch (error) {
+        console.error("Delete Error", error);
+      }
+    }
 
   const onShare = async () => {
     try {
@@ -264,101 +284,100 @@ const Groups_details = () => {
   }
 
   return (
+    <Provider>
     <Screen>
-      <Back_button
-        title={"Home"}
-        onPress={() => navigation.navigate("home")}
-        children={
-          <TouchableOpacity
-            style={{ position: "absolute", right: "6%", bottom: scale(5) }}
-            onPress={() => setShareModal(true)}
-          >
-            <Entypo name="share-alternative" size={scale(18)} color="black" />
-          </TouchableOpacity>
-        }
-      />
-      <View style={styles.top_container}>
-        <View style={styles.image_inner_container}>
-          {roomPicture ? (
+        <Back_button
+          title={"Home"}
+          onPress={() => navigation.navigate("home")}
+          children={
             <TouchableOpacity
-              activeOpacity={0.8}
-              style={{ flex: 1 }}
-              onPress={updateRoomPicture}
+              style={{ position: "absolute", right: "6%", bottom: scale(5) }}
+              onPress={() => setShareModal(true)}
             >
-              <Image
-                resizeMode="cover"
-                source={{ uri: roomPicture }}
-                style={styles.imageStyle}
-              />
+              <Entypo name="share-alternative" size={scale(18)} color="black" />
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={updateRoomPicture}
-              style={[
-                styles.imageStyle,
-                { backgroundColor: Colors.backgroundFillGray },
-              ]}
-            >
-              <AntDesign name="camera" size={scale(40)} color="gray" />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={{ justifyContent: "space-between" }}>
-          <Text style={styles.title}>
-            {truncate(room_details.room_name, 12)}
-          </Text>
-          <TouchableWithoutFeedback onPressIn={copyToClipboard}>
-            <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
-          </TouchableWithoutFeedback>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={{ position: "absolute", right: "6%" }}
-        >
-          <SimpleLineIcons name="options-vertical" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.bottom_container}>
-        <View style={{ flex: 0.35 }}>
-          <View style={styles.drop_down}>
-            <Text
-              style={{
-                fontFamily: "DMSans_700Bold",
-                fontSize: RFValue(18),
-                marginRight: scale(5),
-              }}
-            >
-              Members
-            </Text>
-          </View>
-          <TouchableWithoutFeedback
-            onPress={() =>
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-            }
-          >
-            <View style={{ position: "absolute", right: 3 }}>
-              <AntDesign name="adduser" size={scale(22)} color="black" />
-            </View>
-          </TouchableWithoutFeedback>
-          <FlatList
-            data={members}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={styles.members_list}
-            renderItem={({ item }) => (
-              <Groups_member_list_item
-                title={item.name}
-                subtitle={`@${item.username}`}
-                image={item.profile_picture_url}
-              />
+          }
+        />
+        <View style={styles.top_container}>
+          <View style={styles.image_inner_container}>
+            {roomPicture ? (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={{ flex: 1 }}
+                onPress={updateRoomPicture}
+              >
+                <Image
+                  resizeMode="cover"
+                  source={{ uri: roomPicture }}
+                  style={styles.imageStyle}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={updateRoomPicture}
+                style={[
+                  styles.imageStyle,
+                  { backgroundColor: Colors.backgroundFillGray },
+                ]}
+              >
+                <AntDesign name="camera" size={scale(40)} color="gray" />
+              </TouchableOpacity>
             )}
-          />
+          </View>
+          <View style={{ justifyContent: "space-between" }}>
+            <Text style={styles.title}>
+              {truncate(room_details.room_name, 12)}
+            </Text>
+            <TouchableWithoutFeedback onPressIn={copyToClipboard}>
+              <Text style={styles.subtitle}>ID: {room_details.room_code}</Text>
+            </TouchableWithoutFeedback>
+          </View>
+          <View style={{ position: "absolute", right: "6%" }}>
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              contentStyle={{ backgroundColor: Colors.white }}
+              style={{}}
+              anchor={
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={{ right: 0 }}
+                  onPress={openMenu}
+                >
+                  <SimpleLineIcons
+                    name="options-vertical"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              }
+            >
+              <Menu.Item
+                onPress={() => {}}
+                title={"Rename Room"}
+                titleStyle={{
+                  fontFamily: "DMSans_500Medium",
+                  color: Colors.primary,
+                  fontSize: RFValue(12),
+                }}
+              />
+              <Divider />
+              <Menu.Item
+                onPress={()=>setDeleteModalVisible(true)}
+                title="Delete Room"
+                titleStyle={{
+                  fontFamily: "DMSans_500Medium",
+                  color: Colors.delete_red,
+                  fontSize: RFValue(12),
+                }}
+              />
+            </Menu>
+          </View>
         </View>
-        <View style={{ flex: .65}}>
-          <TouchableWithoutFeedback onPress={toggleReceiptsDropDown}>
-            <View style={[styles.drop_down]}>
+        <View style={styles.bottom_container}>
+          <View style={{ flex: 0.35 }}>
+            <View style={styles.drop_down}>
               <Text
                 style={{
                   fontFamily: "DMSans_700Bold",
@@ -366,149 +385,198 @@ const Groups_details = () => {
                   marginRight: scale(5),
                 }}
               >
-                Receipts
+                Members
               </Text>
-              {receiptsDropDown ? (
-                <Entypo
-                  name="chevron-small-down"
-                  size={scale(22)}
-                  color="black"
-                />
-              ) : (
-                <Entypo
-                  name="chevron-small-up"
-                  size={scale(24)}
-                  color="black"
-                />
-              )}
             </View>
-          </TouchableWithoutFeedback>
-          {receiptsDropDown && (
-            <FlatList
-              data={mappedReceitps}
-              keyExtractor={(item) => item.id.toString()}
-              onRefresh={() => fetchRoomReceipts()}
-              refreshing={isRefreshing}
-              showsVerticalScrollIndicator={false}
-              style={[styles.receipts_list]}
-              ItemSeparatorComponent={
-                <View
-                  style={{
-                    backgroundColor: Colors.primary,
-                    height: verticalScale(1),
-                  }}
-                />
+            <TouchableWithoutFeedback
+              onPress={() =>
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error
+                )
               }
+            >
+              <View style={{ position: "absolute", right: 3 }}>
+                <AntDesign name="adduser" size={scale(22)} color="black" />
+              </View>
+            </TouchableWithoutFeedback>
+            <FlatList
+              data={members}
+              keyExtractor={(item) => item.id.toString()}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={styles.members_list}
               renderItem={({ item }) => (
-                <Groups_receipt_list_item
-                  title={item.receipt_name}
-                  owner={First_last_initial(item.ownerName)}
-                  onPress={() =>
-                    navigation.navigate("Split_bill_stack", {
-                      screen: "Bill_totals",
-                      params: {
-                        room_code: item.room_code,
-                        receipt_id: item.id,
-                      },
-                    })
-                  }
+                <Groups_member_list_item
+                  title={item.name}
+                  subtitle={`@${item.username}`}
+                  image={item.profile_picture_url}
                 />
               )}
             />
-          )}
-        </View>
-      </View>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={shareModal}
-        onRequestClose={() => {
-          setShareModal(false);
-        }}
-      >
-        <Toast />
-        <View style={styles.modal_view}>
-          <TouchableWithoutFeedback onPress={() => setShareModal(false)}>
-            <View style={{ flex: 0.7 }} />
-          </TouchableWithoutFeedback>
-          <View style={styles.modal}>
-            <View style={styles.share_modal_top}>
-              <Text
-                style={{
-                  fontFamily: "DMSans_700Bold",
-                  fontSize: RFValue(16),
-                  color: Colors.primary,
-                }}
-              >
-                Share group
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.modal_share_button}
-                onPress={onShare}
-              >
-                <Entypo
-                  name="share-alternative"
-                  size={scale(16)}
-                  color="white"
-                />
+          </View>
+          <View style={{ flex: 0.65 }}>
+            <TouchableWithoutFeedback onPress={toggleReceiptsDropDown}>
+              <View style={[styles.drop_down]}>
                 <Text
                   style={{
-                    color: Colors.white,
-                    marginLeft: scale(10),
                     fontFamily: "DMSans_700Bold",
-                    fontSize: RFValue(14),
+                    fontSize: RFValue(18),
+                    marginRight: scale(5),
                   }}
                 >
-                  Share link
+                  Receipts
                 </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                height: verticalScale(2),
-                backgroundColor: Colors.primary,
-                width: "88%",
-              }}
-            />
-            <View style={{ width: "100%", paddingHorizontal: "20%" }}>
-              <Text
-                style={{
-                  fontFamily: "DMSans_500Medium",
-                  color: Colors.primary,
-                  fontSize: RFValue(20),
-                  textAlign: "left",
-                }}
-              >
-                Join ID
-              </Text>
-              <TouchableWithoutFeedback onPressIn={copyToClipboard}>
-                <Text
-                  style={{
-                    fontSize: RFValue(26),
-                    fontFamily: "DMSans_700Bold",
-                    color: Colors.primary,
-                    textAlign: "right",
-                  }}
-                >
-                  {room_code}
-                </Text>
-              </TouchableWithoutFeedback>
-            </View>
+                {receiptsDropDown ? (
+                  <Entypo
+                    name="chevron-small-down"
+                    size={scale(22)}
+                    color="black"
+                  />
+                ) : (
+                  <Entypo
+                    name="chevron-small-up"
+                    size={scale(24)}
+                    color="black"
+                  />
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+            {receiptsDropDown && (
+              <FlatList
+                data={mappedReceitps}
+                keyExtractor={(item) => item.id.toString()}
+                onRefresh={() => fetchRoomReceipts()}
+                refreshing={isRefreshing}
+                showsVerticalScrollIndicator={false}
+                style={[styles.receipts_list]}
+                ItemSeparatorComponent={
+                  <View
+                    style={{
+                      backgroundColor: Colors.primary,
+                      height: verticalScale(1),
+                    }}
+                  />
+                }
+                renderItem={({ item }) => (
+                  <Groups_receipt_list_item
+                    title={item.receipt_name}
+                    owner={First_last_initial(item.ownerName)}
+                    onPress={() =>
+                      navigation.navigate("Split_bill_stack", {
+                        screen: "Bill_totals",
+                        params: {
+                          room_code: item.room_code,
+                          receipt_id: item.id,
+                        },
+                      })
+                    }
+                  />
+                )}
+              />
+            )}
           </View>
         </View>
-      </Modal>
-      <Large_green_button
-        // text_style={{fontSize: RFValue(14)}}
-        title={"Split Bill"}
-        onPress={() =>
-          navigation.navigate("Split_bill_stack", {
-            screen: "Upload_take_photo",
-            params: { from: "Group", room_code: room_code },
-          })
-        }
-      />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={shareModal}
+          onRequestClose={() => {
+            setShareModal(false);
+          }}
+        >
+          <Toast />
+          <View style={styles.modal_view}>
+            <TouchableWithoutFeedback onPress={() => setShareModal(false)}>
+              <View style={{ flex: 0.7 }} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modal}>
+              <View style={styles.share_modal_top}>
+                <Text
+                  style={{
+                    fontFamily: "DMSans_700Bold",
+                    fontSize: RFValue(16),
+                    color: Colors.primary,
+                  }}
+                >
+                  Share group
+                </Text>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.modal_share_button}
+                  onPress={onShare}
+                >
+                  <Entypo
+                    name="share-alternative"
+                    size={scale(16)}
+                    color="white"
+                  />
+                  <Text
+                    style={{
+                      color: Colors.white,
+                      marginLeft: scale(10),
+                      fontFamily: "DMSans_700Bold",
+                      fontSize: RFValue(14),
+                    }}
+                  >
+                    Share link
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  height: verticalScale(2),
+                  backgroundColor: Colors.primary,
+                  width: "88%",
+                }}
+              />
+              <View style={{ width: "100%", paddingHorizontal: "20%" }}>
+                <Text
+                  style={{
+                    fontFamily: "DMSans_500Medium",
+                    color: Colors.primary,
+                    fontSize: RFValue(20),
+                    textAlign: "left",
+                  }}
+                >
+                  Join ID
+                </Text>
+                <TouchableWithoutFeedback onPressIn={copyToClipboard}>
+                  <Text
+                    style={{
+                      fontSize: RFValue(26),
+                      fontFamily: "DMSans_700Bold",
+                      color: Colors.primary,
+                      textAlign: "right",
+                    }}
+                  >
+                    {room_code}
+                  </Text>
+                </TouchableWithoutFeedback>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Large_green_button
+          // text_style={{fontSize: RFValue(14)}}
+          title={"Split Bill"}
+          onPress={() =>
+            navigation.navigate("Split_bill_stack", {
+              screen: "Upload_take_photo",
+              params: { from: "Group", room_code: room_code },
+            })
+          }
+        />
+        <DeleteModal 
+          visible={deleteModalVisible}
+          onClose={() => setDeleteModalVisible(false)}
+          onConfirm={handleDelete}
+          title="Delete Room"
+          message="Are you sure you want to delete this room?"
+          confirmText="Delete"
+          cancelText="Cancel"
+        />
     </Screen>
+    </Provider>
   );
 };
 
