@@ -36,7 +36,7 @@ const Bills = ({ searchQuery }) => {
         `/receipts/one-off_receipt_list`
       );
       setReceipts(response.data);
-      // console.log(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Receipts", error);
     } finally {
@@ -47,6 +47,20 @@ const Bills = ({ searchQuery }) => {
   useEffect(() => {
     fetchReceipts();
   }, []);
+
+  function First_last_initial(fullName) {
+    if (!fullName) {
+      return;
+    }
+    const parts = fullName.trim().split(" ");
+    if (parts.length === 1) {
+      return parts[0];
+    } else {
+      const firstName = parts[0];
+      const lastNameInitial = parts[1].charAt(0);
+      return `${firstName} ${lastNameInitial}.`;
+    }
+  }
 
   const filteredData = receipts.filter(
     (bill) =>
@@ -91,7 +105,7 @@ const Bills = ({ searchQuery }) => {
         renderItem={({ item }) => (
           <Bills_list_item_component
             title={item.receipt_name}
-            subtitle={item.owner_id}
+            subtitle={First_last_initial(item.owner_name)}
             onPress={() => {
               navigation.navigate("Split_bill_stack", {
                 screen: "Bill_totals",
