@@ -46,7 +46,6 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.1",
     "react-native-base64": "^0.2.1",
-    "react-native-ble-plx": "^3.1.2",
     "react-native-config": "^1.5.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-linear-gradient": "^2.8.3",
