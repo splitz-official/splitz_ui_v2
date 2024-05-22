@@ -2,7 +2,7 @@
   "expo": {
     "name": "NewScreens",
     "slug": "NewScreens",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nikhil0929.NewScreens"
+      "bundleIdentifier": "com.nikhil0929.NewScreens",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
