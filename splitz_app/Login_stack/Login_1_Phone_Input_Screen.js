@@ -35,7 +35,7 @@ function Login_1_Phone_Input_Screen({ route }) {
         navigation.navigate("OTP_Screen", { phone_number: number });
       })
       .catch((error) => {
-        console.log(error);
+        console.log("From phone input:", error);
       });
   };
 
