@@ -9,7 +9,6 @@ import Back_button from '../../../Components/Back_button'
 import { scale } from 'react-native-size-matters';
 import Colors from '../../../Config/Colors';
 import Large_green_button from '../../../Components/Large_green_button';
-import { items } from '../../../placeholder_data';
 
 const Splitting_Screen = () => {
 

@@ -36,7 +36,7 @@ const Bills = ({ searchQuery }) => {
         `/receipts/one-off_receipt_list`
       );
       setReceipts(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error("Receipts", error);
     } finally {

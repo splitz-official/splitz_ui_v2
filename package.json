@@ -1,6 +1,6 @@
 {
   "name": "newscreens",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -9,7 +9,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@config-plugins/react-native-ble-plx": "^7.0.0",
     "@expo-google-fonts/dm-sans": "^0.2.3",
     "@expo-google-fonts/oswald": "^0.2.3",
     "@expo-google-fonts/roboto": "^0.2.3",
@@ -47,7 +46,6 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.1",
     "react-native-base64": "^0.2.1",
-    "react-native-ble-plx": "^3.1.2",
     "react-native-config": "^1.5.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-linear-gradient": "^2.8.3",
