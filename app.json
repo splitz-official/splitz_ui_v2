@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "NewScreens",
-    "slug": "NewScreens",
+    "name": "Omada",
+    "slug": "omada",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -55,9 +55,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "daab6892-7b46-4d57-a9f3-6b84ca7803b6"
+        "projectId": "19c3446b-024a-4e15-94ee-2fbfc33dece5"
       }
     },
-    "owner": "nikhil0929"
+    "owner": "charles.gutcho"
   }
 }
