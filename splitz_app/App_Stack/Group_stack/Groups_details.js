@@ -40,6 +40,7 @@ import Large_green_button from "../../../Components/Large_green_button";
 import Groups_receipt_list_item from "./Components/Groups_receipt_list_item";
 import Profile_picture from "../../../Components/Profile_picture";
 import DeleteModal from "../../../Components/Delete_modal";
+import Bills_list_item_component from "../Home_Screen_stack/Components/Bills_list_item_component";
 
 const Groups_details = () => {
   const { axiosInstance, userData } = useAxios();
@@ -59,7 +60,9 @@ const Groups_details = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [shareModal, setShareModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteRoomModalVisible, setDeleteRoomModalVisible] = useState(false);
+  const [deleteReceiptModalVisible, setDeleteReceiptModalVisible] = useState(false);
+  const [selectedReceiptID, setSelectedReceiptID] = useState(null);
   const isOwner = userData.id === room_details?.room_owner_id;
   // console.log(isOwner);
 
@@ -135,6 +138,7 @@ const Groups_details = () => {
       ownerName: membersMap[receipt.owner_id],
     }));
     setMappedReceipts(id_mappedReceipts);
+    // console.log(mappedReceitps)
   };
 
   const copyToClipboard = async () => {
@@ -149,18 +153,31 @@ const Groups_details = () => {
     });
   };
 
-  const handleDelete = async () => {
+  const handleDeleteRoom = async () => {
     console.log("delete button working");
       try {
         await axiosInstance.post(`/room/delete/${room_code}`)
         .then(()=> {
-          setDeleteModalVisible(false);
+          setDeleteRoomModalVisible(false);
           navigation.navigate('home')
         })
       } catch (error) {
         console.error("Delete Error", error);
       }
-    }
+    };
+
+    const handleDeleteReceipt = async () => {
+      if (selectedReceiptID) {
+        try {
+          await axiosInstance.post(`receipts/delete/${selectedReceiptID}`);
+          console.log("delete button working");
+          fetchRoomReceipts();
+          setDeleteReceiptModalVisible(false);
+        } catch (error) {
+          console.error("Delete Error", error);
+        }
+      }
+    };
 
   const onShare = async () => {
     try {
@@ -460,9 +477,22 @@ const Groups_details = () => {
                   />
                 }
                 renderItem={({ item }) => (
-                  <Groups_receipt_list_item
+                  // <Groups_receipt_list_item
+                  //   title={item.receipt_name}
+                  //   owner={First_last_initial(item.ownerName)}
+                  //   onPress={() =>
+                  //     navigation.navigate("Split_bill_stack", {
+                  //       screen: "Bill_totals",
+                  //       params: {
+                  //         room_code: item.room_code,
+                  //         receipt_id: item.id,
+                  //       },
+                  //     })
+                  //   }
+                  // />
+                  <Bills_list_item_component 
                     title={item.receipt_name}
-                    owner={First_last_initial(item.ownerName)}
+                    subtitle={First_last_initial(item.ownerName)}
                     onPress={() =>
                       navigation.navigate("Split_bill_stack", {
                         screen: "Bill_totals",
@@ -472,6 +502,12 @@ const Groups_details = () => {
                         },
                       })
                     }
+                    deletePress={() => {
+                      Haptics.selectionAsync();
+                      setSelectedReceiptID(item.id);
+                      setDeleteReceiptModalVisible(true);
+                    }}
+                    owner={userData.id === item.owner_id}
                   />
                 )}
               />
@@ -569,13 +605,22 @@ const Groups_details = () => {
           }
         />
         <DeleteModal 
-          visible={deleteModalVisible}
-          onClose={() => setDeleteModalVisible(false)}
-          onConfirm={handleDelete}
+          visible={deleteRoomModalVisible}
+          onClose={() => setDeleteRoomModalVisible(false)}
+          onConfirm={handleDeleteRoom}
           title="Delete Room"
           message="Are you sure you want to delete this room?"
           confirmText="Delete"
           cancelText="Cancel"
+        />
+        <DeleteModal 
+          visible={deleteReceiptModalVisible}
+          onClose={() => setDeleteReceiptModalVisible(false)}
+          onConfirm={handleDeleteReceipt}
+          title={"Delete Receipt"}
+          message={"Are you sure you want to delete this receipt?"}
+          confirmText={"Delete"}
+          cancelText={"Cancel"}
         />
     </Screen>
     </Provider>

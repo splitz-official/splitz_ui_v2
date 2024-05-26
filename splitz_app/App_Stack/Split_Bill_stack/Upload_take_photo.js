@@ -184,14 +184,14 @@ const Upload_take_photo = () => {
   const emptyReceipt = async () => {
     Haptics.selectionAsync();
     setLoading(true);
-    const json_data = {
+    const body = {
       room_code: room_code,
       receipt_name: receiptname,
       user_list: participants,
     };
-    console.log(json_data);
+    console.log(body);
     axiosInstance
-      .post(`/receipts/create-empty-receipt`, json_data)
+      .post(`/receipts/create-empty-receipt`, body)
       .then((uploadresponse) => {
         console.log(uploadresponse.data);
         if (room_code) {
@@ -262,11 +262,11 @@ const Upload_take_photo = () => {
                 <TouchableOpacity
                   style={{}}
                   activeOpacity={0.5}
-                  onPress={Notworking}
+                  onPress={receiptname.trim()==='' ? Notworking : emptyReceipt}
                 >
                   <Medium500Text
-                    // style={receiptname.trim()==='' ? [styles.manual_entry, {color: Colors.textgray}]: styles.manual_entry}
-                    style={[styles.manual_entry, { color: Colors.textgray }]}
+                    style={receiptname.trim()==='' ? [styles.manual_entry, {color: Colors.textgray}]: styles.manual_entry}
+                    // style={[styles.manual_entry, { color: Colors.textgray }]}
                   >
                     Enter items manually
                   </Medium500Text>
