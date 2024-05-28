@@ -31,7 +31,7 @@ const Receipt_items = () => {
   const userID = userData.id;
   const [receipt, setReceipt] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(route.params?.editing ?? false);
   const [addingItem, setAddingItem] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [initialselectedItems, setInitialSelectedItems] = useState([]);
@@ -64,7 +64,7 @@ const Receipt_items = () => {
         .filter(item => item.users.find(user => user.id === userID))
         .map(item => item.id);
 
-        setReceipt(response.data); 
+        setReceipt(response.data);
         setInitialSelectedItems(userSelectedItems);
         setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
@@ -81,7 +81,7 @@ const Receipt_items = () => {
     };
 
     fetchReceipt();
-  }, []); 
+  }, []);
 
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const Receipt_items = () => {
             if (!item.users.find(user => user.id === userID)) {
               numUsers += 1;
             }
-            const itemTotalCost = (item.item_cost * item.item_quantity) / numUsers;
+            const itemTotalCost = item.item_cost / numUsers;
             return acc + itemTotalCost;
           }
           return acc;
@@ -128,7 +128,6 @@ const Receipt_items = () => {
   };
 
   const addItems = async() => {
-    // console.log(itemName, itemQuantity, itemPrice)
     if (itemName.trim() === '' || itemPrice.trim() === '' || itemQuantity.trim() === '') {
       Alert.alert("Please fill in all fields");
       return;
@@ -136,7 +135,8 @@ const Receipt_items = () => {
     const newItem = {
       item_name: itemName,
       item_quantity: parseInt(itemQuantity),
-      item_price: parseFloat(itemPrice)
+      item_price: parseFloat(itemPrice),
+      add_item_price_to_total: true,
     }
     await axiosInstance.post(`/receipts/${room_code}/add-item/${receipt_id}`, [newItem])
     .then((response) => {
@@ -151,10 +151,12 @@ const Receipt_items = () => {
       setItemName("");
       setItemQuantity("1");
       setItemPrice("");
-      console.log(response);
+      setAddingItem(false);
     })
     .catch((error) => {
-      console.log("Error: ", error);
+      console.error('Error Data:', error.response.data);
+      console.error('Error Status:', error.response.status);
+      console.error('Error Headers:', error.response.headers);
     })
   }
 
@@ -236,7 +238,7 @@ const Receipt_items = () => {
           }
         }}
         children={
-          <TouchableOpacity activeOpacity={.8} style={styles.edit_done} 
+          <TouchableOpacity activeOpacity={.8} style={styles.edit_done}
           onPress={() => {
             if (editing) {
               setEditing(false);
@@ -252,14 +254,14 @@ const Receipt_items = () => {
           </TouchableOpacity>
         }
         />
-          
+
       <KeyboardAvoidingView
       behavior='height'
       style={{flex: 1}}
       >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-            <TextInput 
+            <TextInput
             style={styles.receipt_name}
             value={receiptname}
             onFocus={()=>setEditingName(true)}
@@ -272,10 +274,10 @@ const Receipt_items = () => {
             />
             <View style={{marginTop: '5%', justifyContent: 'flex-start', flexDirection: 'row', marginLeft: '5%'}}>
               <View style={{alignItems: 'center'}}>
-                <Profile_picture 
-                name={userData.name} 
-                image={userData.profile_picture_url} 
-                sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}} 
+                <Profile_picture
+                name={userData.name}
+                image={userData.profile_picture_url}
+                sizing_style={{height: scale(50), width: scale(50), borderWidth: 1, borderColor: Colors.primary}}
                 text_sizing={{fontSize: RFValue(18)}}/>
                 <Medium500Text style={{fontSize: RFValue(14), marginTop: scale(5)}}>You</Medium500Text>
               </View>
@@ -285,17 +287,17 @@ const Receipt_items = () => {
               </View>
             </View>
             <View style={[styles.items_container]}>
-              <FlatList 
+              <FlatList
               data={receipt.items}
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
               horizontal={false}
               contentContainerStyle={{justifyContent: 'center'}}
-              renderItem={({ item }) => 
-                <Receipt_items_list_component 
+              renderItem={({ item }) =>
+                <Receipt_items_list_component
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
-                price={((item.item_cost * item.item_quantity).toFixed(2)).toString()}
+                price={(item.item_cost.toFixed(2)).toString()}
                 readOnly={!editing}
                 //onpress should be null when editing items
                 onPress={()=> {
@@ -308,13 +310,13 @@ const Receipt_items = () => {
                 }
                 }
                 isSelected={selectedItems.includes(item.id)}
-                participants={item.users && item.users.length > 0 ? 
+                participants={item.users && item.users.length > 0 ?
                     item.users.filter(user=>user.id !== userID)
                     :
                     []
                 }
                 // participants={item.users}
-                /> 
+                />
               }
               />
               {editing && !addingItem &&
@@ -333,22 +335,22 @@ const Receipt_items = () => {
                 <Bold700Text style={styles.total_text}>Your subtotal:</Bold700Text>
                 <Bold700Text style={styles.total_text}>{userCost.toFixed(2)}</Bold700Text>
               </View>
-            </> 
+            </>
             ) : (
               <>
               <View style={styles.total_container}>
                 <Bold700Text style={styles.total_text}>Total:</Bold700Text>
                 <Bold700Text style={styles.total_text}>{total}</Bold700Text>
               </View>
-            </> 
+            </>
             )
             }
           </View>
         </View>
       </TouchableWithoutFeedback>
       {editingName && !addingItem ? (
-        <Large_green_button 
-        title={"Confirm Name"} 
+        <Large_green_button
+        title={"Confirm Name"}
         onPress={() => {
             handleReceiptRename();
             Keyboard.dismiss();
@@ -357,8 +359,8 @@ const Receipt_items = () => {
         ) : editing ? (
             null
         ) : (
-          <Large_green_button 
-            title={"Confirm items"} 
+          <Large_green_button
+            title={"Confirm items"}
             onPress={confirmSelectedItems}
           />
         )}
@@ -374,7 +376,7 @@ const Receipt_items = () => {
         <View style={styles.modal_view}>
           <View style={styles.modal_box}>
             <View style={styles.modal_text_input_container}>
-              <TextInput 
+              <TextInput
               placeholder='Name'
               autoFocus={true}
               placeholderTextColor={Colors.mediumgray}
@@ -383,7 +385,7 @@ const Receipt_items = () => {
               value={itemName}
               onChangeText={setItemName}
               />
-              <TextInput 
+              <TextInput
               placeholder='1'
               placeholderTextColor={Colors.mediumgray}
               style={[styles.modal_text_inputs, {flex: 1}]}
@@ -391,7 +393,7 @@ const Receipt_items = () => {
               value={itemQuantity}
               onChangeText={setItemQuantity}
               />
-              <TextInput 
+              <TextInput
               placeholder='price'
               placeholderTextColor={Colors.mediumgray}
               style={[styles.modal_text_inputs, {flex: 1.5}]}
@@ -401,9 +403,9 @@ const Receipt_items = () => {
               />
             </View>
             <View style={styles.modal_confirm_cancel_buttons_container}>
-              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]} 
+              <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]}
               onPress={()=>{setAddingItem(false), setItemName(""), setItemQuantity("1"), setItemPrice("")}}>
-                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>Cancel</Medium500Text>
+                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>test</Medium500Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]} onPress={addItems}>
                 <Medium500Text style={{color: 'white', fontSize: RFValue(12)}}>Add</Medium500Text>
@@ -459,10 +461,10 @@ const styles = StyleSheet.create({
     fontSize: RFValue(18)
   },
   edit_done: {
-    borderBottomWidth: 2, 
+    borderBottomWidth: 2,
     borderColor: Colors.primary,
-    position: 'absolute', 
-    right: '6%', 
+    position: 'absolute',
+    right: '6%',
     bottom: verticalScale(2)
   },
   edit_done_text: {

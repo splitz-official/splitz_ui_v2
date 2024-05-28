@@ -199,6 +199,7 @@ const Upload_take_photo = () => {
           navigation.navigate("Receipt_items", {
             receipt_id: uploadresponse.data.id,
             room_code: uploadresponse.data.room_code,
+            editing: true,
           });
         } else {
           console.log(
@@ -207,6 +208,7 @@ const Upload_take_photo = () => {
           );
           navigation.navigate("Quick_split", {
             receipt_id: uploadresponse.data.id,
+            editing: true,
           });
         }
       })
