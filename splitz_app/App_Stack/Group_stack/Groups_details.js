@@ -383,7 +383,7 @@ const Groups_details = () => {
               />
               <Divider />
               <Menu.Item
-                onPress={()=>setDeleteModalVisible(true)}
+                onPress={()=>setDeleteRoomModalVisible(true)}
                 title="Delete Room"
                 titleStyle={{
                   fontFamily: "DMSans_500Medium",

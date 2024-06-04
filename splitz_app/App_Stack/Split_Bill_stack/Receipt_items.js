@@ -48,7 +48,6 @@ const Receipt_items = () => {
   const [itemQuantity, setItemQuantity] = useState('1');
   const [itemPrice, setItemPrice] = useState('');
 
-  useEffect(() => {
     const fetchReceipt = async () => {
       if (!room_code || !receipt_id) {
         console.log('Missing parameters: room_code or receipt_id');
@@ -80,8 +79,9 @@ const Receipt_items = () => {
       // console.log("Selected Items: ", selectedItems)
     };
 
+  useEffect(()=> {
     fetchReceipt();
-  }, []);
+  }, [])
 
 
   useEffect(() => {
@@ -157,6 +157,9 @@ const Receipt_items = () => {
       console.error('Error Data:', error.response.data);
       console.error('Error Status:', error.response.status);
       console.error('Error Headers:', error.response.headers);
+    })
+    .finally(() => {
+      fetchReceipt();
     })
   }
 
