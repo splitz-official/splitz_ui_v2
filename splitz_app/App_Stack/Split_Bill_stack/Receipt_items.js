@@ -127,6 +127,27 @@ const Receipt_items = () => {
     }
   };
 
+  const deleteItem = async (item_id) => {
+    await axiosInstance
+      .post(`/receipts/${room_code}/delete-item/${receipt_id}/${item_id}`)
+      .then((response) => {
+        Toast.show({
+          type: "success",
+          text1: "Item Deleted",
+          position: "top",
+          topOffset: verticalScale(45),
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+        fetchReceipt();
+      })
+      .catch((error) => {
+        console.error('Error Data:', error.response.data);
+        console.error('Error Status:', error.response.status);
+        console.error('Error Headers:', error.response.headers);
+      });
+  }
+
   const addItems = async() => {
     if (itemName.trim() === '' || itemPrice.trim() === '' || itemQuantity.trim() === '') {
       Alert.alert("Please fill in all fields");
@@ -302,6 +323,7 @@ const Receipt_items = () => {
                 quantity={`(${item.item_quantity})`}
                 price={(item.item_cost.toFixed(2)).toString()}
                 readOnly={!editing}
+                deleteItem={() => deleteItem(item.id)}
                 //onpress should be null when editing items
                 onPress={()=> {
                   if(editing){

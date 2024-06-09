@@ -39,7 +39,7 @@ const Receipt_items = () => {
   const userID = userData.id;
   const [receipt, setReceipt] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(route.params?.editing ?? false);
   const [addingItem, setAddingItem] = useState(false);
   // const [selectedItems, setSelectedItems] = useState([]);
   const [owner, setOwner] = useState(false);
@@ -60,56 +60,56 @@ const Receipt_items = () => {
   const [itemQuantity, setItemQuantity] = useState("1");
   const [itemPrice, setItemPrice] = useState("");
 
+  const fetchReceipt = async () => {
+    if (!receipt_id) {
+      console.log("Missing parameters: receipt_id");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // console.log("Fetching receipt data")
+      const response = await axiosInstance.get(
+        `/receipts/receipt/${receipt_id}`
+      );
+      // console.log(response.data.items[0].users);
+      console.log(response.data);
+
+      // const userSelectedItems = response.data.items
+      // .filter(item => item.users.find(user => user.id === userID))
+      // .map(item => item.id);
+
+      const newItemsWithSelections = new Map();
+
+      // response.data.items.forEach(item => {
+      //   newItemsWithSelections.set(item.id, { ...item, selectedBy: [] });
+      // });
+
+      response.data.items.forEach((item) => {
+        const selectedBy = item.users.map((user) => user);
+        newItemsWithSelections.set(item.id, { ...item, selectedBy });
+      });
+      // console.log(newItemsWithSelections);
+      setItemsWithSelections(newItemsWithSelections);
+
+      setUsers(response.data.users);
+      setReceipt(response.data);
+
+      // setSelectedItems(userSelectedItems);
+      setTax(response.data.tax_amount);
+      setTip(response.data.tip_amount);
+      setTotal(response.data.total_amount);
+      initialNameRef.current = response.data.receipt_name;
+      setReceiptName(response.data.receipt_name);
+      setLoading(false);
+    } catch (error) {
+      console.log("fetchReceipt Error: ", error.response.data);
+      setLoading(false);
+    }
+    // console.log("Selected Items: ", selectedItems)
+  };
+
   useEffect(() => {
-    const fetchReceipt = async () => {
-      if (!receipt_id) {
-        console.log("Missing parameters: receipt_id");
-        return;
-      }
-
-      setLoading(true);
-      try {
-        // console.log("Fetching receipt data")
-        const response = await axiosInstance.get(
-          `/receipts/receipt/${receipt_id}`
-        );
-        // console.log(response.data.items[0].users);
-        console.log(response.data);
-
-        // const userSelectedItems = response.data.items
-        // .filter(item => item.users.find(user => user.id === userID))
-        // .map(item => item.id);
-
-        const newItemsWithSelections = new Map();
-
-        // response.data.items.forEach(item => {
-        //   newItemsWithSelections.set(item.id, { ...item, selectedBy: [] });
-        // });
-
-        response.data.items.forEach((item) => {
-          const selectedBy = item.users.map((user) => user);
-          newItemsWithSelections.set(item.id, { ...item, selectedBy });
-        });
-        // console.log(newItemsWithSelections);
-        setItemsWithSelections(newItemsWithSelections);
-
-        setUsers(response.data.users);
-        setReceipt(response.data);
-
-        // setSelectedItems(userSelectedItems);
-        setTax(response.data.tax_amount);
-        setTip(response.data.tip_amount);
-        setTotal(response.data.total_amount);
-        initialNameRef.current = response.data.receipt_name;
-        setReceiptName(response.data.receipt_name);
-        setLoading(false);
-      } catch (error) {
-        console.log("fetchReceipt Error: ", error.response.data);
-        setLoading(false);
-      }
-      // console.log("Selected Items: ", selectedItems)
-    };
-
     fetchReceipt();
   }, []);
 
@@ -224,9 +224,29 @@ const Receipt_items = () => {
       return `${firstName} ${lastNameInitial}.`;
     }
   }
-
+  const deleteItem = async (item_id) => {
+    console.log("item_id", item_id);
+    await axiosInstance
+      .post(`/receipts/delete-item/${receipt_id}/${item_id}`)
+      .then((response) => {
+        Toast.show({
+          type: "success",
+          text1: "Item Deleted",
+          position: "top",
+          topOffset: verticalScale(45),
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+        fetchReceipt();
+      })
+      .catch((error) => {
+        console.error('Error Data:', error.response.data);
+        console.error('Error Status:', error.response.status);
+        console.error('Error Headers:', error.response.headers);
+      });
+  }
   const addItems = async () => {
-    // console.log(itemName, itemQuantity, itemPrice)
+    console.log(itemName, itemQuantity, itemPrice)
     if (
       itemName.trim() === "" ||
       itemPrice.trim() === "" ||
@@ -239,9 +259,10 @@ const Receipt_items = () => {
       item_name: itemName,
       item_quantity: parseInt(itemQuantity),
       item_price: parseFloat(itemPrice),
+      add_item_price_to_total: true,
     };
     await axiosInstance
-      .post(`/receipts/${room_code}/add-item/${receipt_id}`, [newItem])
+      .post(`/receipts/add-item/${receipt_id}`, [newItem])
       .then((response) => {
         Toast.show({
           type: "success",
@@ -254,10 +275,13 @@ const Receipt_items = () => {
         setItemName("");
         setItemQuantity("1");
         setItemPrice("");
-        console.log(response);
+        setAddingItem(false);
+        fetchReceipt();
       })
       .catch((error) => {
-        console.log("Error: ", error);
+        console.error('Error Data:', error.response.data);
+        console.error('Error Status:', error.response.status);
+        console.error('Error Headers:', error.response.headers);
       });
   };
 
@@ -424,6 +448,7 @@ const Receipt_items = () => {
                       .toFixed(2)
                       .toString()}
                     readOnly={!editing}
+                    deleteItem={() => deleteItem(item.id)}
                     onPress={() => {
                       if (!selectedUser && !editing) {
                         Toast.show({
