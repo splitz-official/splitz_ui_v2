@@ -5,6 +5,8 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 import { scale, verticalScale } from 'react-native-size-matters';
 import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
+// import * as React from 'react';
+import { Entypo } from '@expo/vector-icons';
 
 import Screen from '../../../Components/Screen';
 import Colors from '../../../Config/Colors';
@@ -15,6 +17,9 @@ import { useAxios } from '../../../Axios/axiosContext';
 import Receipt_add_item from './Components/Receipt_add_item';
 import Profile_picture from '../../../Components/Profile_picture';
 import { Bold700Text, Medium500Text } from '../../../Config/AppText';
+import EditModal from '../../../Components/Edit_modal';
+
+
 
 //add item endpoint and rename receipt endpoint
 
@@ -35,6 +40,10 @@ const Receipt_items = () => {
   const [addingItem, setAddingItem] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [initialselectedItems, setInitialSelectedItems] = useState([]);
+  const [editTipModal, setEditTipModal] = useState(false);
+  const [editTaxModal, setEditTaxModal] = useState(false);
+  const [newTip, setNewTip] = useState('');
+  const [newTax, setNewTax] = useState('');
 
   const [tax, setTax] = useState('');
   const [tip, setTip] = useState('');
@@ -68,7 +77,11 @@ const Receipt_items = () => {
         setSelectedItems(userSelectedItems);
         setTax(response.data.tax_amount);
         setTip(response.data.tip_amount);
-        setTotal(response.data.total_amount);
+        
+        
+        setTotal(calculateBillTotal(response.data.items, response.data.tip_amount, response.data.tax_amount));
+        console.log("Total from scanner:", response.data.total_amount)
+
         initialNameRef.current=response.data.receipt_name;
         setReceiptName(response.data.receipt_name);
         setLoading(false);
@@ -82,6 +95,37 @@ const Receipt_items = () => {
   useEffect(()=> {
     fetchReceipt();
   }, [])
+
+  const calculateBillTotal = (items, tip, tax) => {
+    const itemsTotal = items.reduce((acc, item) => {
+      const itemCost = parseFloat(item.item_cost);
+      if (isNaN(itemCost)) {
+        console.log("Invalid item cost:", item.item_cost);
+        return acc;
+      }
+      return acc + itemCost;
+    }, 0);
+
+    // console.log("Raw Tip:", tip);
+    // console.log("Raw Tax:", tax);
+  
+    const tipAmount = parseFloat(tip);
+    const taxAmount = parseFloat(tax);
+
+    console.log("Tax:", taxAmount); 
+    console.log("Tip:", tipAmount);
+  
+    if (isNaN(tipAmount)) {
+      console.log("Invalid tip amount:", tip);
+    }
+    if (isNaN(taxAmount)) {
+      console.log("Invalid tax amount:", tax);
+    }
+  
+    const total = itemsTotal + (isNaN(tipAmount) ? 0 : tipAmount) + (isNaN(taxAmount) ? 0 : taxAmount);
+    return total.toFixed(2);
+  };
+  
 
 
   useEffect(() => {
@@ -324,8 +368,9 @@ const Receipt_items = () => {
                 name={item.item_name}
                 quantity={`(${item.item_quantity})`}
                 price={(item.item_cost.toFixed(2)).toString()}
-                readOnly={!editing}
+                // readOnly={!editing}
                 deleteItem={() => deleteItem(item.id)}
+                editing={editing}
                 //onpress should be null when editing items
                 onPress={()=> {
                   if(editing){
@@ -351,9 +396,27 @@ const Receipt_items = () => {
                 <Text style={styles.add_item_text}>+ New item</Text>
               </TouchableOpacity>}
             <View style={{alignSelf: 'center', width: '100%', backgroundColor: Colors.primary, height: scale(2), marginVertical: verticalScale(10)}}/>
-            <View style={styles.tax_tip_container}>
-                <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
-                <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
+            <View style={[styles.tax_tip_container, {}]}>
+                {editing ? 
+                  <TouchableOpacity onPress={()=> setEditTipModal(true)} activeOpacity={.7} style={{borderColor: Colors.primary, borderWidth: 1, padding: 5, borderRadius: 10}}>
+                      <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
+                      <View style={{position: 'absolute', backgroundColor: 'white', top: -8, right: -8}}>
+                        <Entypo name="edit" size={18} color="black" />
+                      </View>
+                  </TouchableOpacity>
+                  :
+                  <Medium500Text style={styles.tax_tip_text}>Tip: {tip}</Medium500Text>
+                }
+                {editing ? 
+                  <TouchableOpacity onPress={()=> setEditTaxModal(true)} activeOpacity={.7} style={{borderColor: Colors.primary, borderWidth: 1, padding: 5, borderRadius: 10, marginLeft: '30%'}}>
+                    <Medium500Text style={[styles.tax_tip_text,]}>Tax: {tax}</Medium500Text>
+                    <View style={{position: 'absolute', backgroundColor: 'white', top: -8, right: -8}}>
+                      <Entypo name="edit" size={18} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                :
+                  <Medium500Text style={[styles.tax_tip_text, {marginLeft: '30%'}]}>Tax: {tax}</Medium500Text>
+                }
               </View>
             {selectedItems.length > 0 ?
             (
@@ -442,6 +505,28 @@ const Receipt_items = () => {
         </View>
         <Toast/>
       </Modal>
+      <EditModal 
+      visible={editTipModal}
+      onClose={()=>setEditTipModal(false)}
+      message={"What is the correct tip amount?"}
+      confirmText={"Confirm"}
+      cancelText={"Cancel"}
+      value={newTip}
+      changeText={setNewTip}
+      label={"Tip"}
+      // onConfirm={}
+      />
+      <EditModal 
+      visible={editTaxModal}
+      onClose={()=>setEditTaxModal(false)}
+      message={"What is the correct tax amount?"}
+      confirmText={"Confirm"}
+      cancelText={"Cancel"}
+      value={newTax}
+      changeText={setNewTax}
+      label={"Tax"}
+      // onConfirm={}
+      />
     </Screen>
   )
 }

@@ -47,9 +47,9 @@ const Receipt_items_list_component = ({
       }
       onPress={onPress}
     >
-      {!readOnly ? (
+      {editing ? (
         <TouchableOpacity
-          activeOpacity={1}
+          activeOpacity={.7}
           style={{
             position: "absolute",
             right: 2,
