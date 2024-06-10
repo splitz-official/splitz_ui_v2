@@ -166,8 +166,8 @@ const Receipt_items = () => {
         text1: 'Item Added Successfully',
         position: 'top',
         topOffset: verticalScale(45),
-        autoHide: true,
-        visibilityTime: 2000
+        // autoHide: true,
+        visibilityTime: 5000
       })
       setItemName("");
       setItemQuantity("1");
@@ -181,6 +181,8 @@ const Receipt_items = () => {
     })
     .finally(() => {
       fetchReceipt();
+      setEditing(true);
+      setAddingItem(true);
     })
   }
 
@@ -430,7 +432,7 @@ const Receipt_items = () => {
             <View style={styles.modal_confirm_cancel_buttons_container}>
               <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.white}]}
               onPress={()=>{setAddingItem(false), setItemName(""), setItemQuantity("1"), setItemPrice("")}}>
-                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>test</Medium500Text>
+                <Medium500Text style={{color: Colors.primary, fontSize: RFValue(12)}}>Cancel</Medium500Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modal_buttons, {backgroundColor: Colors.primary}]} onPress={addItems}>
                 <Medium500Text style={{color: 'white', fontSize: RFValue(12)}}>Add</Medium500Text>

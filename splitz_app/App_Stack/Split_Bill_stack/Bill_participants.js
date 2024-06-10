@@ -128,7 +128,7 @@ const Bill_participants = () => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color={Colors.primary} />;
+    return <ActivityIndicator size="large" color={Colors.primary} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}/>;
   }
 
   return (
