@@ -306,6 +306,55 @@ const Receipt_items = () => {
     }
   };
 
+  const editReceiptTax = async () => {
+    await axiosInstance
+      .post("/receipts/edit-tax", null, {params: {
+        receipt_id: receipt_id,
+        new_tax: newTax,
+      }})
+      .then((response) => {
+        Toast.show({
+          type: "success",
+          text1: "Tax Updated Succesfully",
+          position: "top",
+          topOffset: verticalScale(45),
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+        setEditTaxModal(false);
+        fetchReceipt();
+      })
+      .catch((error) => {
+        console.error("Error Data:", error.response.data);
+        console.error("Error Status:", error.response.status);
+        console.error("Error Headers:", error.response.headers);
+      });
+  };
+
+  const editReceiptTip = async () => {
+    await axiosInstance
+      .post("/receipts/edit-tip", null, {params: {
+        receipt_id: receipt_id,
+        new_tip: newTip,
+      }})
+      .then((response) => {
+        Toast.show({
+          type: "success",
+          text1: "Tip Updated Succesfully",
+          position: "top",
+          topOffset: verticalScale(45),
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+        setEditTipModal(false);
+        fetchReceipt();
+      })
+      .catch((error) => {
+        console.error("Error Data:", error.response.data);
+        console.error("Error Status:", error.response.status);
+        console.error("Error Headers:", error.response.headers);
+      });
+  };
   const handlePriceChange = (text) => {
     if (/^\d*\.?\d{0,2}$/.test(text)) {
       setItemPrice(text);
@@ -651,7 +700,7 @@ const Receipt_items = () => {
         value={newTip}
         changeText={setNewTip}
         label={"Tip"}
-        // onConfirm={}
+        onConfirm={editReceiptTip}
       />
       <EditModal
         visible={editTaxModal}
@@ -662,10 +711,10 @@ const Receipt_items = () => {
         value={newTax}
         changeText={setNewTax}
         label={"Tax"}
-        // onConfirm={}
+        onConfirm={editReceiptTax}
       />
     </Screen>
-  );
+  );//
 };
 
 const styles = StyleSheet.create({
