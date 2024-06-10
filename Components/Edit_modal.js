@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: scale(20),
     alignItems: "center",
+    marginTop: '-60%'
   },
   modalText: {
     fontSize: RFValue(16),
