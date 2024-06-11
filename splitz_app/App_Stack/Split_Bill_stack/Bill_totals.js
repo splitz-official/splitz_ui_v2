@@ -77,7 +77,13 @@ const Bill_totals = () => {
           setSelectedItems(userSelectedItems);
           setTax(response.data.tax_amount);
           setTip(response.data.tip_amount);
-          setTotal(response.data.total_amount.toFixed(2));
+          setTotal(
+            calculateBillTotal(
+              response.data.items,
+              response.data.tip_amount,
+              response.data.tax_amount
+            )
+          );
           initialNameRef.current = response.data.receipt_name;
           setReceiptName(response.data.receipt_name);
           calculateUserTotals(
@@ -96,6 +102,39 @@ const Bill_totals = () => {
       fetchReceipt();
     }, [])
   );
+
+  const calculateBillTotal = (items, tip, tax) => {
+    const itemsTotal = items.reduce((acc, item) => {
+      const itemCost = parseFloat(item.item_cost);
+      if (isNaN(itemCost)) {
+        console.log("Invalid item cost:", item.item_cost);
+        return acc;
+      }
+      return acc + itemCost;
+    }, 0);
+
+    // console.log("Raw Tip:", tip);
+    // console.log("Raw Tax:", tax);
+
+    const tipAmount = parseFloat(tip);
+    const taxAmount = parseFloat(tax);
+
+    console.log("Tax:", taxAmount);
+    console.log("Tip:", tipAmount);
+
+    if (isNaN(tipAmount)) {
+      console.log("Invalid tip amount:", tip);
+    }
+    if (isNaN(taxAmount)) {
+      console.log("Invalid tax amount:", tax);
+    }
+
+    const total =
+      itemsTotal +
+      (isNaN(tipAmount) ? 0 : tipAmount) +
+      (isNaN(taxAmount) ? 0 : taxAmount);
+    return total.toFixed(2);
+  };
 
   function First_last_initial(fullName) {
     if (!fullName) {
@@ -151,10 +190,10 @@ const Bill_totals = () => {
 
     const userCost_array = Array.from(userCosts.values());
     setActiveUsers_and_Costs(userCost_array);
-    // userCost_array.forEach(
-    //   user => console.log(user.items)
-    // )
-    // console.log(userCost_array);
+    userCost_array.forEach(
+      user => console.log(user.items)
+    )
+    console.log(userCost_array);
   };
 
   const handleReceiptRename = async () => {

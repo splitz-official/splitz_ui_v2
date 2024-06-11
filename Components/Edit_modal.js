@@ -18,6 +18,13 @@ const EditModal = ({
   changeText,
   label
 }) => {
+
+  const handleChangeText = (text) => {
+    if (/^\d*\.?\d{0,2}$/.test(text)) {
+      changeText(text);
+    }
+  };
+
   return (
     <Modal
       visible={visible}
@@ -37,7 +44,7 @@ const EditModal = ({
             textColor={Colors.black}
             keyboardType="decimal-pad"
             value={value}
-            onChangeText={changeText}
+            onChangeText={handleChangeText} 
             autoFocus={true}
           />
           <View style={styles.modal_confirm_cancel_buttons_container}>
@@ -100,7 +107,6 @@ const styles = StyleSheet.create({
     fontSize: RFValue(12),
   },
   modal_buttons: {
-    // borderColor: Colors.primary,
     borderWidth: 1,
     paddingVertical: scale(10),
     width: scale(80),
@@ -110,12 +116,9 @@ const styles = StyleSheet.create({
   },
   modal_confirm_cancel_buttons_container: {
     flexDirection: "row",
-    // borderWidth: 1,
-    // flex: 1,
     width: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    // paddingBottom: verticalScale(15),
     paddingHorizontal: scale(20),
     marginTop: verticalScale(10),
   },
